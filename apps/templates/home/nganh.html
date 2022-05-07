@@ -1,0 +1,378 @@
+
+{% extends "layouts/base.html" %}
+
+{% block title %} Danh sách ngành {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+<style>
+    .rowActions li:hover {
+        color: #005CEB !important;
+    } 
+
+    .rowActions .hoverDanger:hover {
+        color: #f44236 !important;
+    } 
+
+    .bg-grey {
+        background-color: #f0f1f3;
+    }
+
+    .bg-red {
+        background-color: #F85C75;
+    }
+
+    .text-red {
+        color: #F85C75;
+    }
+
+    .rounded {
+        border-radius: 1rem !important;
+        border: none;
+    }
+
+    .modal-bottom-radius {
+        border-bottom-right-radius: 1rem !important;
+        border-bottom-left-radius: 1rem !important;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="pcoded-content">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Ngành</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Ngành</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <h5 class="mr-auto">Danh sách ngành</h5>
+                                <div class="ml-auto">
+                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới ngành">
+                                        <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-border-style">
+                                    <div class="table-responsive">
+                                        <table id="table" class="table table-hover" data-provide="selectall">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mã Ngành</th>
+                                                    <th>Tên Ngành</th>
+                                                    <th>Tên Khoa</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ Hover-table ] end -->
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteConfirmationModal">
+                Open modal
+            </button> -->
+        </div>
+
+        <!-- Ngành Form Modal -->
+        <div></div>
+        <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabel"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModal" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formNganh" class="form-edit" role="form" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.ma_nganh.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-8 align-self-end">
+                                        {{ form.ma_nganh(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_ma_nganh" class="invalid-feedback text-danger position-absolute text-truncate">Mã ngành là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.ten_nganh.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-8 align-self-end">
+                                        {{ form.ten_nganh(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_ten_nganh" class="invalid-feedback text-danger position-absolute text-truncate">Tên ngành là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.khoa_id.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.khoa_id(class="form-control") }}
+                                        <small id="ifb_khoa_id" class="invalid-feedback text-danger position-absolute text-truncate">Khoa là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveEdit">Lưu</button>
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveAdd">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Delete Comfirm Modal  -->
+        <div id="deleteConfirmationModal" role="dialog" tabindex="-1" class="modal fade" aria-modal="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content rounded" role="document">
+                    <!--  -->
+                    <div class="modal-body px-0 pb-0">
+                        <div class="w-100 px-2 d-flex flex-column align-items-center justify-content-between">
+                            <i class="feather icon-trash-2 fa-5x pt-3 text-red"></i> 
+                            <span class="py-3">
+                                <h5 class="mb-0 text-red">Delete record</h5>
+                            </span>
+                        </div>
+                        <div class="bg-grey px-3 mt-3 modal-bottom-radius">
+                            <div class="text-center pt-4 text-dark">
+                                <div class="pt-2">
+                                    Xóa ngành này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa ngành này không?
+                                </div>
+                            </div>
+                            <div class="d-flex py-3 justify-content-center">
+                                <button type="button" data-dismiss="modal" aria-label="Close" class="mr-3 btn btn-sm btn-outline-dark"><span>Hủy</span></button>
+                                <button type="button" class="delete btn btn-sm btn-outline-danger"><span>Xóa</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--  -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Alert -->
+        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-modal="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content rounded" role="document">
+                    <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                        <h5 class="modal-title font-weight-bold" id="alertModalLabel">Thông báo trùng lặp</h5>
+                        <button type="button" class="close btn btn-lg" data-dismiss="modal" aria-label="Close">
+                            <h3 class="m-0" aria-hidden="true">&times;</h3>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="p-2" id="msg"></div>
+                    </div>
+                    <div class="modal-footer" style="padding: 12px 24px;">
+                        <!-- <button type="button" name="insert_data" id="btn_save" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button> -->
+                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+            // $("#alertModal").on("show", function () {
+            //     $("body").addClass("modal-open");
+            // }).on("hidden", function () {
+            //     $("body").removeClass("modal-open")
+            // });
+            // $(body.modal-open).css('overflow', 'hidden');
+            // $(body).css('position', 'fixed');
+            // $('#alertModal').modal().on('show', function(){
+            //     $('body').css('overflow', 'hidden');
+            // }).on('hidden', function(){
+            //     $('body').css('overflow', 'auto');
+            // });
+
+            // $('select.selectpicker').attr('data-live-search', true);
+            $("#khoa_id").select2();
+            $("#khoa_id").val('').trigger('change')
+
+            var datatablesOptions = {
+                ajax: {
+                    url: '/api/nganh',
+                    type: 'POST'
+                },
+                columns: [
+                    {data: 'ma_nganh'},
+                    {data: 'ten_nganh'},
+                    {data: 'ten_khoa'},
+                    {
+                        render: function (data, type, row) {
+                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editNganh list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Xóa" class="delNganh hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                    '</ul>'
+                        }, orderable: false, searchable: false
+                    }             
+                ], autoWidth: false, bDestroy: true, ordering: false
+            };
+            $('#table').dataTable(datatablesOptions);
+
+            // call function invalid-feedback
+            invalidFeedback('#ma_nganh', '#ifb_ma_nganh');
+            invalidFeedback('#ten_nganh', '#ifb_ten_nganh');
+            
+            
+            // notify('top', 'right', '', 'info', 'animated fadeIn', 'animated fadeOut', 'Thêm thành công!');
+            
+            
+            // Reset form when close modal
+            $('button.closeFormModal').on('click', function(){
+                $('#formNganh').trigger('reset');
+                $("#khoa_id").val('').trigger('change')
+            });
+
+            // Open add modal
+            $('button#add').on('click', function(){
+                // Change class save button
+                $('button.saveEdit').hide();
+                $('button.saveAdd').show();
+                showFormModal('Thêm mới ngành');
+            });
+
+            // Event click the save button to add new
+            $('.saveAdd').on('click', function(){
+                saveForm('', 'POST');
+            });
+
+            // Event click the save button to edit
+            $('.saveEdit').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveForm(id, 'PUT');
+            });
+
+            // Function save form
+            function saveForm(id, method){
+                var ma_nganh = $('#ma_nganh').val();
+                var ten_nganh = $('#ten_nganh').val();
+                var khoa_id = $('#khoa_id').val();
+                if(ma_nganh=='' || ten_nganh=='' || khoa_id==''){
+                    checkInput('#ma_nganh', '#ifb_ma_nganh');
+                    checkInput('#ten_nganh', '#ifb_ten_nganh');
+                }else{
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/nganh'+id,
+                        type: method,
+                        data: {ma_nganh: ma_nganh, ten_nganh: ten_nganh, khoa_id: khoa_id},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Thông báo trùng lặp', data.duplicate);
+                            }else if(data.success){
+                                notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                                $('#formModal').modal('hide');
+                                $('#formNganh').trigger('reset');
+                                $("#khoa_id").val('').trigger('change')
+                                // $('#ma_nganh').removeAttr('value');
+                                // $('#ten_nganh').removeAttr('value');
+                                $('#table').dataTable(datatablesOptions);
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Edit
+            $('#table').on('click', '.editNganh', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/nganh/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#ma_nganh').val(data.data.ma_nganh);
+                            $('#ten_nganh').val(data.data.ten_nganh);
+                            $('#khoa_id').val(data.data.khoa_id);
+                            //Open modal
+                            $('button.saveAdd').hide();
+                            $('button.saveEdit').show().attr('data-id', id);
+                            // $('#formModal').on('click', '.editNganh', function() {
+                            // $('.saveAdd').removeClass('saveAdd').addClass('saveEdit');
+                            // });
+                            showFormModal('Chỉnh sửa ngành: ' + data.data.ten_nganh);
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            });
+
+
+            $('#deleteConfirmationModal').on('click', 'button.delete', function(){
+                $.ajax({
+                    url: '/nganh/'+$(this).attr("data-id"),
+                    type: 'DELETE',
+                    success: function(data){
+                        if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }else if(data.success){
+                            notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                            $('#table').dataTable(datatablesOptions);
+                            $('#deleteConfirmationModal').modal('hide');
+                        }
+                    }
+                });
+            });
+
+            // Event click the save button to remove
+            $('#table').on('click', '.delNganh', function(){
+                $('#deleteConfirmationModal').modal('show'); 
+                $('button.delete').attr('data-id', $(this).attr("data-id"));
+            });
+        });
+    </script>
+
+{% endblock javascripts %}

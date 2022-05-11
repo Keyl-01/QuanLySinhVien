@@ -392,6 +392,7 @@ class Lop(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ten_lop = db.Column(db.String(60), unique=True, nullable=False)
+    so_luong = db.Column(db.Integer, nullable=False)
     mon_id = db.Column(db.Integer, ForeignKey(Mon.id), nullable=False)
     lichlops = relationship('LichLop', backref='lop', lazy=True, cascade="all, delete-orphan")
     
@@ -409,6 +410,7 @@ class Lop(db.Model):
         return {
             'id': self.id,
             'ten_lop': self.ten_lop,
+            'so_luong': self.so_luong,
             'mon_id': self.mon_id,
             'ma_mon': self.mon.ma_mon,
             'ten_mon': self.mon.ten_mon

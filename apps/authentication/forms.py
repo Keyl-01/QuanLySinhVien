@@ -214,6 +214,52 @@ class CreateSinhVienForm(FlaskForm):
                         id='lcn_id')
 
 
+#----------------------------------LopHoc----------------------------------
+
+class CreateLopForm(FlaskForm):
+    ten_lop = StringField('Tên lớp',
+                         id='ten_lop',
+                         validators=[DataRequired()])
+    so_luong = IntegerField('Sức chứa tối đa',
+                         id='so_luong',
+                         validators=[DataRequired(), NumberRange(min=0, max=10000)])
+    mon_id = SelectField('Môn học',
+                        id='mon_id')
+
+
+#----------------------------------PhongHoc----------------------------------
+
+class CreatePhongForm(FlaskForm):
+    ten_phong = StringField('Tên phòng',
+                         id='ten_phong',
+                         validators=[DataRequired()])
+    so_luong = IntegerField('Sức chứa',
+                         id='so_luong',
+                         validators=[DataRequired(), NumberRange(min=0, max=10000)])
+
+                
+#----------------------------------LichLop----------------------------------
+
+class CreateLichLopForm(FlaskForm):
+    lop_id = SelectField('Lớp',
+                         id='lop_id',
+                         validators=[DataRequired()])
+    phong_id = SelectField('Phòng',
+                         id='phong_id',
+                         validators=[DataRequired()])
+    thu = SelectField('Thứ',
+                         id='thu',
+                         validators=[DataRequired()])
+    start = SelectField('Ca bắt đầu',
+                         id='start',
+                         validators=[DataRequired()])
+    end = SelectField('Ca kết thúc',
+                         id='end',
+                         validators=[DataRequired()])
+    gv_id = SelectField('Giáo viên',
+                        id='gv_id',
+                        validators=[DataRequired()])
+
 
 # #----------------------------------Teacher----------------------------------
 

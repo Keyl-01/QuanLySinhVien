@@ -1,0 +1,38 @@
+.rowActions li:hover {
+    color: #005CEB !important;
+} 
+
+.rowActions .hoverDanger:hover {
+    color: #f44236 !important;
+} 
+
+.bg-grey {
+    background-color: #f0f1f3;
+}
+
+.bg-red {
+    background-color: #F85C75;
+}
+
+.text-red {
+    color: #F85C75;
+}
+
+.rounded {
+    border-radius: 1rem !important;
+    border: none;
+}
+
+.modal-bottom-radius {
+    border-bottom-right-radius: 1rem !important;
+    border-bottom-left-radius: 1rem !important;
+}
+
+/* Important part */
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}

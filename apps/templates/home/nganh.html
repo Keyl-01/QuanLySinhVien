@@ -4,39 +4,7 @@
 {% block title %} Danh sách ngành {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
-{% block stylesheets %}
-<style>
-    .rowActions li:hover {
-        color: #005CEB !important;
-    } 
-
-    .rowActions .hoverDanger:hover {
-        color: #f44236 !important;
-    } 
-
-    .bg-grey {
-        background-color: #f0f1f3;
-    }
-
-    .bg-red {
-        background-color: #F85C75;
-    }
-
-    .text-red {
-        color: #F85C75;
-    }
-
-    .rounded {
-        border-radius: 1rem !important;
-        border: none;
-    }
-
-    .modal-bottom-radius {
-        border-bottom-right-radius: 1rem !important;
-        border-bottom-left-radius: 1rem !important;
-    }
-</style>
-{% endblock stylesheets %}
+{% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
     <div class="pcoded-content">
@@ -79,7 +47,7 @@
                                                 <tr>
                                                     <th>Mã Ngành</th>
                                                     <th>Tên Ngành</th>
-                                                    <th>Tên Khoa</th>
+                                                    <th>Khoa</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -235,6 +203,7 @@
             // $('select.selectpicker').attr('data-live-search', true);
             $("#khoa_id").select2();
             $("#khoa_id").val('').trigger('change')
+            $('.select2-container').addClass('d-block');
 
             var datatablesOptions = {
                 ajax: {
@@ -260,6 +229,7 @@
             // call function invalid-feedback
             invalidFeedback('#ma_nganh', '#ifb_ma_nganh');
             invalidFeedback('#ten_nganh', '#ifb_ten_nganh');
+            invalidFeedbackSelect('#khoa_id', '#ifb_khoa_id');
             
             
             // notify('top', 'right', '', 'info', 'animated fadeIn', 'animated fadeOut', 'Thêm thành công!');
@@ -268,7 +238,10 @@
             // Reset form when close modal
             $('button.closeFormModal').on('click', function(){
                 $('#formNganh').trigger('reset');
-                $("#khoa_id").val('').trigger('change')
+                $("#khoa_id").val('').trigger('change');
+                $('input').css('border', '');
+                $('.select2-selection').css('border', '');
+                $('small.invalid-feedback').hide('');
             });
 
             // Open add modal
@@ -295,9 +268,10 @@
                 var ma_nganh = $('#ma_nganh').val();
                 var ten_nganh = $('#ten_nganh').val();
                 var khoa_id = $('#khoa_id').val();
-                if(ma_nganh=='' || ten_nganh=='' || khoa_id==''){
+                if(ma_nganh=='' || ten_nganh=='' || khoa_id==null){
                     checkInput('#ma_nganh', '#ifb_ma_nganh');
                     checkInput('#ten_nganh', '#ifb_ten_nganh');
+                    checkInputSelect('#khoa_id', '#ifb_khoa_id');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({
@@ -334,7 +308,7 @@
                             // Set input value
                             $('#ma_nganh').val(data.data.ma_nganh);
                             $('#ten_nganh').val(data.data.ten_nganh);
-                            $('#khoa_id').val(data.data.khoa_id);
+                            $("#khoa_id").val(data.data.khoa_id).trigger('change');
                             //Open modal
                             $('button.saveAdd').hide();
                             $('button.saveEdit').show().attr('data-id', id);

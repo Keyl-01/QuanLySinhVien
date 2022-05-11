@@ -4,39 +4,7 @@
 {% block title %} Danh sách chương trình đào tạo {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
-{% block stylesheets %}
-<style>
-    .rowActions li:hover {
-        color: #005CEB !important;
-    } 
-
-    .rowActions .hoverDanger:hover {
-        color: #f44236 !important;
-    } 
-
-    .bg-grey {
-        background-color: #f0f1f3;
-    }
-
-    .bg-red {
-        background-color: #F85C75;
-    }
-
-    .text-red {
-        color: #F85C75;
-    }
-
-    .rounded {
-        border-radius: 1rem !important;
-        border: none;
-    }
-
-    .modal-bottom-radius {
-        border-bottom-right-radius: 1rem !important;
-        border-bottom-left-radius: 1rem !important;
-    }
-</style>
-{% endblock stylesheets %}
+{% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
     <div class="pcoded-content">
@@ -79,7 +47,7 @@
                                                 <tr>
                                                     <th>Mã Chương Trình Đào Tạo</th>
                                                     <th>Tên Chương Trình Đào Tạo</th>
-                                                    <th>Tên Ngành</th>
+                                                    <th>Ngành</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -104,7 +72,7 @@
         <!-- Chương Trình Đào Tạo Form Modal -->
         <div></div>
         <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content rounded">
                 <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
                     <h5 class="modal-title font-weight-bold" id="formModalLabel"></h5>
@@ -147,7 +115,7 @@
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ form.nganh_id(class="form-control") }}
-                                        <small id="ifb_nganh_id" class="invalid-feedback text-danger position-absolute text-truncate">Khoa là trường bắt buộc.</small>
+                                        <small id="ifb_nganh_id" class="invalid-feedback text-danger position-absolute text-truncate">Ngành là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +127,7 @@
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ form.mon_id(class="form-control", multiple="multiple") }}
-                                        <!-- <small id="ifb_nganh_id" class="invalid-feedback text-danger position-absolute text-truncate">Khoa là trường bắt buộc.</small> -->
+                                        <small id="ifb_mon_id" class="invalid-feedback text-danger position-absolute text-truncate">Môn học là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -248,13 +216,16 @@
             $('#nganh_id').select2();
             $('#mon_id').select2({
                 closeOnSelect : false,
-                placeholder : "Chọn môn học",
+                // placeholder : "Chọn môn học",
                 allowHtml: true,
                 allowClear: true,
                 tags: true
             })
             $("#nganh_id").val('').trigger('change')
             $("#mon_id").val('').trigger('change')
+            $('.select2-container').addClass('d-block');
+
+            // alert($("#mon_id").val(''));
 
             var datatablesOptions = {
                 ajax: {
@@ -280,6 +251,7 @@
             // call function invalid-feedback
             invalidFeedback('#ma_ctdt', '#ifb_ma_ctdt');
             invalidFeedback('#ten_ctdt', '#ifb_ten_ctdt');
+            invalidFeedbackSelect('#nganh_id', '#ifb_nganh_id');
             
             
             // notify('top', 'right', '', 'info', 'animated fadeIn', 'animated fadeOut', 'Thêm thành công!');
@@ -288,8 +260,11 @@
             // Reset form when close modal
             $('button.closeFormModal').on('click', function(){
                 $('#formCtdt').trigger('reset');
-                $("#nganh_id").val('').trigger('change')
-                $("#mon_id").val('').trigger('change')
+                $("#nganh_id").val('').trigger('change');
+                $("#mon_id").val('').trigger('change');
+                $('input').css('border', '');
+                $('.select2-selection').css('border', '');
+                $('small.invalid-feedback').hide('');
             });
 
             // Open add modal
@@ -297,7 +272,7 @@
                 // Change class save button
                 $('button.saveEdit').hide();
                 $('button.saveAdd').show();
-                showFormModal('Thêm mới ngành');
+                showFormModal('Thêm mới chương trình đào tạo');
             });
 
             // Event click the save button to add new
@@ -317,12 +292,10 @@
                 var ten_ctdt = $('#ten_ctdt').val();
                 var nganh_id = $('#nganh_id').val();
                 var mon_id = $('#mon_id').val();
-                // var mon_id = $('#mon_id').select2('val');
-                // var mon_id = $('#mon_id').serialize();
-                // alert(mon_id)
-                if(ma_ctdt=='' || ten_ctdt=='' || nganh_id==''){
+                if(ma_ctdt=='' || ten_ctdt=='' || nganh_id==null){
                     checkInput('#ma_ctdt', '#ifb_ma_ctdt');
                     checkInput('#ten_ctdt', '#ifb_ten_ctdt');
+                    checkInputSelect('#nganh_id', '#ifb_nganh_id');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({
@@ -374,7 +347,7 @@
                             // $('#formModal').on('click', '.editCtdt', function() {
                             // $('.saveAdd').removeClass('saveAdd').addClass('saveEdit');
                             // });
-                            showFormModal('Chỉnh sửa ngành: ' + data.data.ten_ctdt);
+                            showFormModal('Chỉnh sửa chương trình đào tạo: ' + data.data.ten_ctdt);
                             
                         }else if(data.error){
                             notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);

@@ -37,7 +37,7 @@
 
         function checkInput(input, feedback){
             var value = $(input).val();
-            if(value == ''){
+            if(value=='' || value==null){
                 $(input).css('border', '1px solid red');
                 $(feedback).show();
             }else{
@@ -57,6 +57,7 @@
             });
         }
 
+
         function validateEmail(email){
             var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
             if (testEmail.test(email)){
@@ -65,6 +66,57 @@
                 return false;
             }
         }
+        function checkInputEmail(){
+            var value = $('input#email').val();
+            var result = validateEmail(value);
+            if(value == ''){
+                $('input#email').css('border', '1px solid red');
+                $('small#ifb_email').text('Email là trường bắt buộc.');
+                $('small#ifb_email').show();
+            }else if(!result && value!=''){
+                $('input#email').css('border', '1px solid red');
+                $('small#ifb_email').text('Email không hợp lệ.');
+                $('small#ifb_email').show();
+            }else{
+                $('input#email').css('border', '');
+                $('small#ifb_email').text('');
+                $('small#ifb_email').hide();
+            }
+        };
+
+        function invalidFeedbackEmail(){
+            $('input#email').on({
+                focusout: function() {
+                    checkInputEmail();
+                },
+                keyup: function() {
+                    checkInputEmail();
+                }
+            });
+        }
+
+
+        function checkInputSelect(input, feedback){
+            var value = $(input).val();
+            // alert(value);
+            if(value=='' || value==null){
+                $('.select2-selection').css('border', '1px solid red');
+                $(feedback).show();
+            }else{
+                $('.select2-selection').css('border', '');
+                $(feedback).hide();
+            }
+        };
+
+        function invalidFeedbackSelect(input, feedback){
+            $('.selection').on({
+                focusout: function() {
+                    checkInputSelect(input, feedback);
+                }
+            });
+        }
+
+        
 
         $('input#email').on('keyup', function(){
             var value = $(this).val();

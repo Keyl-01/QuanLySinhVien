@@ -1,7 +1,7 @@
 
 {% extends "layouts/base.html" %}
 
-{% block title %} Danh sách môn {% endblock %} 
+{% block title %} Danh sách giảng viên {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
@@ -16,11 +16,11 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Môn</h5>
+                                <h5 class="m-b-10">Giảng viên</h5>
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                                <li class="breadcrumb-item"><a href="javascript:">Môn</a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Giảng viên</a></li>
                             </ul>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
-                                <h5 class="mr-auto">Danh sách môn</h5>
+                                <h5 class="mr-auto">Danh sách giảng viên</h5>
                                 <div class="ml-auto">
                                     <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới ngành">
                                         <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
@@ -46,9 +46,11 @@
                                         <table id="table" class="table table-hover" data-provide="selectall">
                                             <thead>
                                                 <tr>
-                                                    <th>Mã Môn</th>
-                                                    <th>Tên Môn</th>
-                                                    <th>Tín Chỉ</th>
+                                                    <th>Mã Giảng Viên</th>
+                                                    <th>Tên Giảng Viên</th>
+                                                    <th>Ngày Sinh</th>
+                                                    <th>Email</th>
+                                                    <th>Số Điện Thoại</th>
                                                     <th>Bộ Môn</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -71,10 +73,10 @@
             </button> -->
         </div>
 
-        <!-- Môn Form Modal -->
+        <!-- Giảng Viên Form Modal -->
         <div></div>
         <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content rounded">
                 <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
                     <h5 class="modal-title font-weight-bold" id="formModalLabel"></h5>
@@ -83,17 +85,17 @@
                     </button>
                 </div>
                 <div class="modal-body px-4 pt-4 pb-0">
-                    <form id="formMon" class="form-edit" role="form" method="POST">
+                    <form id="formGV" class="form-edit" role="form" method="POST">
                         {{ form.hidden_tag() }}
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.ma_mon.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.ma_gv.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-8 align-self-end">
-                                        {{ form.ma_mon(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_ma_mon" class="invalid-feedback text-danger position-absolute text-truncate">Mã môn là trường bắt buộc.</small>
+                                        {{ form.ma_gv(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_ma_gv" class="invalid-feedback text-danger position-absolute text-truncate">Mã giảng viên là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -101,11 +103,11 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.ten_mon.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.first_name.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-8 align-self-end">
-                                        {{ form.ten_mon(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_ten_mon" class="invalid-feedback text-danger position-absolute text-truncate">Tên môn là trường bắt buộc.</small>
+                                        {{ form.first_name(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_first_name" class="invalid-feedback text-danger position-absolute text-truncate">Tên giảng viên là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -113,11 +115,91 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.tinchi.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.last_name.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-8 align-self-end">
+                                        {{ form.last_name(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_last_name" class="invalid-feedback text-danger position-absolute text-truncate">Họ đệm giảng viên là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.date_birth.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.tinchi(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_tinchi" class="invalid-feedback text-danger position-absolute text-truncate">Tín chỉ là trường bắt buộc.</small>
+                                        {{ form.date_birth(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_date_birth" class="invalid-feedback text-danger position-absolute text-truncate">Ngày sinh là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.email.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.email(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_email" class="invalid-feedback text-danger position-absolute text-truncate"></small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.phone.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.phone(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_phone" class="invalid-feedback text-danger position-absolute text-truncate">Số điện thoại là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        {{ form.address.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.address(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        {{ form.xa.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.xa(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        {{ form.quan.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.quan(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        {{ form.city.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.city(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
                                     </div>
                                 </div>
                             </div>
@@ -201,39 +283,31 @@
 
     <script>
         $(document).ready(function () {
-            // $("#alertModal").on("show", function () {
-            //     $("body").addClass("modal-open");
-            // }).on("hidden", function () {
-            //     $("body").removeClass("modal-open")
-            // });
-            // $(body.modal-open).css('overflow', 'hidden');
-            // $(body).css('position', 'fixed');
-            // $('#alertModal').modal().on('show', function(){
-            //     $('body').css('overflow', 'hidden');
-            // }).on('hidden', function(){
-            //     $('body').css('overflow', 'auto');
-            // });
-
-            // $('select.selectpicker').attr('data-live-search', true);
             $("#bomon_id").select2();
-            $("#bomon_id").val('').trigger('change');
+            $("#bomon_id").val('').trigger('change')
             $('.select2-container').addClass('d-block');
 
             var datatablesOptions = {
                 ajax: {
-                    url: '/api/mon',
+                    url: '/api/giangvien',
                     type: 'POST'
                 },
                 columns: [
-                    {data: 'ma_mon'},
-                    {data: 'ten_mon'},
-                    {data: 'tinchi'},
+                    {data: 'ma_gv'},
+                    {
+                        render: function (data, type, row) {
+                            return row.last_name + ' ' + row.first_name
+                        }
+                    },
+                    {data: 'date_birth'},
+                    {data: 'email'},
+                    {data: 'phone'},
                     {data: 'ten_bomon'},
                     {
                         render: function (data, type, row) {
                             return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
-                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editMon list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Xóa" class="delMon hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editGV list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Xóa" class="delGV hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
                                     '</ul>'
                         }, orderable: false, searchable: false
                     }             
@@ -242,9 +316,12 @@
             $('#table').dataTable(datatablesOptions);
 
             // call function invalid-feedback
-            invalidFeedback('#ma_mon', '#ifb_ma_mon');
-            invalidFeedback('#ten_mon', '#ifb_ten_mon');
-            invalidFeedback('#tinchi', '#ifb_tinchi');
+            invalidFeedback('#ma_gv', '#ifb_ma_gv');
+            invalidFeedback('#first_name', '#ifb_first_name');
+            invalidFeedback('#last_name', '#ifb_last_name');
+            invalidFeedback('#date_birth', '#ifb_date_birth');
+            invalidFeedbackEmail();
+            invalidFeedback('#phone', '#ifb_phone');
             invalidFeedbackSelect('#bomon_id', '#ifb_bomon_id');
             
             
@@ -253,7 +330,7 @@
             
             // Reset form when close modal
             $('button.closeFormModal').on('click', function(){
-                $('#formMon').trigger('reset');
+                $('#formGV').trigger('reset');
                 $("#bomon_id").val('').trigger('change')
                 $('input').css('border', '');
                 $('.select2-selection').css('border', '');
@@ -265,7 +342,7 @@
                 // Change class save button
                 $('button.saveEdit').hide();
                 $('button.saveAdd').show();
-                showFormModal('Thêm mới môn học');
+                showFormModal('Thêm mới giảng viên');
             });
 
             // Event click the save button to add new
@@ -281,29 +358,51 @@
 
             // Function save form
             function saveForm(id, method){
-                var ma_mon = $('#ma_mon').val();
-                var ten_mon = $('#ten_mon').val();
-                var tinchi = $('#tinchi').val();
+                var ma_gv = $('#ma_gv').val();
+                var first_name = $('#first_name').val();
+                var last_name = $('#last_name').val();
+                var date_birth = $('#date_birth').val();
+                var email = $('#email').val();
+                var phone = $('#phone').val();
+                var address = $('#address').val();
+                var xa = $('#xa').val();
+                var quan = $('#quan').val();
+                var city = $('#city').val();
                 var bomon_id = $('#bomon_id').val();
-                if(ma_mon=='' || ten_mon=='' || bomon_id==null || tinchi==''){
-                    checkInput('#ma_mon', '#ifb_ma_mon');
-                    checkInput('#ten_mon', '#ifb_ten_mon');
-                    checkInput('#tinchi', '#ifb_tinchi');
+                if(ma_gv=='' || first_name=='' || last_name=='' || email=='' || phone=='' || date_birth=='' || bomon_id==null){
+                    checkInput('#ma_gv', '#ifb_ma_gv');
+                    checkInput('#first_name', '#ifb_first_name');
+                    checkInput('#last_name', '#ifb_last_name');
+                    checkInput('#date_birth', '#ifb_date_birth');
+                    // checkInputEmail('#email', '#ifb_email');
+                    checkInputEmail();
+                    checkInput('#phone', '#ifb_phone');
                     checkInputSelect('#bomon_id', '#ifb_bomon_id');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({
-                        url: '/mon'+id,
+                        url: '/giangvien'+id,
                         type: method,
-                        data: {ma_mon: ma_mon, ten_mon: ten_mon, tinchi: tinchi, bomon_id: bomon_id},
+                        data: {ma_gv: ma_gv, 
+                            first_name: first_name, 
+                            last_name: last_name, 
+                            date_birth: date_birth,
+                            email: email,
+                            phone: phone,
+                            address: address,
+                            xa: xa,
+                            quan: quan,
+                            city: city,
+                            bomon_id: bomon_id
+                        },
                         success: function(data){
                             if(data.duplicate){
                                 showAlertModal('Thông báo trùng lặp', data.duplicate);
                             }else if(data.success){
                                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
                                 $('#formModal').modal('hide');
-                                $('#formMon').trigger('reset');
-                                $("#bomon_id").val('').trigger('change')
+                                $('#formGV').trigger('reset');
+                                // $("#bomon_id").val('').trigger('change')
                                 // $('#ma_mon').removeAttr('value');
                                 // $('#ten_mon').removeAttr('value');
                                 $('#table').dataTable(datatablesOptions);
@@ -314,20 +413,26 @@
             }
 
             // Edit
-            $('#table').on('click', '.editMon', function(){
+            $('#table').on('click', '.editGV', function(){
                 // Call api
                 var id = $(this).attr("data-id");
                 $.ajax({
-                    url: '/api/mon/info',
+                    url: '/api/giangvien/info',
                     type: 'POST',
                     data: {id: id},
                     success: function(data){
                         if(data.data){
                             // Set input value
-                            $('#ma_mon').val(data.data.ma_mon);
-                            $('#ten_mon').val(data.data.ten_mon);
-                            $('#tinchi').val(data.data.tinchi);
-                            // $('#bomon_id').val(data.data.bomon_id);
+                            $('#ma_gv').val(data.data.ma_gv);
+                            $('#first_name').val(data.data.first_name);
+                            $('#last_name').val(data.data.last_name);
+                            $('#date_birth').val(data.data.date_birth);
+                            $('#email').val(data.data.email);
+                            $('#phone').val(data.data.phone);
+                            $('#address').val(data.data.address);
+                            $('#xa').val(data.data.xa);
+                            $('#quan').val(data.data.quan);
+                            $('#city').val(data.data.city);
                             $("#bomon_id").val(data.data.bomon_id).trigger('change');
                             //Open modal
                             $('button.saveAdd').hide();
@@ -335,7 +440,7 @@
                             // $('#formModal').on('click', '.editMon', function() {
                             // $('.saveAdd').removeClass('saveAdd').addClass('saveEdit');
                             // });
-                            showFormModal('Chỉnh sửa môn học: ' + data.data.ten_mon);
+                            showFormModal('Chỉnh sửa giảng viên: ' + data.data.ma_gv + ' - ' + data.data.last_name + ' ' + data.data.first_name);
                             
                         }else if(data.error){
                             notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
@@ -347,7 +452,7 @@
 
             $('#deleteConfirmationModal').on('click', 'button.delete', function(){
                 $.ajax({
-                    url: '/mon/'+$(this).attr("data-id"),
+                    url: '/giangvien/'+$(this).attr("data-id"),
                     type: 'DELETE',
                     success: function(data){
                         if(data.error){
@@ -362,7 +467,7 @@
             });
 
             // Event click the save button to remove
-            $('#table').on('click', '.delMon', function(){
+            $('#table').on('click', '.delGV', function(){
                 $('#deleteConfirmationModal').modal('show'); 
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
             });

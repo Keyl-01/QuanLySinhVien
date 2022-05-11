@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+from codecs import BOM
 from flask import jsonify, render_template, redirect, request, url_for
 import pandas as pd
 from flask_login import (
@@ -14,7 +15,7 @@ from flask_login import (
 from apps import db, login_manager
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
-from apps.authentication.models import Khoa, Nganh, Mon, Users, ChuongTrinhDaoTao
+from apps.authentication.models import BoMon, Khoa, Nganh, Mon, Users, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien
 
 from apps.authentication.util import verify_pass
 
@@ -25,7 +26,7 @@ def route_default():
 
 
 
-# Api
+# -------------------------------------------------API--------------------------------------------------------
 # -------------------------Khoa--------------------------------
 @blueprint.route('/api/khoa', methods=['POST'])
 def dataKhoa():
@@ -51,6 +52,20 @@ def dataNganhInfo():
         id = request.form['id']
         nganh = Nganh.query.filter_by(id=id).first()
         return jsonify({'data': nganh.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+# -------------------------BoMon--------------------------------
+@blueprint.route('/api/bomon', methods=['POST'])
+def dataBoMon():
+    return jsonify({'data': [bomon.to_dict() for bomon in BoMon.query.all()]})
+
+@blueprint.route('/api/bomon/info', methods=['POST'])
+def dataBoMonInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        bomon = BoMon.query.filter_by(id=id).first()
+        return jsonify({'data': bomon.to_dict()})
     return jsonify({'error': 'Không tồn tại dữ liệu này.'})
 
 
@@ -80,6 +95,50 @@ def dataChuongTrinhDaoTaoInfo():
         id = request.form['id']
         ctdt = ChuongTrinhDaoTao.query.filter_by(id=id).first()
         return jsonify({'data': ctdt.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+# -------------------------GiangVien--------------------------------
+@blueprint.route('/api/giangvien', methods=['POST'])
+def dataGiangVien():
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'data': [gv.to_dict() for gv in GiangVien.query.all()]})
+
+@blueprint.route('/api/giangvien/info', methods=['POST'])
+def dataGiangVienInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        gv = GiangVien.query.filter_by(id=id).first()
+        return jsonify({'data': gv.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+# -------------------------LopChuyenNganh--------------------------------
+@blueprint.route('/api/lcn', methods=['POST'])
+def dataLopChuyenNganh():
+    return jsonify({'data': [lcn.to_dict() for lcn in LopChuyenNganh.query.all()]})
+
+@blueprint.route('/api/lcn/info', methods=['POST'])
+def dataLopChuyenNganhInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        lcn = LopChuyenNganh.query.filter_by(id=id).first()
+        return jsonify({'data': lcn.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+# -------------------------SinhVien--------------------------------
+@blueprint.route('/api/sinhvien', methods=['POST'])
+def dataSinhVien():
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'data': [sv.to_dict() for sv in SinhVien.query.all()]})
+
+@blueprint.route('/api/sinhvien/info', methods=['POST'])
+def dataSinhVienInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        sv = SinhVien.query.filter_by(id=id).first()
+        return jsonify({'data': sv.to_dict()})
     return jsonify({'error': 'Không tồn tại dữ liệu này.'})
 
 

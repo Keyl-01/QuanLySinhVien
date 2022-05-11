@@ -5,8 +5,8 @@ Copyright (c) 2019 - present AppSeed.us
 
 
 from re import S
-from apps.authentication.forms import CreateKhoaForm, CreateNganhForm, CreateMonForm, CreateChuongTrinhDaoTaoForm
-from apps.authentication.models import Khoa, Nganh, Mon, ChuongTrinhDaoTao, ChuongTrinhDaoTao_MonHoc, Users
+from apps.authentication.forms import CreateKhoaForm, CreateNganhForm, CreateBoMonForm, CreateMonForm, CreateChuongTrinhDaoTaoForm, CreateLopChuyenNganhForm, CreateSinhVienForm, CreateGiangVienForm
+from apps.authentication.models import Khoa, Nganh, BoMon, Mon, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Users
 from apps.home import blueprint
 from apps import db, login_manager, create_app
 from flask import Flask, render_template, jsonify, redirect, request, session, url_for, Response
@@ -146,18 +146,75 @@ def deleteNganh(id):
     return jsonify({'success': 'Xóa thành công.'})
 
 
+#-------------------------------------Bộ Môn------------------------------------------
+
+@blueprint.route('/bomon')
+def bomon():
+    create_bomon_form = CreateBoMonForm(request.form)
+    khoa =  Khoa.query.all()
+    create_bomon_form.khoa_id.choices = [(row.id, row.ten_khoa) for row in khoa]
+    return render_template('home/bomon.html', segment='bomon', form=create_bomon_form)
+
+@blueprint.route('/bomon', methods=['POST'])
+def addBoMon():
+    ma_bomon = request.form['ma_bomon']
+    ten_bomon = request.form['ten_bomon']
+
+    bomon = BoMon.query.filter_by(ma_bomon=ma_bomon).first()
+    if bomon:
+        return jsonify({'duplicate': 'Mã bộ môn đã tồn tại. Không thể lưu bộ môn này.'})
+
+    bomon = BoMon.query.filter_by(ten_bomon=ten_bomon).first()
+    if bomon:
+        return jsonify({'duplicate': 'Tên bộ môn đã tồn tại. Không thể lưu bộ môn này.'})
+
+    bomon = BoMon(**request.form)
+    db.session.add(bomon)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+@blueprint.route('/bomon/<int:id>', methods=['PUT'])
+def updateBoMon(id):
+    ma_bomon = request.form['ma_bomon']
+    ten_bomon = request.form['ten_bomon']
+
+    found_bomon = BoMon.query.filter_by(id=id).first()
+
+    bomon = BoMon.query.filter(BoMon.id != id, BoMon.ma_bomon == ma_bomon).first()
+    if bomon:
+        return jsonify({'duplicate': 'Mã bộ môn đã tồn tại. Không thể lưu bộ môn này.'})
+
+    bomon = BoMon.query.filter(BoMon.id != id, BoMon.ten_bomon == ten_bomon).first()
+    if bomon:
+        return jsonify({'duplicate': 'Tên bộ môn đã tồn tại. Không thể lưu bộ môn này.'})
+
+    bomon = BoMon(**request.form)
+    found_bomon.ma_bomon = bomon.ma_bomon
+    found_bomon.ten_bomon = bomon.ten_bomon
+    found_bomon.khoa_id = bomon.khoa_id
+    db.session.commit()
+        
+    return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/bomon/<int:id>', methods=['DELETE'])
+def deleteBoMon(id):
+    bomon = BoMon.query.get_or_404(id)
+    if bomon is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(bomon)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+
 #-------------------------------------Môn học------------------------------------------
 
 @blueprint.route('/mon')
 def mon():
     create_mon_form = CreateMonForm(request.form)
     khoa =  Khoa.query.all()
-    # select_field = {}
-    # for nganh in khoa:
-    #     select_field.append(nganh.ten_khoa)
-    #     [(row.id, row.ten_nganh) for row in nganh.nganhs]
-    # create_mon_form.nganh_id.choices = select_field
-    create_mon_form.nganh_id.choices = dict([(nganh.ten_khoa, [(row.id, row.ten_nganh) for row in nganh.nganhs]) for nganh in khoa])
+    create_mon_form.bomon_id.choices = dict([(row.ten_khoa, [(bomon.id, bomon.ten_bomon) for bomon in row.bomons]) for row in khoa])
     return render_template('home/mon.html', segment='mon', form=create_mon_form)
 
 @blueprint.route('/mon', methods=['POST'])
@@ -197,7 +254,7 @@ def updateMon(id):
     mon = Mon(**request.form)
     found_mon.ma_mon = mon.ma_mon
     found_mon.ten_mon = mon.ten_mon
-    found_mon.nganh_id = mon.nganh_id
+    found_mon.bomon_id = mon.bomon_id
     db.session.commit()
         
     return jsonify({'success': 'Cập nhật thành công.'})
@@ -218,9 +275,9 @@ def deleteMon(id):
 def chuongTrinhDaoTao():
     create_ctdt_form = CreateChuongTrinhDaoTaoForm(request.form)
     khoa = Khoa.query.all()
-    create_ctdt_form.nganh_id.choices = dict([(nganh.ten_khoa, [(row.id, row.ten_nganh) for row in nganh.nganhs]) for nganh in khoa])
-    nganh = Nganh.query.all()
-    create_ctdt_form.mon_id.choices = dict([(mon.ten_nganh, [(row.id, row.ten_mon) for row in mon.mons]) for mon in nganh])
+    create_ctdt_form.nganh_id.choices = dict([(row.ten_khoa, [(nganh.id, nganh.ten_nganh) for nganh in row.nganhs]) for row in khoa])
+    bomon = BoMon.query.all()
+    create_ctdt_form.mon_id.choices = dict([(row.ten_bomon, [(mon.id, mon.ten_mon) for mon in row.mons]) for row in bomon])
     return render_template('home/chuongtrinhdaotao.html', segment='chuongtrinhdaotao', form=create_ctdt_form)
 
 @blueprint.route('/chuongtrinhdaotao', methods=['POST'])
@@ -231,11 +288,11 @@ def addChuongTrinhDaoTao():
 
     ctdt = ChuongTrinhDaoTao.query.filter_by(ma_ctdt=ma_ctdt).first()
     if ctdt:
-        return jsonify({'duplicate': 'Mã môn đã tồn tại. Không thể lưu môn này.'})
+        return jsonify({'duplicate': 'Mã chương trình đào tạo đã tồn tại. Không thể lưu chương trình đào tạo này.'})
 
     ctdt = ChuongTrinhDaoTao.query.filter_by(ten_ctdt=ten_ctdt).first()
     if ctdt:
-        return jsonify({'duplicate': 'Tên môn đã tồn tại. Không thể lưu môn này.'})
+        return jsonify({'duplicate': 'Tên chương trình đào tạo đã tồn tại. Không thể lưu chương trình đào tạo này.'})
 
     ctdt = ChuongTrinhDaoTao(**request.form) 
     for row in mon_id:
@@ -256,11 +313,11 @@ def updateChuongTrinhDaoTao(id):
 
     ctdt = ChuongTrinhDaoTao.query.filter(ChuongTrinhDaoTao.id != id, ChuongTrinhDaoTao.ma_ctdt == ma_ctdt).first()
     if ctdt:
-        return jsonify({'duplicate': 'Mã môn đã tồn tại. Không thể lưu môn này.'})
+        return jsonify({'duplicate': 'Mã chương trình đào tạo đã tồn tại. Không thể lưu chương trình đào tạo này.'})
 
     ctdt = ChuongTrinhDaoTao.query.filter(ChuongTrinhDaoTao.id != id, ChuongTrinhDaoTao.ten_ctdt == ten_ctdt).first()
     if ctdt:
-        return jsonify({'duplicate': 'Tên môn đã tồn tại. Không thể lưu môn này.'})
+        return jsonify({'duplicate': 'Tên chương trình đào tạo đã tồn tại. Không thể lưu chương trình đào tạo này.'})
 
     # ctdts = ChuongTrinhDaoTao.query.get(id)
     # print(ctdts.mons)
@@ -283,6 +340,235 @@ def deleteChuongTrinhDaoTao(id):
     if ctdt is None:
         return jsonify({'error': 'Không tìm thấy.'})
     db.session.delete(ctdt)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+#-------------------------------------Giảng viên------------------------------------------
+
+@blueprint.route('/giangvien')
+def giangVien():
+    create_gv_form = CreateGiangVienForm(request.form)
+    khoa =  Khoa.query.all()
+    create_gv_form.bomon_id.choices = dict([(row.ten_khoa, [(bomon.id, bomon.ten_bomon) for bomon in row.bomons]) for row in khoa])
+    return render_template('home/giangvien.html', segment='giangvien', form=create_gv_form)
+
+@blueprint.route('/giangvien', methods=['POST'])
+def addGiangVien():
+    ma_gv = request.form['ma_gv']
+    email = request.form['email']
+    phone = request.form['phone']
+
+    gv = GiangVien.query.filter_by(ma_gv=ma_gv).first()
+    if gv:
+        return jsonify({'duplicate': 'Mã giảng viên đã tồn tại. Không thể lưu giảng viên này.'})
+
+    gv = GiangVien.query.filter_by(email=email).first()
+    if gv:
+        return jsonify({'duplicate': 'Email của giảng viên đã tồn tại. Không thể lưu giảng viên này.'})
+
+    gv = GiangVien.query.filter_by(phone=phone).first()
+    if gv:
+        return jsonify({'duplicate': 'Số điện thoại của giảng viên đã tồn tại. Không thể lưu giảng viên này.'})
+
+    gv = GiangVien(**request.form) 
+    db.session.add(gv)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+@blueprint.route('/giangvien/<int:id>', methods=['PUT'])
+def updateGiangVien(id):
+    ma_gv = request.form['ma_gv']
+    email = request.form['email']
+    phone = request.form['phone']
+
+    found_gv = GiangVien.query.filter_by(id=id).first()
+
+    gv = GiangVien.query.filter(GiangVien.id != id, GiangVien.ma_gv == ma_gv).first()
+    if gv:
+        return jsonify({'duplicate': 'Mã giảng viên đã tồn tại. Không thể lưu giảng viên này.'})
+
+    gv = GiangVien.query.filter(GiangVien.id != id, GiangVien.email == email).first()
+    if gv:
+        return jsonify({'duplicate': 'Email của giảng viên đã tồn tại. Không thể lưu giảng viên này.'})
+
+    gv = GiangVien.query.filter(GiangVien.id != id, GiangVien.phone == phone).first()
+    if gv:
+        return jsonify({'duplicate': 'Số điện thoại của giảng viên đã tồn tại. Không thể lưu giảng viên này.'})
+
+    gv = GiangVien(**request.form)
+    found_gv.ma_gv = gv.ma_gv
+    found_gv.first_name = gv.first_name
+    found_gv.last_name = gv.last_name
+    found_gv.date_birth = gv.date_birth
+    found_gv.address = gv.address
+    found_gv.xa = gv.xa
+    found_gv.quan = gv.quan
+    found_gv.city = gv.city
+    found_gv.email = gv.email
+    found_gv.phone = gv.phone
+    found_gv.bomon_id = gv.bomon_id
+    db.session.commit()
+        
+    return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/giangvien/<int:id>', methods=['DELETE'])
+def deleteGiangVien(id):
+    gv = GiangVien.query.get_or_404(id)
+    if gv is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(gv)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+#-------------------------------------Lớp chuyên ngành------------------------------------------
+
+@blueprint.route('/lopchuyennganh')
+def lopChuyenNganh():
+    create_lcn_form = CreateLopChuyenNganhForm(request.form)
+    bomon = BoMon.query.all()
+    create_lcn_form.gv_id.choices = dict([(row.ten_bomon, [(gv.id, gv.ma_gv+' - '+gv.last_name+' '+gv.first_name) for gv in row.gvs]) for row in bomon])
+    nganh = Nganh.query.all()
+    create_lcn_form.ctdt_id.choices = dict([(row.ten_nganh, [(ctdt.id, ctdt.ten_ctdt) for ctdt in row.ctdts]) for row in nganh])
+    sv = SinhVien.query.all()
+    create_lcn_form.sv_id.choices = [(row.id, row.ma_sv+' - '+row.last_name+' '+row.first_name) for row in sv]
+    return render_template('home/lopchuyennganh.html', segment='lopchuyennganh', form=create_lcn_form)
+
+@blueprint.route('/lopchuyennganh', methods=['POST'])
+def addLopChuyenNganh():
+    ten_lcn = request.form['ten_lcn']
+    sv_id = request.form.getlist('sv_id')
+
+    lcn = LopChuyenNganh.query.filter_by(ten_lcn=ten_lcn).first()
+    if lcn:
+        return jsonify({'duplicate': 'Tên lớp chuyên ngành đã tồn tại. Không thể lưu lớp chuyên ngành này.'})
+
+    lcn = LopChuyenNganh(**request.form) 
+    for row in sv_id:
+        lcn.svs.append(SinhVien.query.get(row))
+    db.session.add(lcn)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+@blueprint.route('/lopchuyennganh/<int:id>', methods=['PUT'])
+def updateLopChuyenNganh(id):
+    ten_lcn = request.form['ten_lcn']
+    sv_id = request.form.getlist('sv_id')
+
+    found_lcn = LopChuyenNganh.query.filter_by(id=id).first()
+
+    lcn = LopChuyenNganh.query.filter(LopChuyenNganh.id != id, LopChuyenNganh.ten_lcn == ten_lcn).first()
+    if lcn:
+        return jsonify({'duplicate': 'Tên lớp chuyên ngành đã tồn tại. Không thể lưu lớp chuyên ngành này.'})
+
+
+    lcn = LopChuyenNganh(**request.form)
+    found_lcn.ten_lcn = lcn.ten_lcn
+    found_lcn.ctdt_id = lcn.ctdt_id
+    found_lcn.gv_id = lcn.gv_id
+    found_lcn.svs = []
+
+    for row in sv_id:
+        found_lcn.svs.append(SinhVien.query.get(row))
+    db.session.commit()
+        
+    return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/lopchuyennganh/<int:id>', methods=['DELETE'])
+def deleteLopChuyenNganh(id):
+    lcn = LopChuyenNganh.query.get_or_404(id)
+    if lcn is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(lcn)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+#-------------------------------------Sinh viên------------------------------------------
+
+@blueprint.route('/sinhvien')
+def sinhVien():
+    create_sv_form = CreateSinhVienForm(request.form)
+    ctdt = ChuongTrinhDaoTao.query.all()
+    create_sv_form.lcn_id.choices = dict([(row.ten_ctdt, [(lcn.id, lcn.ten_lcn) for lcn in row.lcns]) for row in ctdt])
+    return render_template('home/sinhvien.html', segment='sinhvien', form=create_sv_form)
+
+@blueprint.route('/sinhvien', methods=['POST'])
+def addSinhVien():
+    ma_sv = request.form['ma_sv']
+    email = request.form['email']
+    phone = request.form['phone']
+    lcn_id = request.form.getlist('lcn_id')
+
+    sv = SinhVien.query.filter_by(ma_sv=ma_sv).first()
+    if sv:
+        return jsonify({'duplicate': 'Mã sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+    sv = SinhVien.query.filter_by(email=email).first()
+    if sv:
+        return jsonify({'duplicate': 'Email của sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+    sv = SinhVien.query.filter_by(phone=phone).first()
+    if sv:
+        return jsonify({'duplicate': 'Số điện thoại của sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+    sv = SinhVien(**request.form)
+    for row in lcn_id:
+        sv.lcns.append(LopChuyenNganh.query.get(row))
+    db.session.add(sv)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+@blueprint.route('/sinhvien/<int:id>', methods=['PUT'])
+def updateSinhVien(id):
+    ma_sv = request.form['ma_sv']
+    email = request.form['email']
+    phone = request.form['phone']
+    lcn_id = request.form.getlist('lcn_id')
+
+    found_sv = SinhVien.query.filter_by(id=id).first()
+
+    sv = SinhVien.query.filter(SinhVien.id != id, SinhVien.ma_sv == ma_sv).first()
+    if sv:
+        return jsonify({'duplicate': 'Mã sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+    sv = SinhVien.query.filter(SinhVien.id != id, SinhVien.email == email).first()
+    if sv:
+        return jsonify({'duplicate': 'Email của sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+    sv = SinhVien.query.filter(SinhVien.id != id, SinhVien.phone == phone).first()
+    if sv:
+        return jsonify({'duplicate': 'Số điện thoại của sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+    sv = SinhVien(**request.form)
+    found_sv.ma_sv = sv.ma_sv
+    found_sv.first_name = sv.first_name
+    found_sv.last_name = sv.last_name
+    found_sv.date_birth = sv.date_birth
+    found_sv.address = sv.address
+    found_sv.xa = sv.xa
+    found_sv.quan = sv.quan
+    found_sv.city = sv.city
+    found_sv.email = sv.email
+    found_sv.phone = sv.phone
+    found_sv.lcns = []
+
+    for row in lcn_id:
+        found_sv.lcns.append(LopChuyenNganh.query.get(row))
+    db.session.commit()
+        
+    return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/sinhvien/<int:id>', methods=['DELETE'])
+def deleteSinhVien(id):
+    sv = SinhVien.query.get_or_404(id)
+    if sv is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(sv)
     db.session.commit()
     return jsonify({'success': 'Xóa thành công.'})
 

@@ -6,9 +6,9 @@ Copyright (c) 2019 - present AppSeed.us
 from datetime import date
 from flask_wtf import FlaskForm
 from wtforms.fields import DateField
-from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, FileField
+from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, IntegerField, FileField
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms.validators import Email, DataRequired, InputRequired
+from wtforms.validators import Email, DataRequired, NumberRange, InputRequired
 from apps.authentication.models import Khoa
 from apps import db, login_manager
 
@@ -79,6 +79,19 @@ class CreateNganhForm(FlaskForm):
                         id='khoa_id')
 
 
+#----------------------------------BoMon----------------------------------
+
+class CreateBoMonForm(FlaskForm):
+    ma_bomon = StringField('Mã bộ môn',
+                         id='ma_bomon',
+                         validators=[DataRequired()])
+    ten_bomon = StringField('Tên bộ môn',
+                         id='ten_bomon',
+                         validators=[DataRequired()])
+    khoa_id = SelectField('Khoa',
+                        id='khoa_id')
+
+
 #----------------------------------Mon----------------------------------
 
 class CreateMonForm(FlaskForm):
@@ -88,8 +101,12 @@ class CreateMonForm(FlaskForm):
     ten_mon = StringField('Tên môn',
                          id='ten_mon',
                          validators=[DataRequired()])
-    nganh_id = SelectField('Ngành',
-                        id='nganh_id')
+    tinchi = IntegerField('Tín chỉ',
+                         id='tinchi',
+                         validators=[DataRequired(), NumberRange(min=0, max=10)])
+    bomon_id = SelectField('Bộ môn',
+                        id='bomon_id')
+
 
 
 #----------------------------------ChuongTrinhDaoTao----------------------------------
@@ -103,56 +120,147 @@ class CreateChuongTrinhDaoTaoForm(FlaskForm):
                          validators=[DataRequired()])
     nganh_id = SelectField('Ngành',
                         id='nganh_id')
-    mon_id = SelectMultipleField('Môn',
+    mon_id = SelectMultipleField('Môn học',
                         id='mon_id')
+
+
+#----------------------------------GiangVien----------------------------------
+
+class CreateGiangVienForm(FlaskForm):
+    ma_gv = StringField('Mã giảng viên',
+                         id='ma_gv',
+                         validators=[DataRequired()])
+    first_name = StringField('Tên',
+                         id='first_name',
+                         validators=[DataRequired()])
+    last_name = StringField('Họ đệm',
+                         id='last_name',
+                         validators=[DataRequired()])
+    date_birth = DateField('Ngày sinh',
+                         id='date_birth',
+                         format='%d-%m-%Y',
+                         validators=[DataRequired()])
+    address = StringField('Địa chỉ cụ thể',
+                         id='address',
+                         validators=[DataRequired()])
+    xa = StringField('Phường/Xã',
+                         id='xa',
+                         validators=[DataRequired()])
+    quan = StringField('Quận/Huyện',
+                         id='quan',
+                         validators=[DataRequired()])
+    city = StringField('Tỉnh/Thành phố',
+                         id='city',
+                         validators=[DataRequired()])
+    email = StringField('Email',
+                      id='email',
+                      validators=[DataRequired(), Email()])
+    phone = StringField('Số điện thoại',
+                      id='phone',
+                      validators=[DataRequired()])
+    bomon_id = SelectField('Bộ môn',
+                        id='bomon_id')
+
+
+#----------------------------------LopChuyenNganh----------------------------------
+
+class CreateLopChuyenNganhForm(FlaskForm):
+    ten_lcn = StringField('Tên lớp chuyên ngành',
+                         id='ten_lcn',
+                         validators=[DataRequired()])
+    ctdt_id = SelectField('Chương trình đào tạo',
+                        id='ctdt_id')
+    gv_id = SelectField('Giảng viên',
+                        id='gv_id')
+    sv_id = SelectMultipleField('Sinh viên',
+                        id='sv_id')
+
+
+#----------------------------------SinhVien----------------------------------
+
+class CreateSinhVienForm(FlaskForm):
+    ma_sv = StringField('Mã sinh viên',
+                         id='ma_sv',
+                         validators=[DataRequired()])
+    first_name = StringField('Tên',
+                         id='first_name',
+                         validators=[DataRequired()])
+    last_name = StringField('Họ đệm',
+                         id='last_name',
+                         validators=[DataRequired()])
+    date_birth = DateField('Ngày sinh',
+                         id='date_birth',
+                         format='%d-%m-%Y',
+                         validators=[DataRequired()])
+    address = StringField('Địa chỉ cụ thể',
+                         id='address',
+                         validators=[DataRequired()])
+    xa = StringField('Phường/Xã',
+                         id='xa',
+                         validators=[DataRequired()])
+    quan = StringField('Quận/Huyện',
+                         id='quan',
+                         validators=[DataRequired()])
+    city = StringField('Tỉnh/Thành phố',
+                         id='city',
+                         validators=[DataRequired()])
+    email = StringField('Email',
+                      id='email',
+                      validators=[DataRequired(), Email()])
+    phone = StringField('Số điện thoại',
+                      id='phone',
+                      validators=[DataRequired()])
+    lcn_id = SelectMultipleField('Lớp chuyên ngành',
+                        id='lcn_id')
+
 
 
 # #----------------------------------Teacher----------------------------------
 
 # class CreateTeacherForm(FlaskForm):
-#     teacher_code = TextField('Mã giảng viên',
+#     teacher_code = StringField('Mã giảng viên',
 #                          id='teacher_code',
 #                          validators=[DataRequired()])
-#     first_name = TextField('Tên',
+#     first_name = StringField('Tên',
 #                          id='first_name',
 #                          validators=[DataRequired()])
-#     last_name = TextField('Họ đệm',
+#     last_name = StringField('Họ đệm',
 #                          id='last_name',
 #                          validators=[DataRequired()])
 #     date_birth = DateField('Ngày sinh',
 #                          id='date_birth',
 #                          format='%d-%m-%Y',
 #                          validators=[DataRequired()])
-#     address = TextField('Địa chỉ cụ thể',
+#     address = StringField('Địa chỉ cụ thể',
 #                          id='address',
 #                          validators=[DataRequired()])
-#     xa = TextField('Phường/Xã',
+#     xa = StringField('Phường/Xã',
 #                          id='xa',
 #                          validators=[DataRequired()])
-#     quan = TextField('Quận/Huyện',
+#     quan = StringField('Quận/Huyện',
 #                          id='quan',
 #                          validators=[DataRequired()])
-#     city = TextField('Tỉnh/Thành phố',
+#     city = StringField('Tỉnh/Thành phố',
 #                          id='city',
 #                          validators=[DataRequired()])
-#     email = TextField('Email',
+#     email = StringField('Email',
 #                       id='email',
 #                       validators=[DataRequired(), Email()])
-#     phone = TextField('Số điện thoại',
+#     phone = StringField('Số điện thoại',
 #                       id='phone',
 #                       validators=[DataRequired()])
 
 # #----------------------------------Weekday----------------------------------
 
 # class CreateWeekdayForm(FlaskForm):
-#     name = TextField('Buổi học',
+#     name = StringField('Buổi học',
 #                          id='name',
 #                          validators=[DataRequired()])
 
 # #----------------------------------Category----------------------------------
 
 # class CreateCategoryForm(FlaskForm):
-#     name = TextField('Bộ môn',
+#     name = StringField('Bộ môn',
 #                          id='name',
 #                          validators=[DataRequired()])
 
@@ -160,7 +268,7 @@ class CreateChuongTrinhDaoTaoForm(FlaskForm):
 # #----------------------------------Course----------------------------------
 
 # class CreateCourseForm(FlaskForm):
-#     course_name = TextField('Môn học',
+#     course_name = StringField('Môn học',
 #                         id='course_name',
 #                         validators=[DataRequired()])
 #     category_id = SelectField('Bộ môn',
@@ -170,7 +278,7 @@ class CreateChuongTrinhDaoTaoForm(FlaskForm):
 # #----------------------------------Class----------------------------------
 
 # class CreateClassForm(FlaskForm):
-#     lesson = TextField('Lớp học',
+#     lesson = StringField('Lớp học',
 #                         id='lesson',
 #                         validators=[DataRequired()])
 #     start_date = DateField('Thời gian bắt đầu',
@@ -203,14 +311,14 @@ class CreateChuongTrinhDaoTaoForm(FlaskForm):
 #                         id='class_id')
 #     weekday_id = SelectField('Buổi học',
 #                         id='weekday_id')
-#     hours = TextField('Số giờ học',
+#     hours = StringField('Số giờ học',
 #                         id='hours',
 #                         validators=[DataRequired()])
 
 # #----------------------------------ATTENDANCE----------------------------------
 
 # class CreateAttendanceForm(FlaskForm):
-#     status = TextField('Trạng thái',
+#     status = StringField('Trạng thái',
 #                         id='status',
 #                         validators=[DataRequired()])
 #     class_id = SelectField('Lớp học',

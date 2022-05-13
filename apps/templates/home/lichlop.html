@@ -1,7 +1,7 @@
 
 {% extends "layouts/base.html" %}
 
-{% block title %} Danh sách lớp chuyên ngành {% endblock %} 
+{% block title %} Danh sách lịch lớp học {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -15,11 +15,11 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Lớp chuyên ngành</h5>
+                                <h5 class="m-b-10">Lịch lớp học</h5>
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                                <li class="breadcrumb-item"><a href="javascript:">Lớp chuyên ngành</a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Lịch lớp học</a></li>
                             </ul>
                         </div>
                     </div>
@@ -32,9 +32,9 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
-                                <h5 class="mr-auto">Danh sách lớp chuyên ngành</h5>
+                                <h5 class="mr-auto">Danh sách lịch lớp học</h5>
                                 <div class="ml-auto">
-                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới lớp chuyên ngành">
+                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới lịch lớp học">
                                         <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
                                     </button>
                                 </div>
@@ -45,8 +45,13 @@
                                         <table id="table" class="table table-hover" data-provide="selectall">
                                             <thead>
                                                 <tr>
-                                                    <th>Tên Lớp Chuyên Ngành</th>
-                                                    <th>Chương Trình Đào Tạo</th>
+                                                    <th>Mã Môn</th>
+                                                    <th>Tên Môn</th>
+                                                    <th>Lớp</th>
+                                                    <th>Thứ</th>
+                                                    <th>Ca</th>
+                                                    <th>Phòng</th>
+                                                    <th>Tín Chỉ</th>
                                                     <th>Giảng Viên</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -69,7 +74,7 @@
             </button> -->
         </div>
 
-        <!-- Lớp Chuyên Ngành Form Modal -->
+        <!-- Lịch Lớp Học Form Modal -->
         <div></div>
         <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -81,17 +86,17 @@
                     </button>
                 </div>
                 <div class="modal-body px-4 pt-4 pb-0">
-                    <form id="formLcn" class="form-edit" role="form" method="POST">
+                    <form id="formLichLop" class="form-edit" role="form" method="POST">
                         {{ form.hidden_tag() }}
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.ten_lcn.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.lop_id.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-8 align-self-end">
-                                        {{ form.ten_lcn(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_ten_lcn" class="invalid-feedback text-danger position-absolute text-truncate">Tên lớp chuyên ngành là trường bắt buộc.</small>
+                                        {{ form.lop_id(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_lop_id" class="invalid-feedback text-danger position-absolute text-truncate">Lớp là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -99,11 +104,11 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.ctdt_id.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.thu.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.ctdt_id(class="form-control") }}
-                                        <small id="ifb_ctdt_id" class="invalid-feedback text-danger position-absolute text-truncate">Chương trình đào tạo là trường bắt buộc.</small>
+                                        {{ form.thu(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_thu" class="invalid-feedback text-danger position-absolute text-truncate">Thứ là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -111,11 +116,35 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.gv_id.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.start.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.start(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_start" class="invalid-feedback text-danger position-absolute text-truncate">Ca bắt đầu là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.end.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.end(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_end" class="invalid-feedback text-danger position-absolute text-truncate">Ca kết thúc là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        {{ form.gv_id.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ form.gv_id(class="form-control") }}
-                                        <small id="ifb_gv_id" class="invalid-feedback text-danger position-absolute text-truncate">Giảng viên là trường bắt buộc.</small>
+                                        <!-- <small id="ifb_gv_id" class="invalid-feedback text-danger position-absolute text-truncate">Sức chứa tối đa là trường bắt buộc.</small> -->
                                     </div>
                                 </div>
                             </div>
@@ -123,14 +152,15 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        {{ form.sv_id.label(class="text-dark") }}
+                                        {{ form.phong_id.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.sv_id(class="form-control", multiple="multiple") }}
-                                        <!-- <small id="ifb_sv_id" class="invalid-feedback text-danger position-absolute text-truncate">Môn học là trường bắt buộc.</small> -->
+                                        {{ form.phong_id(class="form-control") }}
+                                        <!-- <small id="ifb_phong_id" class="invalid-feedback text-danger position-absolute text-truncate">Sức chứa tối đa là trường bắt buộc.</small> -->
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </form>
                 </div>
@@ -157,7 +187,7 @@
                         <div class="bg-grey px-3 mt-3 modal-bottom-radius">
                             <div class="text-center pt-4 text-dark">
                                 <div class="pt-2">
-                                    Xóa ngành này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa ngành này không?
+                                    Xóa lịch lớp học này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa lịch lớp học này không?
                                 </div>
                             </div>
                             <div class="d-flex py-3 justify-content-center">
@@ -211,41 +241,48 @@
             //     $('body').css('overflow', 'auto');
             // });
 
-            // $('select.selectpicker').attr('data-live-search', true);
-            $('#ctdt_id').select2();
+            $('#lop_id').select2();
+            $('#thu').select2();
+            $('#start').select2();
+            $('#end').select2();
             $('#gv_id').select2();
-            $('#sv_id').select2({
-                closeOnSelect : false,
-                // placeholder : "Chọn môn học",
-                allowHtml: true,
-                allowClear: true,
-                tags: true
-            });
-            $("#ctdt_id").val('').trigger('change');
-            $("#gv_id").val('').trigger('change');
-            $("#sv_id").val('').trigger('change');
-            $('.select2-container').addClass('d-block');
+            $('#phong_id').select2();
 
-            // alert($("#sv_id").val(''));
+            $("#lop_id").val('').trigger('change');
+            $("#thu").val('').trigger('change');
+            $("#start").val('').trigger('change');
+            $("#end").val('').trigger('change');
+            $("#gv_id").val('').trigger('change');
+            $("#phong_id").val('').trigger('change');
+            $('.select2-container').addClass('d-block');
 
             var datatablesOptions = {
                 ajax: {
-                    url: '/api/lcn',
+                    url: '/api/lichlop',
                     type: 'POST'
                 },
-                columns: [
-                    {data: 'ten_lcn'},
-                    {data: 'ten_ctdt'},
+                columns: [  
+                    {data: 'ma_mon'},
+                    {data: 'ten_mon'},
+                    {data: 'ten_lop'},
+                    {data: 'thu'},
                     {
                         render: function (data, type, row) {
-                            return row.gv_last_name + ' ' + row.gv_first_name + ' (' + row.ma_gv + ')';
+                            return row.start + '-' + row.end
+                        }
+                    },
+                    {data: 'ten_phong'},
+                    {data: 'tinchi'},
+                    {
+                        render: function (data, type, row) {
+                            return row.gv_last_name + ' ' + row.gv_first_name + ' (' + row.ma_gv + ')'
                         }
                     },
                     {
                         render: function (data, type, row) {
                             return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
-                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editLcn list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Xóa" class="delLcn hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editLichLop list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Xóa" class="delLichLop hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
                                     '</ul>'
                         }, orderable: false, searchable: false
                     }             
@@ -254,22 +291,17 @@
             $('#table').dataTable(datatablesOptions);
 
             // call function invalid-feedback
-            invalidFeedback('#ten_lcn', '#ifb_ten_lcn');
-            invalidFeedbackSelect('#ctdt_id', '#ifb_ctdt_id');
-            invalidFeedbackSelect('#gv_id', '#ifb_gv_id');
-            
-            
-            // notify('top', 'right', '', 'info', 'animated fadeIn', 'animated fadeOut', 'Thêm thành công!');
+            invalidFeedbackSelect('#lop_id', '#ifb_lop_id');
+            invalidFeedbackSelect('#thu', '#ifb_thu');
+            invalidFeedbackSelect('#start', '#ifb_start');
+            invalidFeedbackSelect('#end', '#ifb_end');
+            // invalidFeedbackSelect('#lop_id', '#ifb_lop_id');
             
             
             // Reset form when close modal
             $('button.closeFormModal').on('click', function(){
-                $('#formLcn').trigger('reset');
-                $("#ctdt_id").val('').trigger('change');
-                $("#gv_id").val('').trigger('change');
-                $("#sv_id").val('').trigger('change');
+                $('#formLichLop').val('').trigger('reset');
                 $('input').css('border', '');
-                $('.select2-selection').css('border', '');
                 $('small.invalid-feedback').hide('');
             });
 
@@ -278,7 +310,7 @@
                 // Change class save button
                 $('button.saveEdit').hide();
                 $('button.saveAdd').show();
-                showFormModal('Thêm mới lớp chuyên ngành');
+                showFormModal('Thêm mới lịch lớp học');
             });
 
             // Event click the save button to add new
@@ -294,33 +326,31 @@
 
             // Function save form
             function saveForm(id, method){
-                var ten_lcn = $('#ten_lcn').val();
-                var ctdt_id = $('#ctdt_id').val();
+                var lop_id = $('#lop_id').val();
+                var thu = $('#thu').val();
+                var start = $('#start').val();
+                var end = $('#end').val();
                 var gv_id = $('#gv_id').val();
-                var sv_id = $('#sv_id').val();
-                if(ten_lcn=='' || ctdt_id==null || gv_id==null){
-                    checkInput('#ten_lcn', '#ifb_ten_lcn');
-                    checkInputSelect('#ctdt_id', '#ifb_ctdt_id');
-                    checkInputSelect('#gv_id', '#ifb_gv_id');
+                var phong_id = $('#phong_id').val();
+                if(lop_id==null || thu==null || start==null || end==null){
+                    checkInput('#lop_id', '#ifb_lop_id');
+                    checkInput('#thu', '#ifb_thu');
+                    checkInput('#start', '#ifb_start');
+                    checkInput('#end', '#ifb_end');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({
-                        url: '/lopchuyennganh'+id,
+                        url: '/lichlop'+id,
                         type: method,
                         traditional: true,
-                        data: {ten_lcn: ten_lcn, ctdt_id: ctdt_id, gv_id: gv_id, sv_id: sv_id},
+                        data: {lop_id: lop_id, thu: thu, start: start, end: end, gv_id: gv_id, phong_id: phong_id},
                         success: function(data){
                             if(data.duplicate){
                                 showAlertModal('Thông báo trùng lặp', data.duplicate);
                             }else if(data.success){
                                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
                                 $('#formModal').modal('hide');
-                                $('#formLcn').trigger('reset');
-                                $("#ctdt_id").val('').trigger('change');
-                                $("#gv_id").val('').trigger('change');
-                                $("#sv_id").val('').trigger('change');
-                                // $('#ma_lcn').removeAttr('value');
-                                // $('#ten_lcn').removeAttr('value');
+                                $('#formLichLop').val('').trigger('reset');
                                 $('#table').dataTable(datatablesOptions);
                             }
                         }
@@ -329,32 +359,27 @@
             }
 
             // Edit
-            $('#table').on('click', '.editLcn', function(){
+            $('#table').on('click', '.editLichLop', function(){
                 // Call api
                 var id = $(this).attr("data-id");
                 $.ajax({
-                    url: '/api/lcn/info',
+                    url: '/api/lichlop/info',
                     type: 'POST',
                     data: {id: id},
                     success: function(data){
                         if(data.data){
                             // Set input value
-                            $('#ten_lcn').val(data.data.ten_lcn);
-                            $("#ctdt_id").val(data.data.ctdt_id).trigger('change');
+                            $('#lop_id').val(data.data.lop_id).trigger('change');
+                            $("#thu").val(data.data.thu).trigger('change');
+                            $("#start").val(data.data.start).trigger('change');
+                            $("#end").val(data.data.end).trigger('change');
                             $("#gv_id").val(data.data.gv_id).trigger('change');
-                            var substr = []
-                            $.each(data.data.svs, function(key, value){
-                                substr.push(value.sv_id);
-                            });
-                            $("#sv_id").val(substr).trigger('change');
+                            $("#phong_id").val(data.data.phong_id).trigger('change');
 
                             //Open modal
                             $('button.saveAdd').hide();
                             $('button.saveEdit').show().attr('data-id', id);
-                            // $('#formModal').on('click', '.editLcn', function() {
-                            // $('.saveAdd').removeClass('saveAdd').addClass('saveEdit');
-                            // });
-                            showFormModal('Chỉnh sửa lớp chuyên ngành: ' + data.data.ten_lcn);
+                            showFormModal('Chỉnh sửa lịch lớp học: ' + data.data.lop_id);
                             
                         }else if(data.error){
                             notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
@@ -366,7 +391,7 @@
 
             $('#deleteConfirmationModal').on('click', 'button.delete', function(){
                 $.ajax({
-                    url: '/lopchuyennganh/'+$(this).attr("data-id"),
+                    url: '/lichlop/'+$(this).attr("data-id"),
                     type: 'DELETE',
                     success: function(data){
                         if(data.error){
@@ -381,7 +406,7 @@
             });
 
             // Event click the save button to remove
-            $('#table').on('click', '.delLcn', function(){
+            $('#table').on('click', '.delLichLop', function(){
                 $('#deleteConfirmationModal').modal('show'); 
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
             });

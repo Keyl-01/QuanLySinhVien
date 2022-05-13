@@ -15,7 +15,7 @@ from flask_login import (
 from apps import db, login_manager
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
-from apps.authentication.models import BoMon, Khoa, Nganh, Mon, Users, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien
+from apps.authentication.models import BoMon, Khoa, Nganh, Mon, Users, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop
 
 from apps.authentication.util import verify_pass
 
@@ -139,6 +139,52 @@ def dataSinhVienInfo():
         id = request.form['id']
         sv = SinhVien.query.filter_by(id=id).first()
         return jsonify({'data': sv.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+
+# -------------------------LopHoc--------------------------------
+@blueprint.route('/api/lop', methods=['POST'])
+def dataLop():
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'data': [lop.to_dict() for lop in Lop.query.all()]})
+
+@blueprint.route('/api/lop/info', methods=['POST'])
+def dataLopInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        lop = Lop.query.filter_by(id=id).first()
+        return jsonify({'data': lop.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+# -------------------------PhongHoc--------------------------------
+@blueprint.route('/api/phong', methods=['POST'])
+def dataPhong():
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'data': [phong.to_dict() for phong in Phong.query.all()]})
+
+@blueprint.route('/api/phong/info', methods=['POST'])
+def dataPhongInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        phong = Phong.query.filter_by(id=id).first()
+        return jsonify({'data': phong.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+# -------------------------LichLop--------------------------------
+@blueprint.route('/api/lichlop', methods=['POST'])
+def dataLichLop():
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'data': [lichlop.to_dict() for lichlop in LichLop.query.all()]})
+
+@blueprint.route('/api/lichlop/info', methods=['POST'])
+def dataLichLopInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        lichlop = LichLop.query.filter_by(id=id).first()
+        return jsonify({'data': lichlop.to_dict()})
     return jsonify({'error': 'Không tồn tại dữ liệu này.'})
 
 

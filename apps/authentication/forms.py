@@ -244,21 +244,26 @@ class CreateLichLopForm(FlaskForm):
     lop_id = SelectField('Lớp',
                          id='lop_id',
                          validators=[DataRequired()])
-    phong_id = SelectField('Phòng',
-                         id='phong_id',
-                         validators=[DataRequired()])
     thu = SelectField('Thứ',
                          id='thu',
-                         validators=[DataRequired()])
+                         validators=[DataRequired()],
+                         choices=[('1', 'Không xác định'), ('2', 'Thứ 2'), ('3', 'Thứ 3'), ('4', 'Thứ 4'), ('5', 'Thứ 5'), ('6', 'Thứ 6'), ('7', 'Thứ 7'), ('8', 'Chủ nhật')])
     start = SelectField('Ca bắt đầu',
                          id='start',
-                         validators=[DataRequired()])
+                         validators=[DataRequired()],
+                         choices=[('1', 'Ca 1'), ('2', 'Ca 2'), ('3', 'Ca 3'), ('4', 'Ca 4'), ('5', 'Ca 5'), ('6', 'Ca 6'), ('7', 'Ca 7'), 
+                                ('8', 'Ca 8'), ('9', 'Ca 9'), ('10', 'Ca 10'), ('11', 'Ca 11'), ('12', 'Ca 12'), ('13', 'Ca 13'), ('14', 'Ca 14')])
     end = SelectField('Ca kết thúc',
                          id='end',
-                         validators=[DataRequired()])
+                         validators=[DataRequired()],
+                         choices=[('1', 'Ca 1'), ('2', 'Ca 2'), ('3', 'Ca 3'), ('4', 'Ca 4'), ('5', 'Ca 5'), ('6', 'Ca 6'), ('7', 'Ca 7'), 
+                                ('8', 'Ca 8'), ('9', 'Ca 9'), ('10', 'Ca 10'), ('11', 'Ca 11'), ('12', 'Ca 12'), ('13', 'Ca 13'), ('14', 'Ca 14')])
     gv_id = SelectField('Giáo viên',
                         id='gv_id',
                         validators=[DataRequired()])
+    phong_id = SelectField('Phòng',
+                         id='phong_id',
+                         validators=[DataRequired()])
 
 
 # #----------------------------------Teacher----------------------------------

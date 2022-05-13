@@ -55,7 +55,19 @@
                         class="nav-item {% if 'sinhvien' in segment %} active {% endif %}">
                         <a href="/sinhvien" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Sinh viên</span></a>
                     </li>
-                    
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'lop' in segment %} active {% endif %}">
+                        <a href="/lop" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Lớp học</span></a>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'phong' in segment %} active {% endif %}">
+                        <a href="/phong" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Phòng học</span></a>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'lichlop' in segment %} active {% endif %}">
+                        <a href="/lichlop" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Lịch lớp học</span></a>
+                    </li>
+
                     <li data-username="Disabled Menu" class="nav-item">
                         <a href="{{ url_for('authentication_blueprint.logout') }}" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Logout</span>

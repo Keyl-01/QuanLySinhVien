@@ -427,7 +427,7 @@ class Phong(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ten_phong = db.Column(db.String(30), unique=True, nullable=False)
-    so_luong = db.Column(db.Integer, nullable=False)
+    so_luong = db.Column(db.Integer)
     lichlops = relationship('LichLop', backref='phong', lazy=True, cascade="all, delete-orphan")
     
     def __init__(self, **kwargs):
@@ -460,8 +460,8 @@ class LichLop(db.Model):
     thu = db.Column(db.Integer, nullable=False)
     start = db.Column(db.Integer, nullable=False)
     end = db.Column(db.Integer, nullable=False)
-    gv_id = db.Column(db.Integer, ForeignKey(GiangVien.id))
     lop_id = db.Column(db.Integer, ForeignKey(Lop.id), nullable=False)
+    gv_id = db.Column(db.Integer, ForeignKey(GiangVien.id), nullable=False)
     phong_id = db.Column(db.Integer, ForeignKey(Phong.id), nullable=False)
     
     def __init__(self, **kwargs):
@@ -486,6 +486,9 @@ class LichLop(db.Model):
             'gv_last_name': self.giangvien.last_name,
             'lop_id': self.lop_id,
             'ten_lop': self.lop.ten_lop,
+            'ma_mon': self.lop.mon.ma_mon,
+            'ten_mon': self.lop.mon.ten_mon,
+            'tinchi': self.lop.mon.tinchi,
             'phong_id': self.phong_id,
             'ten_phong': self.phong.ten_phong,
             'so_luong': self.phong.so_luong

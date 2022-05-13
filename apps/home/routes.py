@@ -5,13 +5,14 @@ Copyright (c) 2019 - present AppSeed.us
 
 
 from re import S
-from apps.authentication.forms import CreateKhoaForm, CreateNganhForm, CreateBoMonForm, CreateMonForm, CreateChuongTrinhDaoTaoForm, CreateLopChuyenNganhForm, CreateSinhVienForm, CreateGiangVienForm
-from apps.authentication.models import Khoa, Nganh, BoMon, Mon, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Users
+from apps.authentication.forms import CreateKhoaForm, CreateNganhForm, CreateBoMonForm, CreateMonForm, CreateChuongTrinhDaoTaoForm, CreateLopChuyenNganhForm, CreateSinhVienForm, CreateGiangVienForm, CreateLopForm, CreatePhongForm, CreateLichLopForm
+from apps.authentication.models import Khoa, Nganh, BoMon, Mon, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop, Users
 from apps.home import blueprint
 from apps import db, login_manager, create_app
 from flask import Flask, render_template, jsonify, redirect, request, session, url_for, Response
 from flask_login import login_required
 from jinja2 import TemplateNotFound
+from sqlalchemy import or_
 # import cv2
 # import dlib
 # import numpy as np
@@ -569,6 +570,210 @@ def deleteSinhVien(id):
     if sv is None:
         return jsonify({'error': 'Không tìm thấy.'})
     db.session.delete(sv)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+
+#-------------------------------------Lớp Học------------------------------------------
+
+@blueprint.route('/lop')
+def lop():
+    create_lop_form = CreateLopForm(request.form)
+    bomon = BoMon.query.all()
+    create_lop_form.mon_id.choices = dict([(row.ten_bomon, [(mon.id, mon.ma_mon + ' - ' + mon.ten_mon) for mon in row.mons]) for row in bomon])
+    return render_template('home/lop.html', segment='lop', form=create_lop_form)
+
+@blueprint.route('/lop', methods=['POST'])
+def addLop():
+    # ten_lop = request.form['ten_lop']
+    # # lcn_id = request.form.getlist('lcn_id')
+
+    # lop = Lop.query.filter_by(ten_lop=ten_lop).first()
+    # if lop:
+    #     return jsonify({'duplicate': 'Mã sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+
+    lop = Lop(**request.form)
+    # for row in lcn_id:
+    #     lop.lcns.append(LopChuyenNganh.query.get(row))
+    db.session.add(lop)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+@blueprint.route('/lop/<int:id>', methods=['PUT'])
+def updateLop(id):
+    # ten_lop = request.form['ten_lop']
+    # lcn_id = request.form.getlist('lcn_id')
+
+    found_lop = Lop.query.filter_by(id=id).first()
+
+    # lop = Lop.query.filter(Lop.id != id, Lop.ten_lop == ten_lop).first()
+    # if lop:
+    #     return jsonify({'duplicate': 'Mã sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+
+
+    lop = Lop(**request.form)
+    found_lop.ten_lop = lop.ten_lop
+    found_lop.so_luong = lop.so_luong
+    found_lop.mon_id = lop.mon_id
+    # found_lop.lcns = []
+
+    # for row in lcn_id:
+    #     found_lop.lcns.append(LopChuyenNganh.query.get(row))
+    db.session.commit()
+        
+    return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/lop/<int:id>', methods=['DELETE'])
+def deleteLop(id):
+    lop = Lop.query.get_or_404(id)
+    if lop is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(lop)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+
+#-------------------------------------Phòng Học------------------------------------------
+
+@blueprint.route('/phong')
+def phong():
+    create_phong_form = CreatePhongForm(request.form)
+    return render_template('home/phong.html', segment='phong', form=create_phong_form)
+
+@blueprint.route('/phong', methods=['POST'])
+def addPhong():
+    ten_phong = request.form['ten_phong']
+
+    phong = Phong.query.filter_by(ten_phong=ten_phong).first()
+    if phong:
+        return jsonify({'duplicate': 'Phòng đã tồn tại. Không thể lưu phòng này.'})
+
+    phong = Phong(**request.form)
+    db.session.add(phong)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+@blueprint.route('/phong/<int:id>', methods=['PUT'])
+def updatePhong(id):
+    ten_phong = request.form['ten_phong']
+
+    found_phong = Phong.query.filter_by(id=id).first()
+
+    phong = Phong.query.filter(Phong.id != id, Phong.ten_phong == ten_phong).first()
+    if phong:
+        return jsonify({'duplicate': 'Phòng đã tồn tại. Không thể lưu phòng này.'})
+
+    phong = Phong(**request.form)
+    found_phong.ten_phong = phong.ten_phong
+    found_phong.so_luong = phong.so_luong
+    db.session.commit()
+        
+    return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/phong/<int:id>', methods=['DELETE'])
+def deletePhong(id):
+    phong = Phong.query.get_or_404(id)
+    if phong is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(phong)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+
+#-------------------------------------Lịch Lớp------------------------------------------
+
+@blueprint.route('/lichlop')
+def lichlop():
+    create_lichlop_form = CreateLichLopForm(request.form)
+    mon = Mon.query.all()
+    create_lichlop_form.lop_id.choices = dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
+    bomon = BoMon.query.all()
+    create_lichlop_form.gv_id.choices = dict([(row.ten_bomon, [(gv.id, gv.ma_gv+' - '+gv.last_name+' '+gv.first_name) for gv in row.gvs]) for row in bomon])
+    create_lichlop_form.phong_id.choices = [(row.id, row.ten_phong) for row in Phong.query.all()]
+    return render_template('home/lichlop.html', segment='lichlop', form=create_lichlop_form)
+
+@blueprint.route('/lichlop', methods=['POST'])
+def addLichLop():
+    lop_id = request.form['lop_id']
+    thu = request.form['thu']
+    start = request.form['start']
+    end = request.form['end']
+    gv_id = request.form['gv_id']
+    phong_id = request.form['phong_id']
+    # lcn_id = request.form.getlist('lcn_id')
+
+    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.lop_id == lop_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    if lichlop:
+        return jsonify({'duplicate': 'Lịch lớp học bị trùng ca. Không thể lưu lịch lớp học này.'})
+
+    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.phong_id == phong_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    if lichlop:
+        return jsonify({'duplicate': 'Lịch lớp học bị trùng phòng. Không thể lưu lịch lớp học này.'})
+
+    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.gv_id == gv_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    if lichlop:
+        return jsonify({'duplicate': 'Giảng viên giảng dạy lớp này bị trùng lịch. Không thể lưu lịch lớp học này.'})
+
+
+    lichlop = LichLop(**request.form)
+    # for row in lcn_id:
+    #     lichlop.lcns.append(LichLopChuyenNganh.query.get(row))
+    db.session.add(lichlop)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+@blueprint.route('/lichlop/<int:id>', methods=['PUT'])
+def updateLichLop(id):
+    lop_id = request.form['lop_id']
+    thu = request.form['thu']
+    start = request.form['start']
+    end = request.form['end']
+    gv_id = request.form['gv_id']
+    phong_id = request.form['phong_id']
+
+    found_lichlop = LichLop.query.filter_by(id=id).first()
+
+    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.lop_id == lop_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    if lichlop:
+        return jsonify({'duplicate': 'Lịch lớp học bị trùng ca. Không thể lưu lịch lớp học này.'})
+
+    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.phong_id == phong_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    if lichlop:
+        return jsonify({'duplicate': 'Lịch lớp học bị trùng phòng. Không thể lưu lịch lớp học này.'})
+
+    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.gv_id == gv_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    if lichlop:
+        return jsonify({'duplicate': 'Giảng viên giảng dạy lớp này bị trùng lịch. Không thể lưu lịch lớp học này.'})
+
+
+    lichlop = LichLop(**request.form)
+    found_lichlop.lop_id = lichlop.lop_id
+    found_lichlop.thu = lichlop.thu
+    found_lichlop.start = lichlop.start
+    found_lichlop.end = lichlop.end
+    found_lichlop.gv_id = lichlop.gv_id
+    found_lichlop.phong_id = lichlop.phong_id
+    # found_lichlop.lcns = []
+
+    # for row in lcn_id:
+    #     found_lichlop.lcns.append(LichLopChuyenNganh.query.get(row))
+    db.session.commit()
+        
+    return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/lichlop/<int:id>', methods=['DELETE'])
+def deleteLichLop(id):
+    lichlop = LichLop.query.get_or_404(id)
+    if lichlop is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(lichlop)
     db.session.commit()
     return jsonify({'success': 'Xóa thành công.'})
 

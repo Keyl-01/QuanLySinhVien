@@ -15,7 +15,7 @@ from flask_login import (
 from apps import db, login_manager
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
-from apps.authentication.models import BoMon, Khoa, Nganh, Mon, Users, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop
+from apps.authentication.models import BoMon, Khoa, Nganh, Mon, SinhVien_Lop, Users, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop
 
 from apps.authentication.util import verify_pass
 
@@ -133,6 +133,12 @@ def dataSinhVien():
     # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
     return jsonify({'data': [sv.to_dict() for sv in SinhVien.query.all()]})
 
+@blueprint.route('/api/sinhvien/lop/<int:lop_id>', methods=['POST'])
+def dataSinhVien_LopHoc(lop_id):
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+
+    return jsonify({'data': [sv.to_dict() for sv in SinhVien_Lop.query.filter(SinhVien_Lop.lop_id == lop_id).all()]})
+
 @blueprint.route('/api/sinhvien/info', methods=['POST'])
 def dataSinhVienInfo():
     if 'id' in request.form:
@@ -148,6 +154,17 @@ def dataSinhVienInfo():
 def dataLop():
     # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
     return jsonify({'data': [lop.to_dict() for lop in Lop.query.all()]})
+
+
+@blueprint.route('/api/select/lop', methods=['GET'])
+def selectLop():
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'results': [{
+                                'id': lop.id, 
+                                'text': lop.ten_lop
+                            } for lop in Lop.query.all()]
+                    })
+    # dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
 
 @blueprint.route('/api/lop/info', methods=['POST'])
 def dataLopInfo():
@@ -178,6 +195,11 @@ def dataPhongInfo():
 def dataLichLop():
     # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
     return jsonify({'data': [lichlop.to_dict() for lichlop in LichLop.query.all()]})
+
+@blueprint.route('/api/lichlop/<int:id>', methods=['POST'])
+def dataLichLopById(id):
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'data': [lichlop.to_dict() for lichlop in LichLop.query.filter(LichLop.lop_id == id).all()]})
 
 @blueprint.route('/api/lichlop/info', methods=['POST'])
 def dataLichLopInfo():

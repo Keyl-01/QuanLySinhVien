@@ -69,15 +69,11 @@
                     <!-- [ Main Content ] end -->
                 </div>
             </div>
-            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteConfirmationModal">
-                Open modal
-            </button> -->
         </div>
 
         <!-- Lớp Học Form Modal -->
-        <div></div>
         <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content rounded">
                 <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
                     <h5 class="modal-title font-weight-bold" id="formModalLabel"></h5>
@@ -85,47 +81,128 @@
                         <h3 class="m-0" aria-hidden="true">&times;</h3>
                     </button>
                 </div>
-                <div class="modal-body px-4 pt-4 pb-0">
-                    <form id="formLop" class="form-edit" role="form" method="POST">
-                        {{ form.hidden_tag() }}
-                        <div class="row">
-                            <div class="form-group col-md-12">
-                                <div class="form-group d-flex w-100 mb-2">
-                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.ten_lop.label(class="text-dark") }}
+                <div class="modal-body pt-4 pb-0" style="background-color: #f4f7fa;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Thông tin lớp học</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="formLop" class="form-edit" role="form" method="POST">
+                                {{ forml.hidden_tag() }}
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <div class="form-group d-flex w-100 mb-2">
+                                            <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                                <small class="text-danger mr-1">*</small>{{ forml.ten_lop.label(class="text-dark") }}
+                                            </div>
+                                            <div class="fieldName pr-0 col-8 align-self-end">
+                                                {{ forml.ten_lop(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                                <small id="ifb_ten_lop" class="invalid-feedback text-danger position-absolute text-truncate">Tên lớp học là trường bắt buộc.</small>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="fieldName pr-0 col-8 align-self-end">
-                                        {{ form.ten_lop(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_ten_lop" class="invalid-feedback text-danger position-absolute text-truncate">Tên lớp học là trường bắt buộc.</small>
+        
+                                    <div class="form-group col-md-12">
+                                        <div class="form-group d-flex w-100 mb-2">
+                                            <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                                <small class="text-danger mr-1">*</small>{{ forml.so_luong.label(class="text-dark") }}
+                                            </div>
+                                            <div class="fieldName pr-0 col-5 align-self-end">
+                                                {{ forml.so_luong(class="form-control autonumber", **{'data-v-max':'9999', 'data-v-min':'0'}) }}
+                                                <small id="ifb_so_luong" class="invalid-feedback text-danger position-absolute text-truncate">Sức chứa tối đa là trường bắt buộc.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+        
+                                    <div class="form-group col-md-12">
+                                        <div class="form-group d-flex w-100 mb-2">
+                                            <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                                <small class="text-danger mr-1">*</small>{{ forml.mon_id.label(class="text-dark") }}
+                                            </div>
+                                            <div class="fieldName pr-0 col-5 align-self-end">
+                                                {{ forml.mon_id(class="form-control") }}
+                                                <small id="ifb_mon_id" class="invalid-feedback text-danger position-absolute text-truncate">Môn học là trường bắt buộc.</small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card lichlop">
+                        <div class="card-header d-flex align-items-center">
+                            <h5 class="mr-auto">Lịch lớp học</h5>
+                            <div class="ml-auto">
+                                <button id="addLL" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới lịch lớp học">
+                                    <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
+                                </button>
                             </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-border-style">
+                                <div class="table-responsive">
+                                    <table id="tableLL" class="table table-hover" data-provide="selectall">
+                                        <thead>
+                                            <tr>
+                                                <th>Mã Môn</th>
+                                                <th>Tên Môn</th>
+                                                <th>Lớp</th>
+                                                <th>Thứ</th>
+                                                <th>Ca</th>
+                                                <th>Phòng</th>
+                                                <th>Tín Chỉ</th>
+                                                <th>Giảng Viên</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
 
-                            <div class="form-group col-md-12">
-                                <div class="form-group d-flex w-100 mb-2">
-                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.so_luong.label(class="text-dark") }}
-                                    </div>
-                                    <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.so_luong(class="form-control") }}
-                                        <small id="ifb_so_luong" class="invalid-feedback text-danger position-absolute text-truncate">Sức chứa tối đa là trường bắt buộc.</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-12">
-                                <div class="form-group d-flex w-100 mb-2">
-                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.mon_id.label(class="text-dark") }}
-                                    </div>
-                                    <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.mon_id(class="form-control") }}
-                                        <small id="ifb_mon_id" class="invalid-feedback text-danger position-absolute text-truncate">Môn học là trường bắt buộc.</small>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+
+
+
+                    <div class="card sinhvien">
+                        <div class="card-header d-flex align-items-center">
+                            <h5 class="mr-auto">Danh sách SV</h5>
+                            <div class="ml-auto">
+                                <button id="addSV" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm sinh viên trong lớp">
+                                    <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-border-style">
+                                <div class="table-responsive">
+                                    <table id="tableSV" class="table table-hover" data-provide="selectall">
+                                        <thead>
+                                            <tr>
+                                                <th>Mã Sinh Viên</th>
+                                                <th>Tên Sinh Viên</th>
+                                                <th>Ngày Sinh</th>
+                                                <th>Email</th>
+                                                <th>Số Điện Thoại</th>
+                                                <th>Lớp Chuyên Ngành</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div class="modal-footer" style="padding: 12px 24px;">
                     <button type="button" class="btn btn-primary btn-sm m-0 saveEdit">Lưu</button>
@@ -134,6 +211,156 @@
             </div>
             </div>
         </div>
+
+
+        <!-- Lịch Lớp Học Form Modal -->
+        <div class="modal fade" id="formModalLL" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelLL"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalLL" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formLichLop" class="form-edit" role="form" method="POST">
+                        {{ formll.hidden_tag() }}
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formll.lop_id.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-8 align-self-end">
+                                        {{ formll.lop_id(class="form-control bg-white shadow-none lop_id", style="padding: 6px 12px;") }}
+                                        <small id="ifb_lop_id" class="invalid-feedback text-danger position-absolute text-truncate">Lớp là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formll.thu.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formll.thu(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_thu" class="invalid-feedback text-danger position-absolute text-truncate">Thứ là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formll.start.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formll.start(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_start" class="invalid-feedback text-danger position-absolute text-truncate">Ca bắt đầu là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formll.end.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formll.end(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_end" class="invalid-feedback text-danger position-absolute text-truncate">Ca kết thúc là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formll.phong_id.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formll.phong_id(class="form-control") }}
+                                        <small id="ifb_phong_id" class="invalid-feedback text-danger position-absolute text-truncate">Phòng là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <div class="form-group d-flex w-100 mb-2">
+                                <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                    {{ formll.gv_id.label(class="text-dark") }}
+                                </div>
+                                <div class="fieldName pr-0 col-5 align-self-end">
+                                    {{ formll.gv_id(class="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveEditLL">Lưu</button>
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveAddLL">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
+
+        <!-- Danh Sách SV Form Modal -->
+        <div class="modal fade" id="formModalSV" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelSV"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalSV" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formLichLop" class="form-edit" role="form" method="POST">
+                        {{ formll.hidden_tag() }}
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formsv.lop_id.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-8 align-self-end">
+                                        {{ formsv.lop_id(class="form-control bg-white shadow-none lop_id", style="padding: 6px 12px;") }}
+                                        <small id="ifb_lopsv_id" class="invalid-feedback text-danger position-absolute text-truncate">Lớp là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formsv.sv_id.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formsv.sv_id(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_sv_id" class="invalid-feedback text-danger position-absolute text-truncate">Sinh viên là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveEditSV">Lưu</button>
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveAddSV">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
 
         <!-- Delete Comfirm Modal  -->
         <div id="deleteConfirmationModal" role="dialog" tabindex="-1" class="modal fade" aria-modal="true">
@@ -150,7 +377,7 @@
                         <div class="bg-grey px-3 mt-3 modal-bottom-radius">
                             <div class="text-center pt-4 text-dark">
                                 <div class="pt-2">
-                                    Xóa lớp học này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa lớp học này không?
+                                    Xóa bản ghi này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa bản ghi này không?
                                 </div>
                             </div>
                             <div class="d-flex py-3 justify-content-center">
@@ -163,6 +390,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Modal Alert -->
         <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-modal="true">
@@ -191,36 +419,42 @@
 
     <script>
         $(document).ready(function () {
-            // $("#alertModal").on("show", function () {
-            //     $("body").addClass("modal-open");
-            // }).on("hidden", function () {
-            //     $("body").removeClass("modal-open")
-            // });
-            // $(body.modal-open).css('overflow', 'hidden');
-            // $(body).css('position', 'fixed');
-            // $('#alertModal').modal().on('show', function(){
-            //     $('body').css('overflow', 'hidden');
-            // }).on('hidden', function(){
-            //     $('body').css('overflow', 'auto');
-            // });
+            var select2Lop = {
+                // minimumInputLength: 0,
+                // tags: [],
+                disabled: true,
+                ajax: {
+                    url: 'api/select/lop',
+                    dataType: 'json',
+                    type: "GET",
+                    quietMillis: 50,
+                    results: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.text,
+                                    id: item.id
+                                }
+                            })
+                        };
+                    }
+                }
+            }
+            
 
-            // $('select.selectpicker').attr('data-live-search', true);
-            $('#mon_id').select2();
-            // $('#gv_id').select2();
-            // $('#sv_id').select2({
-            //     closeOnSelect : false,
-            //     // placeholder : "Chọn môn học",
-            //     allowHtml: true,
-            //     allowClear: true,
-            //     tags: true
-            // });
-            $("#mon_id").val('').trigger('change');
-            // $("#gv_id").val('').trigger('change');
-            // $("#sv_id").val('').trigger('change');
+            $('.autonumber').autoNumeric('init');
+
+            $('form select').select2();
+            $('form select').val('').trigger('change');
+
+            $('#lop_id').select2(select2Lop);
+            $('#lopsv_id').select2(select2Lop);
+            // $('.lop_id').attr('disabled','disabled');
+
             $('.select2-container').addClass('d-block');
 
-            // alert($("#sv_id").val(''));
-
+            var datatablesOptionsLL = '';
+            var datatablesOptionsSV = '';
             var datatablesOptions = {
                 ajax: {
                     url: '/api/lop',
@@ -265,6 +499,9 @@
             // Open add modal
             $('button#add').on('click', function(){
                 // Change class save button
+                $('.lichlop').hide();
+                $('.sinhvien').hide();
+                
                 $('button.saveEdit').hide();
                 $('button.saveAdd').show();
                 showFormModal('Thêm mới lớp học');
@@ -307,10 +544,10 @@
                                 $('#formModal').modal('hide');
                                 $('#formLop').trigger('reset');
                                 $("#mon_id").val('').trigger('change');
-                                // $("#gv_id").val('').trigger('change');
-                                // $("#sv_id").val('').trigger('change');
-                                // $('#ma_lop').removeAttr('value');
-                                // $('#ten_lop').removeAttr('value');
+
+                                $('#lop_id').select2(select2Lop);
+                                $('#lopsv_id').select2(select2Lop);
+
                                 $('#table').dataTable(datatablesOptions);
                             }
                         }
@@ -332,19 +569,93 @@
                             $('#ten_lop').val(data.data.ten_lop);
                             $("#so_luong").val(data.data.so_luong).trigger('change');
                             $("#mon_id").val(data.data.mon_id).trigger('change');
-                            // $("#gv_id").val(data.data.gv_id).trigger('change');
-                            // var substr = []
-                            // $.each(data.data.svs, function(key, value){
-                            //     substr.push(value.sv_id);
-                            // });
-                            // $("#sv_id").val(substr).trigger('change');
 
                             //Open modal
                             $('button.saveAdd').hide();
                             $('button.saveEdit').show().attr('data-id', id);
-                            // $('#formModal').on('click', '.editLop', function() {
-                            // $('.saveAdd').removeClass('saveAdd').addClass('saveEdit');
-                            // });
+
+                            $('.lichlop').show();
+                            $('.sinhvien').show();
+
+                            // alert(id);
+                            // Set selected   
+                            var $newOption = $("<option selected='selected'></option>").val(id).text(data.data.ten_lop);
+                            $(".lop_id").append($newOption).trigger('change');
+                            // $('#lop_id').val(id).trigger('change');
+                            // $('#lopsv_id').val(id).trigger('change');
+
+                            datatablesOptionsLL = {
+                                ajax: {
+                                    url: '/api/lichlop/'+id,
+                                    type: 'POST'
+                                },
+                                columns: [  
+                                    {data: 'ma_mon'},
+                                    {data: 'ten_mon'},
+                                    {data: 'ten_lop'},
+                                    {data: 'thu'},
+                                    {
+                                        render: function (data, type, row) {
+                                            return row.start + '-' + row.end
+                                        }
+                                    },
+                                    {data: 'ten_phong'},
+                                    {data: 'tinchi'},
+                                    {
+                                        render: function (data, type, row) {
+                                            if(row.gv_id == ''){
+                                                return ''
+                                            }
+                                            return row.gv_last_name + ' ' + row.gv_first_name + ' (' + row.ma_gv + ')'
+                                        }
+                                    },
+                                    {
+                                        render: function (data, type, row) {
+                                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editLichLop list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                                        '<li data-id="'+ row.id + '" title="Xóa" class="delLichLop hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                                    '</ul>'
+                                        }, orderable: false, searchable: false
+                                    }             
+                                ], autoWidth: false, bDestroy: true
+                            };
+                            $('#tableLL').dataTable(datatablesOptionsLL);
+
+                            datatablesOptionsSV = {
+                                ajax: {
+                                    url: '/api/sinhvien/lop/'+id,
+                                    type: 'POST'
+                                },
+                                columns: [
+                                    {data: 'ma_sv'},
+                                    {
+                                        render: function (data, type, row) {
+                                            return row.sv_last_name + ' ' + row.sv_first_name
+                                        }
+                                    },
+                                    {data: 'date_birth'},
+                                    {data: 'email'},
+                                    {data: 'phone'},
+                                    {
+                                        render: function (data, type, row) {
+                                            var result = ''
+                                            $.each(row.lcns, function(key, value){
+                                                result += value.ten_lcn + ', ';
+                                            });
+                                            return result
+                                        }
+                                    },
+                                    {
+                                        render: function (data, type, row) {
+                                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                                        '<li data-id="'+ row.id + '" title="Xóa" class="delSV hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                                    '</ul>'
+                                        }, orderable: false, searchable: false
+                                    }             
+                                ], autoWidth: false, bDestroy: true, ordering: false
+                            };
+                            $('#tableSV').dataTable(datatablesOptionsSV);
+
                             showFormModal('Chỉnh sửa lớp học: ' + data.data.ten_lop);
                             
                         }else if(data.error){
@@ -355,7 +666,7 @@
             });
 
 
-            $('#deleteConfirmationModal').on('click', 'button.delete', function(){
+            $('#deleteConfirmationModal').on('click', 'button.deleteLop', function(){
                 $.ajax({
                     url: '/lop/'+$(this).attr("data-id"),
                     type: 'DELETE',
@@ -373,8 +684,266 @@
 
             // Event click the save button to remove
             $('#table').on('click', '.delLop', function(){
+                $('#deleteConfirmationModal').modal('show');
+                $('button.delete').attr('data-id', $(this).attr("data-id"));
+                $('button.delete').removeClass('deleteLL deleteSV').addClass('deleteLop')
+            });
+
+
+
+            //------------------------------------------------FORM LICH LOP-------------------------------------------------
+
+            // $('#start').on('d-block');
+            // $("select").off("click");
+            $("#start").on("select2:select", function() {
+                // alert($('#start').val());
+                var start = $(this).val();
+                var end = $('#end').val();
+                if(end!=null && start>end){
+                    $(this).val(end).trigger('change');
+                    $('#end').val(start).trigger('change');
+                }
+            });
+
+            $("#end").on("select2:select", function() {
+                // alert($('#start').val());
+                var start = $('#start').val();
+                var end = $(this).val();
+                if(start!=null && start>end){
+                    $('#start').val(end).trigger('change');
+                    $(this).val(start).trigger('change');
+                }
+            });
+
+            
+            // call function invalid-feedback
+            invalidFeedbackSelect('#lop_id', '#ifb_lop_id');
+            invalidFeedbackSelect('#thu', '#ifb_thu');
+            invalidFeedbackSelect('#start', '#ifb_start');
+            invalidFeedbackSelect('#end', '#ifb_end');
+            invalidFeedbackSelect('#phong_id', '#ifb_phong_id');
+            // invalidFeedbackSelect('.lop_id', '#ifb_lop_id');
+            
+            
+            // Reset form when close modal
+            $('button.closeFormModalLL').on('click', function(){
+                // $('#formModalLL select').val('').trigger('change');
+                $("#formModalLL select[id!='lop_id']").val('').trigger('change');
+                $('#formModalLL .select2-selection').css('border', '');
+                $('#formModalLL small.invalid-feedback').hide('');
+            });
+
+            // Open add modal
+            $('button#addLL').on('click', function(){
+                // Change class save button
+                $('button.saveEditLL').hide();
+                $('button.saveAddLL').show();
+
+                $('#thu').prop('disabled', false);
+                $('#start').prop('disabled', false);
+                $('#end').prop('disabled', false);
+
+                $('#formModalLabelLL').html('Thêm mới lịch lớp học'); 
+                $('#formModalLL').modal('show'); 
+            });
+
+            // Event click the save button to add new
+            $('.saveAddLL').on('click', function(){
+                saveFormLL('', 'POST');
+            });
+
+            // Event click the save button to edit
+            $('.saveEditLL').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveFormLL(id, 'PUT');
+            });
+
+            // Function save form
+            function saveFormLL(id, method){
+                var lop_id = $('#lop_id').val();
+                var thu = $('#thu').val();
+                var start = $('#start').val();
+                var end = $('#end').val();
+                var gv_id = $('#gv_id').val();
+                var phong_id = $('#phong_id').val();
+                if(lop_id==null || thu==null || start==null || end==null || phong_id==null){
+                    checkInputSelect('#lop_id', '#ifb_lop_id');
+                    checkInputSelect('#thu', '#ifb_thu');
+                    checkInputSelect('#start', '#ifb_start');
+                    checkInputSelect('#end', '#ifb_end');
+                    checkInputSelect('#phong_id', '#ifb_phong_id');
+                }else{
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/lichlop'+id,
+                        type: method,
+                        traditional: true,
+                        data: {lop_id: lop_id, thu: thu, start: start, end: end, gv_id: gv_id, phong_id: phong_id},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Thông báo trùng lặp', data.duplicate);
+                            }else if(data.success){
+                                notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                                $('#formModalLL').modal('hide');
+                                // $('#formModalLL select').val('').trigger('change');
+                                $("#formModalLL select[id!='lop_id']").val('').trigger('change');
+                                
+                                $('#tableLL').dataTable(datatablesOptionsLL);
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Edit
+            $('#tableLL').on('click', '.editLichLop', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/lichlop/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#lop_id').val(data.data.lop_id).trigger('change');
+                            $("#thu").val(data.data.thu).trigger('change');
+                            $("#start").val(data.data.start).trigger('change');
+                            $("#end").val(data.data.end).trigger('change');
+                            $("#gv_id").val(data.data.gv_id).trigger('change');
+                            $("#phong_id").val(data.data.phong_id).trigger('change');
+
+                            $('#thu').prop('disabled', true);
+                            $('#start').prop('disabled', true);
+                            $('#end').prop('disabled', true);
+
+                            //Open modal
+                            $('button.saveAddLL').hide();
+                            $('button.saveEditLL').show().attr('data-id', id);
+
+                            $('#formModalLabelLL').html('Chỉnh sửa lịch lớp học: ' + data.data.ten_lop + ' (Thứ ' + data.data.thu + '/Ca ' + data.data.start + '-' + data.data.end+')'); 
+                            $('#formModalLL').modal('show'); 
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            });
+
+
+            $('#deleteConfirmationModal').on('click', 'button.deleteLL', function(){
+                $.ajax({
+                    url: '/lichlop/'+$(this).attr("data-id"),
+                    type: 'DELETE',
+                    success: function(data){
+                        if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }else if(data.success){
+                            notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                            $('#tableLL').dataTable(datatablesOptionsLL);
+                            $('#deleteConfirmationModal').modal('hide');
+                        }
+                    }
+                });
+            });
+
+            // Event click the save button to remove
+            $('#tableLL').on('click', '.delLichLop', function(){
                 $('#deleteConfirmationModal').modal('show'); 
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
+                $('button.delete').removeClass('deleteLop deleteSV').addClass('deleteLL')
+            });
+
+
+
+
+
+
+
+            //------------------------------------------------FORM SINH VIEN-------------------------------------------------
+
+            
+            // call function invalid-feedback
+            invalidFeedbackSelect('#lopsv_id', '#ifb_lopsv_id');
+            invalidFeedbackSelect('#sv_id', '#ifb_sv_id');
+            
+            
+            // Reset form when close modal
+            $('button.closeFormModalSV').on('click', function(){
+                // $('#formModalSV select').val('').trigger('change');
+                $("#formModalSV select[id!='lopsv_id']").val('').trigger('change');
+                $('#formModalSV .select2-selection').css('border', '');
+                $('#formModalSV small.invalid-feedback').hide('');
+            });
+
+            // Open add modal
+            $('button#addSV').on('click', function(){
+                // Change class save button
+                $('button.saveEditSV').hide();
+                $('button.saveAddSV').show();
+
+                $('#formModalLabelSV').html('Thêm sinh viên trong lớp học'); 
+                $('#formModalSV').modal('show'); 
+            });
+
+            // Event click the save button to add new
+            $('.saveAddSV').on('click', function(){
+                saveFormSV('', 'POST');
+            });
+
+            // Function save form
+            function saveFormSV(id, method){
+                var lop_id = $('#lopsv_id').val();
+                var sv_id = $('#sv_id').val();
+                if(lop_id==null || sv_id==null){
+                    checkInputSelect('#lopsv_id', '#ifb_lopsv_id');
+                    checkInputSelect('#sv_id', '#ifb_sv_id');
+                }else{
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/sv_lop'+id,
+                        type: method,
+                        traditional: true,
+                        data: {lop_id: lop_id, sv_id: sv_id},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Thông báo trùng lặp', data.duplicate);
+                            }else if(data.success){
+                                notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                                $('#formModalSV').modal('hide');
+                                // $('#formModalSV select').val('').trigger('change');
+                                $("#formModalSV select[id!='lopsv_id']").val('').trigger('change');
+                                
+                                $('#tableSV').dataTable(datatablesOptionsSV);
+                            }
+                        }
+                    });
+                }
+            }
+
+
+            $('#deleteConfirmationModal').on('click', 'button.deleteSV', function(){
+                $.ajax({
+                    url: '/sv_lop/'+$(this).attr("data-id"),
+                    type: 'DELETE',
+                    success: function(data){
+                        if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }else if(data.success){
+                            notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                            $('#tableSV').dataTable(datatablesOptionsSV);
+                            $('#deleteConfirmationModal').modal('hide');
+                        }
+                    }
+                });
+            });
+
+            // Event click the save button to remove
+            $('#tableSV').on('click', '.delSV', function(){
+                $('#deleteConfirmationModal').modal('show'); 
+                $('button.delete').attr('data-id', $(this).attr("data-id"));
+                $('button.delete').removeClass('deleteLL deleteLop').addClass('deleteSV')
             });
         });
     </script>

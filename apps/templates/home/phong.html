@@ -101,7 +101,7 @@
                                         {{ form.so_luong.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.so_luong(class="form-control") }}
+                                        {{ form.so_luong(class="form-control autonumber", **{'data-v-max':'9999', 'data-v-min':'0'}) }}
                                         <!-- <small id="ifb_so_luong" class="invalid-feedback text-danger position-absolute text-truncate">Sức chứa tối đa là trường bắt buộc.</small> -->
                                     </div>
                                 </div>
@@ -186,6 +186,8 @@
             // }).on('hidden', function(){
             //     $('body').css('overflow', 'auto');
             // });
+
+            $('.autonumber').autoNumeric('init');
 
             var datatablesOptions = {
                 ajax: {

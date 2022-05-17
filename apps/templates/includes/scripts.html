@@ -9,7 +9,11 @@
     <script src="/static/assets/plugins/modal-window-effects/js/classie.js"></script>
     <script src="/static/assets/plugins/modal-window-effects/js/modalEffects.js"></script>
     <script src="/static/assets/plugins/notification/js/bootstrap-growl.min.js"></script>
+    <script src="/static/assets/plugins/inputmask/js/autoNumeric.js"></script>
+    <script src="/static/assets/plugins/js/collapse.js"></script>
+    <!-- <script src="/static/assets/plugins/smart-wizard/js/jquery.smartizard.min.css"></script> -->
     <script src="/static/assets/js/pcoded.min.js"></script>
+    
     <script>
         //notification 
         function notify(from, align, icon, type, animIn, animOut, message) {
@@ -99,18 +103,19 @@
         function checkInputSelect(input, feedback){
             var value = $(input).val();
             // alert(value);
+            var attribute = "[aria-labelledby*='" + input.slice(1) + "']";
             if(value=='' || value==null){
-                $('.select2-selection').css('border', '1px solid red');
+                $(attribute).css('border', '1px solid red');
                 $(feedback).show();
             }else{
-                $('.select2-selection').css('border', '');
+                $(attribute).css('border', '');
                 $(feedback).hide();
             }
         };
 
         function invalidFeedbackSelect(input, feedback){
-            $('.selection').on({
-                focusout: function() {
+            $(input).on({
+                'select2:closing': function() {
                     checkInputSelect(input, feedback);
                 }
             });

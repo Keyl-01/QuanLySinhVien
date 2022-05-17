@@ -355,6 +355,7 @@ class SinhVien(db.Model):
     xa = db.Column(db.String(100))
     quan = db.Column(db.String(100))
     city = db.Column(db.String(100))
+    sv_ls = relationship('SinhVien_Lop', backref='sinhvien', lazy=True, cascade="all, delete-orphan")
     
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -395,6 +396,7 @@ class Lop(db.Model):
     so_luong = db.Column(db.Integer, nullable=False)
     mon_id = db.Column(db.Integer, ForeignKey(Mon.id), nullable=False)
     lichlops = relationship('LichLop', backref='lop', lazy=True, cascade="all, delete-orphan")
+    sv_ls = relationship('SinhVien_Lop', backref='lop', lazy=True, cascade="all, delete-orphan")
     
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -461,8 +463,59 @@ class LichLop(db.Model):
     start = db.Column(db.Integer, nullable=False)
     end = db.Column(db.Integer, nullable=False)
     lop_id = db.Column(db.Integer, ForeignKey(Lop.id), nullable=False)
-    gv_id = db.Column(db.Integer, ForeignKey(GiangVien.id), nullable=False)
     phong_id = db.Column(db.Integer, ForeignKey(Phong.id), nullable=False)
+    gv_id = db.Column(db.Integer, ForeignKey(GiangVien.id))
+    
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if property == 'date_birth':
+                value = datetime.strptime(value, '%Y-%m-%d')
+
+            setattr(self, property, value)
+
+    def to_dict(self):
+        ma_gv = ''
+        gv_first_name = ''
+        gv_last_name = ''
+        if self.gv_id != '':
+            ma_gv = self.giangvien.ma_gv
+            gv_first_name = self.giangvien.first_name
+            gv_last_name = self.giangvien.last_name
+        return {
+            'id': self.id,
+            'thu': self.thu,
+            'start': self.start,
+            'end': self.end,
+            'gv_id': self.gv_id,
+            'ma_gv': ma_gv,
+            'gv_first_name': gv_first_name,
+            'gv_last_name': gv_last_name,
+            'lop_id': self.lop_id,
+            'ten_lop': self.lop.ten_lop,
+            'ma_mon': self.lop.mon.ma_mon,
+            'ten_mon': self.lop.mon.ten_mon,
+            'tinchi': self.lop.mon.tinchi,
+            'phong_id': self.phong_id,
+            'ten_phong': self.phong.ten_phong,
+            'so_luong': self.phong.so_luong
+            # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
+        }
+
+
+
+# -------------------------SinhVien_LopHoc--------------------------------
+
+class SinhVien_Lop(db.Model):
+
+    __tablename__ = 'SinhVien_Lop'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    diemQT = db.Column(db.Float)
+    lop_id = db.Column(db.Integer, ForeignKey(Lop.id), nullable=False)
+    sv_id = db.Column(db.Integer, ForeignKey(SinhVien.id), nullable=False)
     
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -477,23 +530,24 @@ class LichLop(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'thu': self.thu,
-            'start': self.start,
-            'end': self.end,
-            'gv_id': self.gv_id,
-            'ma_gv': self.giangvien.ma_gv,
-            'gv_first_name': self.giangvien.first_name,
-            'gv_last_name': self.giangvien.last_name,
+            'diemQT': self.diemQT,
             'lop_id': self.lop_id,
             'ten_lop': self.lop.ten_lop,
-            'ma_mon': self.lop.mon.ma_mon,
-            'ten_mon': self.lop.mon.ten_mon,
-            'tinchi': self.lop.mon.tinchi,
-            'phong_id': self.phong_id,
-            'ten_phong': self.phong.ten_phong,
-            'so_luong': self.phong.so_luong
+            'sv_id': self.sv_id,
+            'ma_sv': self.sinhvien.ma_sv,
+            'sv_first_name': self.sinhvien.first_name,
+            'sv_last_name': self.sinhvien.last_name,
+            'date_birth': self.sinhvien.date_birth.strftime("%Y-%m-%d"),
+            'email': self.sinhvien.email,
+            'phone': self.sinhvien.phone,
+            'address': self.sinhvien.address,
+            'xa': self.sinhvien.xa,
+            'quan': self.sinhvien.quan,
+            'city': self.sinhvien.city,
+            'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.sinhvien.lcns]
             # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
         }
+
 
 
 

@@ -5,14 +5,14 @@ Copyright (c) 2019 - present AppSeed.us
 
 
 from re import S
-from apps.authentication.forms import CreateKhoaForm, CreateNganhForm, CreateBoMonForm, CreateMonForm, CreateChuongTrinhDaoTaoForm, CreateLopChuyenNganhForm, CreateSinhVienForm, CreateGiangVienForm, CreateLopForm, CreatePhongForm, CreateLichLopForm
-from apps.authentication.models import Khoa, Nganh, BoMon, Mon, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop, Users
+from apps.authentication.forms import CreateKhoaForm, CreateNganhForm, CreateBoMonForm, CreateMonForm, CreateChuongTrinhDaoTaoForm, CreateLopChuyenNganhForm, CreateSinhVienForm, CreateGiangVienForm, CreateLopForm, CreatePhongForm, CreateLichLopForm, CreateSinhVien_LopForm
+from apps.authentication.models import Khoa, Nganh, BoMon, Mon, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop, SinhVien_Lop, Users
 from apps.home import blueprint
 from apps import db, login_manager, create_app
 from flask import Flask, render_template, jsonify, redirect, request, session, url_for, Response
 from flask_login import login_required
 from jinja2 import TemplateNotFound
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 # import cv2
 # import dlib
 # import numpy as np
@@ -582,16 +582,29 @@ def lop():
     create_lop_form = CreateLopForm(request.form)
     bomon = BoMon.query.all()
     create_lop_form.mon_id.choices = dict([(row.ten_bomon, [(mon.id, mon.ma_mon + ' - ' + mon.ten_mon) for mon in row.mons]) for row in bomon])
-    return render_template('home/lop.html', segment='lop', form=create_lop_form)
+
+    create_lichlop_form = CreateLichLopForm(request.form)
+    mon = Mon.query.all()
+    create_lichlop_form.lop_id.choices = dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
+    bomon = BoMon.query.all()
+    create_lichlop_form.gv_id.choices = dict([(row.ten_bomon, [(gv.id, gv.ma_gv+' - '+gv.last_name+' '+gv.first_name) for gv in row.gvs]) for row in bomon])
+    create_lichlop_form.phong_id.choices = [(row.id, row.ten_phong) for row in Phong.query.all()]
+
+    create_sv_lop_form = CreateSinhVien_LopForm(request.form)
+    create_sv_lop_form.lop_id.choices = dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
+    sv = SinhVien.query.all()
+    create_sv_lop_form.sv_id.choices = [(row.id, row.ma_sv+' - '+row.last_name+' '+row.first_name) for row in sv]
+    
+    return render_template('home/lop.html', segment='lop', forml=create_lop_form, formll=create_lichlop_form, formsv=create_sv_lop_form)
 
 @blueprint.route('/lop', methods=['POST'])
 def addLop():
-    # ten_lop = request.form['ten_lop']
-    # # lcn_id = request.form.getlist('lcn_id')
+    ten_lop = request.form['ten_lop']
+    # lcn_id = request.form.getlist('lcn_id')
 
-    # lop = Lop.query.filter_by(ten_lop=ten_lop).first()
-    # if lop:
-    #     return jsonify({'duplicate': 'Mã sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+    lop = Lop.query.filter_by(ten_lop=ten_lop).first()
+    if lop:
+        return jsonify({'duplicate': 'Lớp học đã tồn tại. Không thể lưu lớp học này.'})
 
 
     lop = Lop(**request.form)
@@ -604,14 +617,14 @@ def addLop():
 
 @blueprint.route('/lop/<int:id>', methods=['PUT'])
 def updateLop(id):
-    # ten_lop = request.form['ten_lop']
+    ten_lop = request.form['ten_lop']
     # lcn_id = request.form.getlist('lcn_id')
 
     found_lop = Lop.query.filter_by(id=id).first()
 
-    # lop = Lop.query.filter(Lop.id != id, Lop.ten_lop == ten_lop).first()
-    # if lop:
-    #     return jsonify({'duplicate': 'Mã sinh viên đã tồn tại. Không thể lưu sinh viên này.'})
+    lop = Lop.query.filter(Lop.id != id, Lop.ten_lop == ten_lop).first()
+    if lop:
+        return jsonify({'duplicate': 'Lớp học đã tồn tại. Không thể lưu lớp học này.'})
 
 
     lop = Lop(**request.form)
@@ -708,15 +721,15 @@ def addLichLop():
     phong_id = request.form['phong_id']
     # lcn_id = request.form.getlist('lcn_id')
 
-    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.lop_id == lop_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.lop_id == lop_id, or_(and_(LichLop.start <= start, start <= LichLop.end), and_(LichLop.start <= end, end <= LichLop.end))).first()
     if lichlop:
         return jsonify({'duplicate': 'Lịch lớp học bị trùng ca. Không thể lưu lịch lớp học này.'})
 
-    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.phong_id == phong_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.phong_id == phong_id, or_(and_(LichLop.start <= start, start <= LichLop.end), and_(LichLop.start <= end, end <= LichLop.end))).first()
     if lichlop:
         return jsonify({'duplicate': 'Lịch lớp học bị trùng phòng. Không thể lưu lịch lớp học này.'})
 
-    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.gv_id == gv_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    lichlop = LichLop.query.filter(LichLop.thu == thu, LichLop.gv_id == gv_id, or_(and_(LichLop.start <= start, start <= LichLop.end), and_(LichLop.start <= end, end <= LichLop.end))).first()
     if lichlop:
         return jsonify({'duplicate': 'Giảng viên giảng dạy lớp này bị trùng lịch. Không thể lưu lịch lớp học này.'})
 
@@ -740,15 +753,15 @@ def updateLichLop(id):
 
     found_lichlop = LichLop.query.filter_by(id=id).first()
 
-    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.lop_id == lop_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.lop_id == lop_id, or_(and_(LichLop.start <= start, start <= LichLop.end), and_(LichLop.start <= end, end <= LichLop.end))).first()
     if lichlop:
         return jsonify({'duplicate': 'Lịch lớp học bị trùng ca. Không thể lưu lịch lớp học này.'})
 
-    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.phong_id == phong_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.phong_id == phong_id, or_(and_(LichLop.start <= start, start <= LichLop.end), and_(LichLop.start <= end, end <= LichLop.end))).first()
     if lichlop:
         return jsonify({'duplicate': 'Lịch lớp học bị trùng phòng. Không thể lưu lịch lớp học này.'})
 
-    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.gv_id == gv_id, or_(LichLop.start <= start, start <= LichLop.end, LichLop.start <= end, end <= LichLop.end)).first()
+    lichlop = LichLop.query.filter(LichLop.id != id, LichLop.thu == thu, LichLop.gv_id == gv_id, or_(and_(LichLop.start <= start, start <= LichLop.end), and_(LichLop.start <= end, end <= LichLop.end))).first()
     if lichlop:
         return jsonify({'duplicate': 'Giảng viên giảng dạy lớp này bị trùng lịch. Không thể lưu lịch lớp học này.'})
 
@@ -777,6 +790,96 @@ def deleteLichLop(id):
     db.session.commit()
     return jsonify({'success': 'Xóa thành công.'})
 
+
+
+#-------------------------------------Sinh Viên - Lớp------------------------------------------
+
+# @blueprint.route('/sv_lop')
+# def SVLop():
+#     create_sv_lop_form = CreateSinhVien_LopForm(request.form)
+#     mon = Mon.query.all()
+#     create_sv_lop_form.lop_id.choices = dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
+#     sv = SinhVien.query.all()
+#     create_sv_lop_form.sv_id.choices = [(row.id, row.ma_sv+' - '+row.last_name+' '+row.first_name) for row in sv]
+#     return render_template('home/sv_lop.html', segment='sv_lop', form=create_sv_lop_form)
+
+@blueprint.route('/sv_lop', methods=['POST'])
+def addSVLop():
+    lop_id = request.form['lop_id']
+    sv_id = request.form['sv_id']
+
+    lichlop = LichLop.query.filter(LichLop.lop_id == lop_id).all()
+    # sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.lop_id != lop_id, SinhVien_Lop.sv_id == sv_id).all()
+    sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+
+    # sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.thu == thu, SinhVien_Lop.lop_id == lop_id, or_(and_(SinhVien_Lop.start <= start, start <= SinhVien_Lop.end), and_(SinhVien_Lop.start <= end, end <= SinhVien_Lop.end))).first()
+    # if sv_lop:
+    #     return jsonify({'duplicate': 'Lịch lớp học bị trùng ca. Không thể lưu lịch lớp học này.'})
+
+    # sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.thu == thu, SinhVien_Lop.phong_id == phong_id, or_(and_(SinhVien_Lop.start <= start, start <= SinhVien_Lop.end), and_(SinhVien_Lop.start <= end, end <= SinhVien_Lop.end))).first()
+    # if sv_lop:
+    #     return jsonify({'duplicate': 'Lịch lớp học bị trùng phòng. Không thể lưu lịch lớp học này.'})
+
+    # sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.thu == thu, SinhVien_Lop.gv_id == gv_id, or_(and_(SinhVien_Lop.start <= start, start <= SinhVien_Lop.end), and_(SinhVien_Lop.start <= end, end <= SinhVien_Lop.end))).first()
+    # if sv_lop:
+    #     return jsonify({'duplicate': 'Giảng viên giảng dạy lớp này bị trùng lịch. Không thể lưu lịch lớp học này.'})
+
+
+    sv_lop = SinhVien_Lop(**request.form)
+    # for row in lcn_id:
+    #     sv_lop.lcns.append(SinhVien_LopChuyenNganh.query.get(row))
+    db.session.add(sv_lop)
+    db.session.commit()
+        
+    return jsonify({'success': 'Thêm thành công.'})
+
+# @blueprint.route('/sv_lop/<int:id>', methods=['PUT'])
+# def updateSVLop(id):
+#     lop_id = request.form['lop_id']
+#     thu = request.form['thu']
+#     start = request.form['start']
+#     end = request.form['end']
+#     gv_id = request.form['gv_id']
+#     phong_id = request.form['phong_id']
+
+#     found_sv_lop = SinhVien_Lop.query.filter_by(id=id).first()
+
+#     sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.id != id, SinhVien_Lop.thu == thu, SinhVien_Lop.lop_id == lop_id, or_(and_(SinhVien_Lop.start <= start, start <= SinhVien_Lop.end), and_(SinhVien_Lop.start <= end, end <= SinhVien_Lop.end))).first()
+#     if sv_lop:
+#         return jsonify({'duplicate': 'Lịch lớp học bị trùng ca. Không thể lưu lịch lớp học này.'})
+
+#     sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.id != id, SinhVien_Lop.thu == thu, SinhVien_Lop.phong_id == phong_id, or_(and_(SinhVien_Lop.start <= start, start <= SinhVien_Lop.end), and_(SinhVien_Lop.start <= end, end <= SinhVien_Lop.end))).first()
+#     if sv_lop:
+#         return jsonify({'duplicate': 'Lịch lớp học bị trùng phòng. Không thể lưu lịch lớp học này.'})
+
+#     sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.id != id, SinhVien_Lop.thu == thu, SinhVien_Lop.gv_id == gv_id, or_(and_(SinhVien_Lop.start <= start, start <= SinhVien_Lop.end), and_(SinhVien_Lop.start <= end, end <= SinhVien_Lop.end))).first()
+#     if sv_lop:
+#         return jsonify({'duplicate': 'Giảng viên giảng dạy lớp này bị trùng lịch. Không thể lưu lịch lớp học này.'})
+
+
+#     sv_lop = SinhVien_Lop(**request.form)
+#     found_sv_lop.lop_id = sv_lop.lop_id
+#     found_sv_lop.thu = sv_lop.thu
+#     found_sv_lop.start = sv_lop.start
+#     found_sv_lop.end = sv_lop.end
+#     found_sv_lop.gv_id = sv_lop.gv_id
+#     found_sv_lop.phong_id = sv_lop.phong_id
+#     # found_sv_lop.lcns = []
+
+#     # for row in lcn_id:
+#     #     found_sv_lop.lcns.append(SinhVien_LopChuyenNganh.query.get(row))
+#     db.session.commit()
+        
+#     return jsonify({'success': 'Cập nhật thành công.'})
+
+@blueprint.route('/sv_lop/<int:id>', methods=['DELETE'])
+def deleteSVLop(id):
+    sv_lop = SinhVien_Lop.query.get_or_404(id)
+    if sv_lop is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(sv_lop)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
 
 
 

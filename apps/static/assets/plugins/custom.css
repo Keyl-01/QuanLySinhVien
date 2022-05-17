@@ -42,3 +42,16 @@ input[type]:not([type=hidden]){
     background-color: white;
     box-shadow: none;
 }
+
+
+.modal-xxl {
+    max-width: 100%;
+    margin: 20px 24px 0px 14px;
+}
+
+.modal-dialog {
+    position: relative;
+    width: auto;
+    /* margin: 0.5rem; */
+    pointer-events: none;
+}

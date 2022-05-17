@@ -75,7 +75,6 @@
         </div>
 
         <!-- Lịch Lớp Học Form Modal -->
-        <div></div>
         <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content rounded">
@@ -140,28 +139,27 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        {{ form.gv_id.label(class="text-dark") }}
-                                    </div>
-                                    <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.gv_id(class="form-control") }}
-                                        <!-- <small id="ifb_gv_id" class="invalid-feedback text-danger position-absolute text-truncate">Sức chứa tối đa là trường bắt buộc.</small> -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-12">
-                                <div class="form-group d-flex w-100 mb-2">
-                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        {{ form.phong_id.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.phong_id.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ form.phong_id(class="form-control") }}
-                                        <!-- <small id="ifb_phong_id" class="invalid-feedback text-danger position-absolute text-truncate">Sức chứa tối đa là trường bắt buộc.</small> -->
+                                        <small id="ifb_phong_id" class="invalid-feedback text-danger position-absolute text-truncate">Phòng là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+
+                        <div class="form-group col-md-12">
+                            <div class="form-group d-flex w-100 mb-2">
+                                <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                    {{ form.gv_id.label(class="text-dark") }}
+                                </div>
+                                <div class="fieldName pr-0 col-5 align-self-end">
+                                    {{ form.gv_id(class="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
                 <div class="modal-footer" style="padding: 12px 24px;">
@@ -241,20 +239,53 @@
             //     $('body').css('overflow', 'auto');
             // });
 
-            $('#lop_id').select2();
-            $('#thu').select2();
-            $('#start').select2();
-            $('#end').select2();
-            $('#gv_id').select2();
-            $('#phong_id').select2();
+            var select2Lop = {
+                // minimumInputLength: 0,
+                // tags: [],
+                ajax: {
+                    url: 'api/select/lop',
+                    dataType: 'json',
+                    type: "GET",
+                    quietMillis: 50,
+                    results: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.text,
+                                    id: item.id
+                                }
+                            })
+                        };
+                    }
+                }
+            }
 
-            $("#lop_id").val('').trigger('change');
-            $("#thu").val('').trigger('change');
-            $("#start").val('').trigger('change');
-            $("#end").val('').trigger('change');
-            $("#gv_id").val('').trigger('change');
-            $("#phong_id").val('').trigger('change');
+
+            $('form select').select2();
+            $('form select').val('').trigger('change');
+            // $('#lop_id').select2(select2Lop);
+            // $('#lop_id').val(4).trigger('change');
             $('.select2-container').addClass('d-block');
+
+            $("#start").on("select2:select", function() {
+                // alert($('#start').val());
+                var start = $(this).val();
+                var end = $('#end').val();
+                if(end!=null && start>end){
+                    $(this).val(end).trigger('change');
+                    $('#end').val(start).trigger('change');
+                }
+            });
+
+            $("#end").on("select2:select", function() {
+                // alert($('#start').val());
+                var start = $('#start').val();
+                var end = $(this).val();
+                if(start!=null && start>end){
+                    $('#start').val(end).trigger('change');
+                    $(this).val(start).trigger('change');
+                }
+            });
 
             var datatablesOptions = {
                 ajax: {
@@ -275,6 +306,9 @@
                     {data: 'tinchi'},
                     {
                         render: function (data, type, row) {
+                            if(row.gv_id == ''){
+                                return ''
+                            }
                             return row.gv_last_name + ' ' + row.gv_first_name + ' (' + row.ma_gv + ')'
                         }
                     },
@@ -286,7 +320,7 @@
                                     '</ul>'
                         }, orderable: false, searchable: false
                     }             
-                ], autoWidth: false, bDestroy: true, ordering: false
+                ], autoWidth: false, bDestroy: true
             };
             $('#table').dataTable(datatablesOptions);
 
@@ -295,13 +329,14 @@
             invalidFeedbackSelect('#thu', '#ifb_thu');
             invalidFeedbackSelect('#start', '#ifb_start');
             invalidFeedbackSelect('#end', '#ifb_end');
+            invalidFeedbackSelect('#phong_id', '#ifb_phong_id');
             // invalidFeedbackSelect('#lop_id', '#ifb_lop_id');
             
             
             // Reset form when close modal
             $('button.closeFormModal').on('click', function(){
-                $('#formLichLop').val('').trigger('reset');
-                $('input').css('border', '');
+                $('form select').val('').trigger('change');
+                $('.select2-selection').css('border', '');
                 $('small.invalid-feedback').hide('');
             });
 
@@ -332,11 +367,12 @@
                 var end = $('#end').val();
                 var gv_id = $('#gv_id').val();
                 var phong_id = $('#phong_id').val();
-                if(lop_id==null || thu==null || start==null || end==null){
-                    checkInput('#lop_id', '#ifb_lop_id');
-                    checkInput('#thu', '#ifb_thu');
-                    checkInput('#start', '#ifb_start');
-                    checkInput('#end', '#ifb_end');
+                if(lop_id==null || thu==null || start==null || end==null || phong_id==null){
+                    checkInputSelect('#lop_id', '#ifb_lop_id');
+                    checkInputSelect('#thu', '#ifb_thu');
+                    checkInputSelect('#start', '#ifb_start');
+                    checkInputSelect('#end', '#ifb_end');
+                    checkInputSelect('#phong_id', '#ifb_phong_id');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({
@@ -350,7 +386,7 @@
                             }else if(data.success){
                                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
                                 $('#formModal').modal('hide');
-                                $('#formLichLop').val('').trigger('reset');
+                                $('form select').val('').trigger('change');
                                 $('#table').dataTable(datatablesOptions);
                             }
                         }

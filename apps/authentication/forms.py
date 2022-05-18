@@ -217,6 +217,9 @@ class CreateSinhVienForm(FlaskForm):
 #----------------------------------LopHoc----------------------------------
 
 class CreateLopForm(FlaskForm):
+    ky_id = SelectField('Kỳ',
+                        id='ky_id')
+
     ten_lop = StringField('Tên lớp',
                          id='ten_lop',
                          validators=[DataRequired()])
@@ -228,7 +231,6 @@ class CreateLopForm(FlaskForm):
                          validators=[DataRequired()])
     mon_id = SelectField('Môn học',
                         id='mon_id')
-
 
 #----------------------------------PhongHoc----------------------------------
 
@@ -281,6 +283,41 @@ class CreateSinhVien_LopForm(FlaskForm):
     diemQT = StringField('Điểm quá trình',
                          id='diemQT',
                          validators=[DataRequired()])
+
+
+#----------------------------------Nam----------------------------------
+
+class CreateNamForm(FlaskForm):
+    namhoc = StringField('Năm học',
+                         id='namhoc',
+                         validators=[DataRequired()])
+    hk1 = DateField('Ngày bắt đầu học kỳ I',
+                        id='hk1',
+                        validators=[DataRequired()])
+    hk2 = DateField('Ngày bắt đầu học kỳ II',
+                        id='hk2',
+                        validators=[DataRequired()])
+    hk3 = DateField('Ngày bắt đầu học kỳ III',
+                        id='hk3',
+                        validators=[DataRequired()])
+    date_end = DateField('Ngày kết thúc năm học',
+                        id='date_end',
+                        validators=[DataRequired()])
+
+
+#----------------------------------Ky----------------------------------
+
+class CreateKyForm(FlaskForm):
+    nam_id = SelectField('Năm học',
+                        id='nam_id',
+                        validators=[DataRequired()])
+    ten_ky = SelectField('Kỳ',
+                        id='ten_ky',
+                        validators=[DataRequired()],
+                        choices=[('1', 'Học kỳ I'), ('2', 'Học kỳ II'), ('3', 'Học kỳ III')])
+    date_start = DateField('Ngày bắt đầu kỳ học',
+                        id='date_start',
+                        validators=[DataRequired()])
 
 
 # #----------------------------------Teacher----------------------------------

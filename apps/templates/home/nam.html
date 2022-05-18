@@ -1,0 +1,648 @@
+
+{% extends "layouts/base.html" %}
+
+{% block title %} Danh sách kỳ học {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="pcoded-content">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Kỳ học</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Kỳ học</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="row">
+                        <div class="col-xl-5">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center">
+                                    <h5 class="mr-auto">Danh sách năm học</h5>
+                                    <div class="ml-auto">
+                                        <button id="addNam" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới năm học">
+                                            <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-border-style">
+                                        <div class="table-responsive">
+                                            <table id="tableNam" class="table table-hover" data-provide="selectall">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Năm Học</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-7">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center">
+                                    <h5 class="mr-auto">Danh sách kỳ học</h5>
+                                    <div class="ml-auto">
+                                        <button id="addKy" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới kỳ học">
+                                            <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-border-style">
+                                        <div class="table-responsive">
+                                            <table id="tableKy" class="table table-hover" data-provide="selectall">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Năm Học</th>
+                                                        <th>Kỳ Học</th>
+                                                        <th>Ngày Bắt Đầu</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ Hover-table ] end -->
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteConfirmationModal">
+                Open modal
+            </button> -->
+        </div>
+
+        <!-- Năm Học Form Modal -->
+        <div class="modal fade" id="formModalNam" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabelNam" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelNam"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalNam" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formNam" class="form-edit" role="form" method="POST">
+                        {{ formn.hidden_tag() }}
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formn.namhoc.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formn.namhoc(class="form-control", disabled="disabled") }}
+                                        <!-- <small id="ifb_namhoc" class="invalid-feedback text-danger position-absolute text-truncate">Năm bắt đầu là trường bắt buộc.</small> -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formn.hk1.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formn.hk1(class="form-control") }}
+                                        <small id="ifb_hk1" class="invalid-feedback text-danger position-absolute text-truncate">Ngày bắt đầu học kỳ I là trường bắt buộc.</small>
+                                        <small id="ifb_hk1_fail" class="invalid-feedback text-danger position-absolute text-truncate">Giá trị của trường ngày bắt đầu học kỳ I không hợp lệ.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formn.hk2.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formn.hk2(class="form-control") }}
+                                        <small id="ifb_hk2" class="invalid-feedback text-danger position-absolute text-truncate">Ngày bắt đầu học kỳ II là trường bắt buộc.</small>
+                                        <small id="ifb_hk2_fail" class="invalid-feedback text-danger position-absolute text-truncate">Giá trị của trường ngày bắt đầu học kỳ II không hợp lệ.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formn.hk3.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formn.hk3(class="form-control") }}
+                                        <small id="ifb_hk3" class="invalid-feedback text-danger position-absolute text-truncate">Ngày bắt đầu học kỳ III là trường bắt buộc.</small>
+                                        <small id="ifb_hk3_fail" class="invalid-feedback text-danger position-absolute text-truncate">Giá trị của trường ngày bắt đầu học kỳ III không hợp lệ.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formn.date_end.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formn.date_end(class="form-control") }}
+                                        <small id="ifb_date_end" class="invalid-feedback text-danger position-absolute text-truncate">Ngày kết thúc năm học là trường bắt buộc.</small>
+                                        <small id="ifb_date_end_fail" class="invalid-feedback text-danger position-absolute text-truncate">Giá trị của trường ngày kết thúc năm học không hợp lệ.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveEditNam">Lưu</button>
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveAddNam">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Delete Comfirm Modal  -->
+        <div id="deleteConfirmationModal" role="dialog" tabindex="-1" class="modal fade" aria-modal="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content rounded" role="document">
+                    <!--  -->
+                    <div class="modal-body px-0 pb-0">
+                        <div class="w-100 px-2 d-flex flex-column align-items-center justify-content-between">
+                            <i class="feather icon-trash-2 fa-5x pt-3 text-red"></i> 
+                            <span class="py-3">
+                                <h5 class="mb-0 text-red">Delete record</h5>
+                            </span>
+                        </div>
+                        <div class="bg-grey px-3 mt-3 modal-bottom-radius">
+                            <div class="text-center pt-4 text-dark">
+                                <div class="pt-2">
+                                    Xóa bản ghi này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa bản ghi này không?
+                                </div>
+                            </div>
+                            <div class="d-flex py-3 justify-content-center">
+                                <button type="button" data-dismiss="modal" aria-label="Close" class="mr-3 btn btn-sm btn-outline-dark"><span>Hủy</span></button>
+                                <button type="button" class="delete btn btn-sm btn-outline-danger"><span>Xóa</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--  -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Alert -->
+        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-modal="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content rounded" role="document">
+                    <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                        <h5 class="modal-title font-weight-bold" id="alertModalLabel">Thông báo trùng lặp</h5>
+                        <button type="button" class="close btn btn-lg" data-dismiss="modal" aria-label="Close">
+                            <h3 class="m-0" aria-hidden="true">&times;</h3>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="p-2" id="msg"></div>
+                    </div>
+                    <div class="modal-footer" style="padding: 12px 24px;">
+                        <!-- <button type="button" name="insert_data" id="btn_save" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button> -->
+                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+            // $('#formModalNam').modal('show');
+            var datatablesOptionsKy = {
+                ajax: {
+                    url: '/api/ky',
+                    type: 'POST'
+                },
+                columns: [  
+                    {
+                        render: function (data, type, row) {
+                            return (new Date(row.date_end)).getFullYear();
+                            //  + ' - ' + row.end;
+                        }
+                    },
+                    {
+                        render: function (data, type, row) {
+                            if (row.ten_ky == '1'){
+                                return 'Học kỳ I';
+                            }else if (row.ten_ky == '2'){
+                                return 'Học kỳ II';
+                            }
+                            return 'Học kỳ III';
+                        }
+                    },
+                    {data: 'date_start'},
+                    {
+                        render: function (data, type, row) {
+                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editKy list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Xóa" class="delKy hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                    '</ul>'
+                        }, orderable: false, searchable: false
+                    }             
+                ], autoWidth: false, bDestroy: true
+            };
+            $('#tableKy').dataTable(datatablesOptionsKy);
+            
+
+
+            var datatablesOptionsNam = {
+                ajax: {
+                    url: '/api/nam',
+                    type: 'POST'
+                },
+                columns: [  
+                    {
+                        render: function (data, type, row) {
+                            return (new Date(row.date_end)).getFullYear();
+                            //  + ' - ' + row.end;
+                        }
+                    },
+                    {
+                        render: function (data, type, row) {
+                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editNam list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Xóa" class="delNam hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                    '</ul>'
+                        }, orderable: false, searchable: false
+                    }             
+                ], autoWidth: false, bDestroy: true
+            };
+            $('#tableNam').dataTable(datatablesOptionsNam);
+
+
+
+            function checkFormDate(){
+                var hk1 = new Date($('#hk1').val());
+                var hk2 = new Date($('#hk2').val());
+                var hk3 = new Date($('#hk3').val());
+                var date_end = new Date($('#date_end').val());
+
+                if (hk1>hk2 || hk1>hk3 || hk1>date_end) {
+                    return false;
+                } else if (hk2>hk3 || hk2>date_end) {
+                    return false;
+                } else if (hk3 > date_end) {
+                    return false;
+                }
+                return true;
+            }
+
+            function checkDate(input, feedback){
+                if(!checkFormDate()){
+                    $(input).css('border', '1px solid red');
+                    $(feedback).show();
+                }else{
+                    $(input).css('border', '');
+                    $(feedback).hide();
+                }
+            };
+            
+
+            $('#hk1').on('change', function() {
+                var date = new Date($(this).val());
+                var year = date.getFullYear();
+
+                if (checkFormDate()) {
+                    var dateEnd = new Date($('#date_end').val());
+                    var yearEnd = dateEnd.getFullYear();
+                    if(yearEnd){
+                        $('#namhoc').val(year + ' - ' + yearEnd);
+                    }
+                }
+            });
+
+
+            $('#date_end').on('change', function() {
+                var date = new Date($(this).val());
+                var year = date.getFullYear();
+
+                if (checkFormDate()) {
+                    var dateHk1 = new Date($('#hk1').val());
+                    var yearHk1 = dateHk1.getFullYear();
+                    if(yearHk1){
+                        $('#namhoc').val(yearHk1 + ' - ' + year);
+                    }
+                }
+            });
+
+            // call function invalid-feedback
+            invalidFeedback('#hk1', '#ifb_hk1');
+            invalidFeedback('#hk2', '#ifb_hk2');
+            invalidFeedback('#hk3', '#ifb_hk3');
+            invalidFeedback('#date_end', '#ifb_date_end');
+            
+            
+            // Reset form when close modal
+            $('button.closeFormModalNam').on('click', function(){
+                $('#formNam').trigger('reset');
+                $('input').css('border', '');
+                $('small.invalid-feedback').hide('');
+            });
+
+            // Open add modal
+            $('button#addNam').on('click', function(){
+                // Change class save button
+                $('button.saveEditNam').hide();
+                $('button.saveAddNam').show();
+
+                $('#formModalLabelNam').html('Thêm mới năm học'); 
+                $('#formModalNam').modal('show'); 
+            });
+
+            // Event click the save button to add new
+            $('.saveAddNam').on('click', function(){
+                saveFormNam('', 'POST');
+            });
+
+            // Event click the save button to edit
+            $('.saveEditNam').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveFormNam(id, 'PUT');
+            });
+
+            // Function save form
+            function saveFormNam(id, method){
+                var hk1 = $('#hk1').val();
+                var hk2 = $('#hk2').val();
+                var hk3 = $('#hk3').val();
+                var date_end = $('#date_end').val();
+                if(hk1=='' || hk2=='' || hk3=='' || date_end==''){
+                    checkInput('#hk1', '#ifb_hk1');
+                    checkInput('#hk2', '#ifb_hk2');
+                    checkInput('#hk3', '#ifb_hk3');
+                    checkInput('#date_end', '#ifb_date_end');
+                } else if (!checkFormDate()) {
+                    showAlertModal('Thông báo dữ liệu không hợp lệ', 'Ngày không hợp lệ ("Ngày bắt đầu học kỳ I" <= "Ngày bắt đầu học kỳ II" <= "Ngày bắt đầu học kỳ III" <= "Ngày kết thúc năm học"');
+                } else {
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/nam'+id,
+                        type: method,
+                        traditional: true,
+                        data: {hk1: hk1, hk2: hk2, hk3: hk3, date_end: date_end},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Thông báo trùng lặp', data.duplicate);
+                            }else if(data.success){
+                                notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                                $('#formModalNam').modal('hide');
+                                $('#formNam').trigger('reset');
+                                
+                                $('#tableNam').dataTable(datatablesOptionsNam);
+                                $('#tableKy').dataTable(datatablesOptionsKy);
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Edit
+            $('#tableNam').on('click', '.editNam', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/nam/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            var start, end;
+                            $.each(data.data.kys, function(key, value){
+                                var ten_ky = value.ten_ky;
+                                if (ten_ky == 1) {
+                                    start = (new Date(value.date_start)).getFullYear();
+                                    $('#hk1').val(value.date_start);
+                                } else if (ten_ky == 2) {
+                                    $('#hk2').val(value.date_start);
+                                } else if (ten_ky == 3) {
+                                    $('#hk3').val(value.date_start);
+                                }
+                            });
+                            
+                            end = (new Date(data.data.date_end)).getFullYear();
+                            $('#date_end').val(data.data.date_end);
+
+                            $('#namhoc').val(start + ' - ' + end);
+                            
+
+                            //Open modal
+                            $('button.saveAddNam').hide();
+                            $('button.saveEditNam').show().attr('data-id', id);
+
+                            $('#formModalLabelNam').html('Chỉnh sửa năm học: ' + start + ' - ' + end); 
+                            $('#formModalNam').modal('show'); 
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            });
+
+
+            $('#deleteConfirmationModal').on('click', 'button.deleteNam', function(){
+                $.ajax({
+                    url: '/nam/'+$(this).attr("data-id"),
+                    type: 'DELETE',
+                    success: function(data){
+                        if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }else if(data.success){
+                            notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                            $('#tableNam').dataTable(datatablesOptionsNam);
+                            $('#tableKy').dataTable(datatablesOptionsKy);
+                            $('#deleteConfirmationModal').modal('hide');
+                        }
+                    }
+                });
+            });
+
+            // Event click the save button to remove
+            $('#tableNam').on('click', '.delNam', function(){
+                $('#deleteConfirmationModal').modal('show'); 
+                $('button.delete').attr('data-id', $(this).attr("data-id"));
+                $('button.delete').removeClass('deleteKy').addClass('deleteNam')
+            });
+
+
+
+            // -----------------------------------------------------FORM KY HOC-------------------------------------------------------------------
+
+            $('form select').select2();
+            $('form select').val('').trigger('change');
+
+            // $('#nam_id').select2(select2Nam);
+
+            $('.select2-container').addClass('d-block');
+
+
+            // // call function invalid-feedback
+            // invalidFeedbackSelect('#nam_id', '#ifb_nam_id');
+            // invalidFeedbackSelect('#ten_ky', '#ifb_ten_ky');
+            
+            
+            // // Reset form when close modal
+            // $('button.closeFormModalKy').on('click', function(){
+            //     $('#formKy').trigger('reset');
+            //     $('#formKy select').val('').trigger('change');
+
+            //     $('input').css('border', '');
+            //     $('.select2-selection').css('border', '');
+            //     $('small.invalid-feedback').hide('');
+            // });
+
+            // // Open add modal
+            // $('button#addKy').on('click', function(){
+            //     // Change class save button
+            //     $('button.saveEditKy').hide();
+            //     $('button.saveAddKy').show();
+
+            //     $('#formModalLabelKy').html('Thêm mới kỳ học'); 
+            //     $('#formModalKy').modal('show'); 
+            // });
+
+            // // Event click the save button to add new
+            // $('.saveAddKy').on('click', function(){
+            //     saveFormKy('', 'POST');
+            // });
+
+            // // Event click the save button to edit
+            // $('.saveEditKy').on('click', function(){
+            //     var id = $(this).attr("data-id");
+            //     saveFormKy(id, 'PUT');
+            // });
+
+            // // Function save form
+            // function saveFormKy(id, method){
+            //     var nam_id = $('#nam_id').val();
+            //     var ten_ky = $('#ten_ky').val();
+            //     if(nam_id=='' || ten_ky==''){
+            //         checkInput('#nam_id', '#ifb_nam_id');
+            //         checkInput('#ten_ky', '#ifb_ten_ky');
+            //     }else{
+            //         if(method!='POST'){id='/'+id;}
+            //         $.ajax({
+            //             url: '/ky'+id,
+            //             type: method,
+            //             traditional: true,
+            //             data: {nam_id: nam_id, ten_ky: ten_ky},
+            //             success: function(data){
+            //                 if(data.duplicate){
+            //                     showAlertModal('Thông báo trùng lặp', data.duplicate);
+            //                 }else if(data.success){
+            //                     notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+            //                     $('#formModalKy').modal('hide');
+            //                     $('#formKy').trigger('reset');
+            //                     $('#formKy select').val('').trigger('change');
+
+            //                     $('#tableKy').dataTable(datatablesOptionsKy);
+            //                 }
+            //             }
+            //         });
+            //     }
+            // }
+
+            // // Edit
+            // $('#tableKy').on('click', '.editKy', function(){
+            //     // Call api
+            //     var id = $(this).attr("data-id");
+            //     $.ajax({
+            //         url: '/api/ky/info',
+            //         type: 'POST',
+            //         data: {id: id},
+            //         success: function(data){
+            //             if(data.data){
+            //                 // Set input value
+            //                 $('#nam_id').val(data.data.nam_id).trigger('change');
+            //                 $("#ten_ky").val(data.data.ten_ky).trigger('change');
+
+            //                 //Open modal
+            //                 $('button.saveAddKy').hide();
+            //                 $('button.saveEditKy').show().attr('data-id', id);
+
+            //                 var kykoc = '';
+            //                 if (row.ten_ky == '1'){
+            //                     kykoc = 'Học kỳ I';
+            //                 }else if (row.ten_ky == '2'){
+            //                     kykoc = 'Học kỳ II';
+            //                 }else {
+            //                     kykoc = 'Học kỳ III';
+            //                 }
+                            
+            //                 $('#formModalLabelKy').html('Chỉnh sửa kỳ học: ' + kykoc + ' Năm học' + data.data.start + ' - ' + data.data.end); 
+            //                 $('#formModalKy').modal('show'); 
+                            
+            //             }else if(data.error){
+            //                 notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+            //             }
+            //         }
+            //     });
+            // });
+
+
+            // $('#deleteConfirmationModal').on('click', 'button.deleteKy', function(){
+            //     $.ajax({
+            //         url: '/ky/'+$(this).attr("data-id"),
+            //         type: 'DELETE',
+            //         success: function(data){
+            //             if(data.error){
+            //                 notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+            //             }else if(data.success){
+            //                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+            //                 $('#tableKy').dataTable(datatablesOptionsKy);
+            //                 $('#deleteConfirmationModal').modal('hide');
+            //             }
+            //         }
+            //     });
+            // });
+
+            // // Event click the save button to remove
+            // $('#tableKy').on('click', '.delKy', function(){
+            //     $('#deleteConfirmationModal').modal('show'); 
+            //     $('button.delete').attr('data-id', $(this).attr("data-id"));
+            //     $('button.delete').removeClass('deleteNam').addClass('deleteKy')
+            // });
+        });
+    </script>
+
+{% endblock javascripts %}

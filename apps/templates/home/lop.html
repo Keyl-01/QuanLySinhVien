@@ -323,7 +323,7 @@
                 </div>
                 <div class="modal-body px-4 pt-4 pb-0">
                     <form id="formLichLop" class="form-edit" role="form" method="POST">
-                        {{ formll.hidden_tag() }}
+                        {{ formsv.hidden_tag() }}
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
@@ -449,7 +449,6 @@
 
             $('#lop_id').select2(select2Lop);
             $('#lopsv_id').select2(select2Lop);
-            // $('.lop_id').attr('disabled','disabled');
 
             $('.select2-container').addClass('d-block');
 
@@ -697,8 +696,8 @@
             // $("select").off("click");
             $("#start").on("select2:select", function() {
                 // alert($('#start').val());
-                var start = $(this).val();
-                var end = $('#end').val();
+                var start = parseInt($(this).val());
+                var end = parseInt($('#end').val());
                 if(end!=null && start>end){
                     $(this).val(end).trigger('change');
                     $('#end').val(start).trigger('change');
@@ -707,8 +706,8 @@
 
             $("#end").on("select2:select", function() {
                 // alert($('#start').val());
-                var start = $('#start').val();
-                var end = $(this).val();
+                var start = parseInt($('#start').val());
+                var end = parseInt($(this).val());
                 if(start!=null && start>end){
                     $('#start').val(end).trigger('change');
                     $(this).val(start).trigger('change');
@@ -739,9 +738,9 @@
                 $('button.saveEditLL').hide();
                 $('button.saveAddLL').show();
 
-                $('#thu').prop('disabled', false);
-                $('#start').prop('disabled', false);
-                $('#end').prop('disabled', false);
+                // $('#thu').prop('disabled', false);
+                // $('#start').prop('disabled', false);
+                // $('#end').prop('disabled', false);
 
                 $('#formModalLabelLL').html('Thêm mới lịch lớp học'); 
                 $('#formModalLL').modal('show'); 
@@ -813,9 +812,9 @@
                             $("#gv_id").val(data.data.gv_id).trigger('change');
                             $("#phong_id").val(data.data.phong_id).trigger('change');
 
-                            $('#thu').prop('disabled', true);
-                            $('#start').prop('disabled', true);
-                            $('#end').prop('disabled', true);
+                            // $('#thu').prop('disabled', true);
+                            // $('#start').prop('disabled', true);
+                            // $('#end').prop('disabled', true);
 
                             //Open modal
                             $('button.saveAddLL').hide();

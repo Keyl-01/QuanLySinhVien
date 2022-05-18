@@ -385,6 +385,70 @@ class SinhVien(db.Model):
 
 
 
+# -------------------------NamHoc--------------------------------
+
+class Nam(db.Model):
+
+    __tablename__ = 'Nam'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    date_end = db.Column(db.Date, nullable=False)
+    kys = relationship('Ky', backref='nam', lazy=True, cascade="all, delete-orphan")
+    
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if property == 'date_end':
+                value = datetime.strptime(value, '%Y-%m-%d')
+
+            setattr(self, property, value)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'kys': [{'id': ky.id, 'ten_ky': ky.ten_ky, 'date_start': ky.date_start.strftime("%Y-%m-%d")} for ky in self.kys],
+            'date_end': self.date_end.strftime("%Y-%m-%d")
+            # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
+        }
+
+
+
+# -------------------------KyHoc--------------------------------
+
+class Ky(db.Model):
+
+    __tablename__ = 'Ky'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    ten_ky = db.Column(db.Integer, nullable=False)
+    date_start = db.Column(db.Date, nullable=False)
+    nam_id = db.Column(db.Integer, ForeignKey(Nam.id), nullable=False)
+    lops = relationship('Lop', backref='ky', lazy=True, cascade="all, delete-orphan")
+    
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if property == 'date_start':
+                value = datetime.strptime(value, '%Y-%m-%d')
+
+            setattr(self, property, value)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'ten_ky': self.ten_ky,
+            'date_start': self.date_start.strftime("%Y-%m-%d"),
+            'nam_id': self.nam_id,
+            'date_end': self.nam.date_end.strftime("%Y-%m-%d")
+            # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
+        }
+
+
+
 # -------------------------LopHoc--------------------------------
 
 class Lop(db.Model):
@@ -395,6 +459,7 @@ class Lop(db.Model):
     ten_lop = db.Column(db.String(60), unique=True, nullable=False)
     so_luong = db.Column(db.Integer, nullable=False)
     mon_id = db.Column(db.Integer, ForeignKey(Mon.id), nullable=False)
+    ky_id = db.Column(db.Integer, ForeignKey(Ky.id), nullable=False)
     lichlops = relationship('LichLop', backref='lop', lazy=True, cascade="all, delete-orphan")
     sv_ls = relationship('SinhVien_Lop', backref='lop', lazy=True, cascade="all, delete-orphan")
     
@@ -415,7 +480,10 @@ class Lop(db.Model):
             'so_luong': self.so_luong,
             'mon_id': self.mon_id,
             'ma_mon': self.mon.ma_mon,
-            'ten_mon': self.mon.ten_mon
+            'ten_mon': self.mon.ten_mon,
+            'ky_id': self.ky_id,
+            'ky': self.ky.ten_ky,
+            'nam_id': self.ky.nam_id
             # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
         }
 

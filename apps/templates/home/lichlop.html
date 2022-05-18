@@ -269,8 +269,8 @@
 
             $("#start").on("select2:select", function() {
                 // alert($('#start').val());
-                var start = $(this).val();
-                var end = $('#end').val();
+                var start = parseInt($(this).val());
+                var end = parseInt($('#end').val());
                 if(end!=null && start>end){
                     $(this).val(end).trigger('change');
                     $('#end').val(start).trigger('change');
@@ -279,8 +279,8 @@
 
             $("#end").on("select2:select", function() {
                 // alert($('#start').val());
-                var start = $('#start').val();
-                var end = $(this).val();
+                var start = parseInt($('#start').val());
+                var end = parseInt($(this).val());
                 if(start!=null && start>end){
                     $('#start').val(end).trigger('change');
                     $(this).val(start).trigger('change');

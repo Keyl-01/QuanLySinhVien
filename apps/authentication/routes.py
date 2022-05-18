@@ -15,7 +15,7 @@ from flask_login import (
 from apps import db, login_manager
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
-from apps.authentication.models import BoMon, Khoa, Nganh, Mon, SinhVien_Lop, Users, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop
+from apps.authentication.models import BoMon, Khoa, Nganh, Mon, SinhVien_Lop, Users, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop, Nam, Ky
 
 from apps.authentication.util import verify_pass
 
@@ -158,13 +158,11 @@ def dataLop():
 
 @blueprint.route('/api/select/lop', methods=['GET'])
 def selectLop():
-    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
     return jsonify({'results': [{
                                 'id': lop.id, 
                                 'text': lop.ten_lop
                             } for lop in Lop.query.all()]
                     })
-    # dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
 
 @blueprint.route('/api/lop/info', methods=['POST'])
 def dataLopInfo():
@@ -207,6 +205,43 @@ def dataLichLopInfo():
         id = request.form['id']
         lichlop = LichLop.query.filter_by(id=id).first()
         return jsonify({'data': lichlop.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+
+# -------------------------NamHoc--------------------------------
+@blueprint.route('/api/nam', methods=['POST'])
+def dataNam():
+    return jsonify({'data': [nam.to_dict() for nam in Nam.query.all()]})
+
+@blueprint.route('/api/select/nam', methods=['GET'])
+def selectNam():
+    return jsonify({'results': [{
+                                'id': nam.id, 
+                                'text': nam.start + ' - ' + nam.end
+                            } for nam in Nam.query.all()]
+                    })
+
+@blueprint.route('/api/nam/info', methods=['POST'])
+def dataNamInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        nam = Nam.query.filter_by(id=id).first()
+        return jsonify({'data': nam.to_dict()})
+    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+
+
+# -------------------------KyHoc--------------------------------
+@blueprint.route('/api/ky', methods=['POST'])
+def dataKy():
+    return jsonify({'data': [ky.to_dict() for ky in Ky.query.all()]})
+
+@blueprint.route('/api/ky/info', methods=['POST'])
+def dataKyInfo():
+    if 'id' in request.form:
+        id = request.form['id']
+        ky = Ky.query.filter_by(id=id).first()
+        return jsonify({'data': ky.to_dict()})
     return jsonify({'error': 'Không tồn tại dữ liệu này.'})
 
 

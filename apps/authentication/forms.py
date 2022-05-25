@@ -293,15 +293,19 @@ class CreateNamForm(FlaskForm):
                          validators=[DataRequired()])
     hk1 = DateField('Ngày bắt đầu học kỳ I',
                         id='hk1',
+                        format='%d/%m/%Y',
                         validators=[DataRequired()])
     hk2 = DateField('Ngày bắt đầu học kỳ II',
                         id='hk2',
+                        format='%d/%m/%Y',
                         validators=[DataRequired()])
     hk3 = DateField('Ngày bắt đầu học kỳ III',
                         id='hk3',
+                        format='%d/%m/%Y',
                         validators=[DataRequired()])
     date_end = DateField('Ngày kết thúc năm học',
                         id='date_end',
+                        format='%d/%m/%Y',
                         validators=[DataRequired()])
 
 

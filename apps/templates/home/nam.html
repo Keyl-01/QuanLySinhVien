@@ -47,6 +47,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Năm Học</th>
+                                                        <th>Ngày Kết Thúc</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -64,11 +65,11 @@
                             <div class="card">
                                 <div class="card-header d-flex align-items-center">
                                     <h5 class="mr-auto">Danh sách kỳ học</h5>
-                                    <div class="ml-auto">
+                                    <!-- <div class="ml-auto">
                                         <button id="addKy" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới kỳ học">
                                             <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
                                         </button>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="card-body">
                                     <div class="table-border-style">
@@ -79,7 +80,6 @@
                                                         <th>Năm Học</th>
                                                         <th>Kỳ Học</th>
                                                         <th>Ngày Bắt Đầu</th>
-                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -118,7 +118,7 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ formn.namhoc.label(class="text-dark") }}
+                                        {{ formn.namhoc.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ formn.namhoc(class="form-control", disabled="disabled") }}
@@ -246,7 +246,6 @@
 
     <script>
         $(document).ready(function () {
-            // $('#formModalNam').modal('show');
             var datatablesOptionsKy = {
                 ajax: {
                     url: '/api/ky',
@@ -255,8 +254,9 @@
                 columns: [  
                     {
                         render: function (data, type, row) {
-                            return (new Date(row.date_end)).getFullYear();
-                            //  + ' - ' + row.end;
+                            var start = (new Date(row.hk1)).getFullYear();
+                            var end = (new Date(row.date_end)).getFullYear();
+                            return start + ' - ' + end;
                         }
                     },
                     {
@@ -269,15 +269,12 @@
                             return 'Học kỳ III';
                         }
                     },
-                    {data: 'date_start'},
                     {
                         render: function (data, type, row) {
-                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
-                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editKy list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Xóa" class="delKy hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
-                                    '</ul>'
-                        }, orderable: false, searchable: false
-                    }             
+                            const [year, month, day] = row.date_start.split('-');
+                            return day + '/' + month + '/' + year;
+                        }
+                    }            
                 ], autoWidth: false, bDestroy: true
             };
             $('#tableKy').dataTable(datatablesOptionsKy);
@@ -292,8 +289,23 @@
                 columns: [  
                     {
                         render: function (data, type, row) {
-                            return (new Date(row.date_end)).getFullYear();
-                            //  + ' - ' + row.end;
+                            var start = '';
+                            $.each(row.kys, function(key, value){
+                                var ten_ky = value.ten_ky;
+                                if (ten_ky == 1) {
+                                    start = (new Date(value.date_start)).getFullYear();
+                                    return false;
+                                }
+                            });
+                            var date = new Date(row.date_end);
+                            var end = date.getFullYear();
+                            return start + ' - ' + end;
+                        }
+                    },
+                    {
+                        render: function (data, type, row) {
+                            const [year, month, day] = row.date_end.split('-');
+                            return day + '/' + month + '/' + year;
                         }
                     },
                     {
@@ -501,147 +513,8 @@
             $('#tableNam').on('click', '.delNam', function(){
                 $('#deleteConfirmationModal').modal('show'); 
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
-                $('button.delete').removeClass('deleteKy').addClass('deleteNam')
+                $('button.delete').addClass('deleteNam');
             });
-
-
-
-            // -----------------------------------------------------FORM KY HOC-------------------------------------------------------------------
-
-            $('form select').select2();
-            $('form select').val('').trigger('change');
-
-            // $('#nam_id').select2(select2Nam);
-
-            $('.select2-container').addClass('d-block');
-
-
-            // // call function invalid-feedback
-            // invalidFeedbackSelect('#nam_id', '#ifb_nam_id');
-            // invalidFeedbackSelect('#ten_ky', '#ifb_ten_ky');
-            
-            
-            // // Reset form when close modal
-            // $('button.closeFormModalKy').on('click', function(){
-            //     $('#formKy').trigger('reset');
-            //     $('#formKy select').val('').trigger('change');
-
-            //     $('input').css('border', '');
-            //     $('.select2-selection').css('border', '');
-            //     $('small.invalid-feedback').hide('');
-            // });
-
-            // // Open add modal
-            // $('button#addKy').on('click', function(){
-            //     // Change class save button
-            //     $('button.saveEditKy').hide();
-            //     $('button.saveAddKy').show();
-
-            //     $('#formModalLabelKy').html('Thêm mới kỳ học'); 
-            //     $('#formModalKy').modal('show'); 
-            // });
-
-            // // Event click the save button to add new
-            // $('.saveAddKy').on('click', function(){
-            //     saveFormKy('', 'POST');
-            // });
-
-            // // Event click the save button to edit
-            // $('.saveEditKy').on('click', function(){
-            //     var id = $(this).attr("data-id");
-            //     saveFormKy(id, 'PUT');
-            // });
-
-            // // Function save form
-            // function saveFormKy(id, method){
-            //     var nam_id = $('#nam_id').val();
-            //     var ten_ky = $('#ten_ky').val();
-            //     if(nam_id=='' || ten_ky==''){
-            //         checkInput('#nam_id', '#ifb_nam_id');
-            //         checkInput('#ten_ky', '#ifb_ten_ky');
-            //     }else{
-            //         if(method!='POST'){id='/'+id;}
-            //         $.ajax({
-            //             url: '/ky'+id,
-            //             type: method,
-            //             traditional: true,
-            //             data: {nam_id: nam_id, ten_ky: ten_ky},
-            //             success: function(data){
-            //                 if(data.duplicate){
-            //                     showAlertModal('Thông báo trùng lặp', data.duplicate);
-            //                 }else if(data.success){
-            //                     notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
-            //                     $('#formModalKy').modal('hide');
-            //                     $('#formKy').trigger('reset');
-            //                     $('#formKy select').val('').trigger('change');
-
-            //                     $('#tableKy').dataTable(datatablesOptionsKy);
-            //                 }
-            //             }
-            //         });
-            //     }
-            // }
-
-            // // Edit
-            // $('#tableKy').on('click', '.editKy', function(){
-            //     // Call api
-            //     var id = $(this).attr("data-id");
-            //     $.ajax({
-            //         url: '/api/ky/info',
-            //         type: 'POST',
-            //         data: {id: id},
-            //         success: function(data){
-            //             if(data.data){
-            //                 // Set input value
-            //                 $('#nam_id').val(data.data.nam_id).trigger('change');
-            //                 $("#ten_ky").val(data.data.ten_ky).trigger('change');
-
-            //                 //Open modal
-            //                 $('button.saveAddKy').hide();
-            //                 $('button.saveEditKy').show().attr('data-id', id);
-
-            //                 var kykoc = '';
-            //                 if (row.ten_ky == '1'){
-            //                     kykoc = 'Học kỳ I';
-            //                 }else if (row.ten_ky == '2'){
-            //                     kykoc = 'Học kỳ II';
-            //                 }else {
-            //                     kykoc = 'Học kỳ III';
-            //                 }
-                            
-            //                 $('#formModalLabelKy').html('Chỉnh sửa kỳ học: ' + kykoc + ' Năm học' + data.data.start + ' - ' + data.data.end); 
-            //                 $('#formModalKy').modal('show'); 
-                            
-            //             }else if(data.error){
-            //                 notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
-            //             }
-            //         }
-            //     });
-            // });
-
-
-            // $('#deleteConfirmationModal').on('click', 'button.deleteKy', function(){
-            //     $.ajax({
-            //         url: '/ky/'+$(this).attr("data-id"),
-            //         type: 'DELETE',
-            //         success: function(data){
-            //             if(data.error){
-            //                 notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
-            //             }else if(data.success){
-            //                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
-            //                 $('#tableKy').dataTable(datatablesOptionsKy);
-            //                 $('#deleteConfirmationModal').modal('hide');
-            //             }
-            //         }
-            //     });
-            // });
-
-            // // Event click the save button to remove
-            // $('#tableKy').on('click', '.delKy', function(){
-            //     $('#deleteConfirmationModal').modal('show'); 
-            //     $('button.delete').attr('data-id', $(this).attr("data-id"));
-            //     $('button.delete').removeClass('deleteNam').addClass('deleteKy')
-            // });
         });
     </script>
 

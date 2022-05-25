@@ -274,6 +274,9 @@ Drop this callout from its right-click popup menu.]]></comment>
 			<entity schema="Default" name="GiangVien" />
 			<entity schema="Default" name="Phong" />
 		</group>
+		<browser id="Browse-1f0c" name="Nam" confirm_updates="y" >
+			<browse_table schema="Default" entity="Nam" x="20" y="20" width="400" height="300" />
+		</browser>
 	</layout>
 	<layout name="~Layout with Sample Tools" id="Layout-147f" show_column_type="y" show_relation="columns" >
 		<entity schema="Default" name="BoMon" color="BED3F4" x="560" y="48" />

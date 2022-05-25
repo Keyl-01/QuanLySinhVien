@@ -886,6 +886,11 @@ def addNam():
     hk3 = request.form['hk3']
     date_end = request.form['date_end']
 
+    hk1s = Ky.query.filter(Ky.ten_ky == 1).all()
+    for ky in hk1s:
+        if ky.date_start.year == (datetime.strptime(hk1, '%Y-%m-%d')).year:
+            return jsonify({'duplicate': 'Năm học đã tồn tại. Không thể lưu năm học này.'})
+
     # nam = Nam.query.filter(or_(Nam.start == start, Nam.end == end)).first()
     # if nam:
     #     return jsonify({'duplicate': 'Năm học đã tồn tại. Không thể lưu năm học này.'})
@@ -915,6 +920,12 @@ def updateNam(id):
     date_end = request.form['date_end']
 
     found_nam = Nam.query.filter_by(id=id).first()
+
+
+    hk1s = Ky.query.filter(Ky.nam_id != id, Ky.ten_ky == 1).all()
+    for ky in hk1s:
+        if ky.date_start.year == (datetime.strptime(hk1, '%Y-%m-%d')).year:
+            return jsonify({'duplicate': 'Năm học đã tồn tại. Không thể lưu năm học này.'})
 
     # nam = Nam.query.filter(Nam.id != id, or_(Nam.start == start, Nam.end == end)).first()
     # if nam:
@@ -950,47 +961,47 @@ def deleteNam(id):
 #     create_ky_form = CreateKyForm(request.form)
 #     return render_template('home/ky.html', segment='ky', form=create_ky_form)
 
-@blueprint.route('/ky', methods=['POST'])
-def addKy():
-    nam_id = request.form['nam_id']
-    ten_ky = request.form['ten_ky']
+# @blueprint.route('/ky', methods=['POST'])
+# def addKy():
+#     nam_id = request.form['nam_id']
+#     ten_ky = request.form['ten_ky']
 
-    ky = Ky.query.filter(Ky.nam_id == nam_id, Ky.ten_ky == ten_ky).first()
-    if ky:
-        return jsonify({'duplicate': 'Kỳ học đã tồn tại. Không thể lưu kỳ học này.'})
+#     ky = Ky.query.filter(Ky.nam_id == nam_id, Ky.ten_ky == ten_ky).first()
+#     if ky:
+#         return jsonify({'duplicate': 'Kỳ học đã tồn tại. Không thể lưu kỳ học này.'})
 
-    ky = Ky(**request.form)
-    db.session.add(ky)
-    db.session.commit()
+#     ky = Ky(**request.form)
+#     db.session.add(ky)
+#     db.session.commit()
         
-    return jsonify({'success': 'Thêm thành công.'})
+#     return jsonify({'success': 'Thêm thành công.'})
 
-@blueprint.route('/ky/<int:id>', methods=['PUT'])
-def updateKy(id):
-    nam_id = request.form['nam_id']
-    ten_ky = request.form['ten_ky']
+# @blueprint.route('/ky/<int:id>', methods=['PUT'])
+# def updateKy(id):
+#     nam_id = request.form['nam_id']
+#     ten_ky = request.form['ten_ky']
 
-    found_ky = Ky.query.filter_by(id=id).first()
+#     found_ky = Ky.query.filter_by(id=id).first()
 
-    ky = Ky.query.filter(Ky.id != id, Ky.nam_id == nam_id, Ky.ten_ky == ten_ky).first()
-    if ky:
-        return jsonify({'duplicate': 'Năm học đã tồn tại. Không thể lưu năm học này.'})
+#     ky = Ky.query.filter(Ky.id != id, Ky.nam_id == nam_id, Ky.ten_ky == ten_ky).first()
+#     if ky:
+#         return jsonify({'duplicate': 'Năm học đã tồn tại. Không thể lưu năm học này.'})
 
-    ky = Ky(**request.form)
-    found_ky.nam_id = ky.nam_id
-    found_ky.ten_ky = ky.ten_ky
-    db.session.commit()
+#     ky = Ky(**request.form)
+#     found_ky.nam_id = ky.nam_id
+#     found_ky.ten_ky = ky.ten_ky
+#     db.session.commit()
         
-    return jsonify({'success': 'Cập nhật thành công.'})
+#     return jsonify({'success': 'Cập nhật thành công.'})
 
-@blueprint.route('/ky/<int:id>', methods=['DELETE'])
-def deleteKy(id):
-    ky = Ky.query.get_or_404(id)
-    if ky is None:
-        return jsonify({'error': 'Không tìm thấy.'})
-    db.session.delete(ky)
-    db.session.commit()
-    return jsonify({'success': 'Xóa thành công.'})
+# @blueprint.route('/ky/<int:id>', methods=['DELETE'])
+# def deleteKy(id):
+#     ky = Ky.query.get_or_404(id)
+#     if ky is None:
+#         return jsonify({'error': 'Không tìm thấy.'})
+#     db.session.delete(ky)
+#     db.session.commit()
+#     return jsonify({'success': 'Xóa thành công.'})
 
 
 

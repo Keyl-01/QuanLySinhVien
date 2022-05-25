@@ -438,11 +438,13 @@ class Ky(db.Model):
             setattr(self, property, value)
 
     def to_dict(self):
+        hk1 = Ky.query.filter(Ky.nam_id == self.nam_id, Ky.ten_ky == 1).first()
         return {
             'id': self.id,
             'ten_ky': self.ten_ky,
             'date_start': self.date_start.strftime("%Y-%m-%d"),
             'nam_id': self.nam_id,
+            'hk1': hk1.date_start.strftime("%Y-%m-%d"),
             'date_end': self.nam.date_end.strftime("%Y-%m-%d")
             # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
         }

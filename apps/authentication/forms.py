@@ -217,8 +217,14 @@ class CreateSinhVienForm(FlaskForm):
 #----------------------------------LopHoc----------------------------------
 
 class CreateLopForm(FlaskForm):
-    ky_id = SelectField('Kỳ',
-                        id='ky_id')
+    nam_id = SelectField('Năm học',
+                        id='nam_id',
+                        validators=[DataRequired()])
+
+    ky_id = SelectField('Kỳ học',
+                        id='ky_id',
+                        choices=[('1', 'Học kỳ I'), ('2', 'Học kỳ II'), ('3', 'Học kỳ III')],
+                        validators=[DataRequired()])
 
     ten_lop = StringField('Tên lớp',
                          id='ten_lop',

@@ -581,8 +581,8 @@ def deleteSinhVien(id):
 @blueprint.route('/lop')
 def lop():
     create_lop_form = CreateLopForm(request.form)
-    # ky = Ky.query.all()
-    # create_lop_form.mon_id.choices = dict([(row.ten_bomon, [(mon.id, mon.ma_mon + ' - ' + mon.ten_mon) for mon in row.mons]) for row in bomon])
+    nam = Nam.query.all()
+    create_lop_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
 
     bomon = BoMon.query.all()
     create_lop_form.mon_id.choices = dict([(row.ten_bomon, [(mon.id, mon.ma_mon + ' - ' + mon.ten_mon) for mon in row.mons]) for row in bomon])

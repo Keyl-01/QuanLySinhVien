@@ -155,6 +155,11 @@ def dataLop():
     # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
     return jsonify({'data': [lop.to_dict() for lop in Lop.query.all()]})
 
+@blueprint.route('/api/lop/<int:nam_id>/<int:ky_id>', methods=['GET'])
+def dataLopFilter(nam_id, ky_id):
+    ky = Ky.query.filter(Ky.nam_id == nam_id, Ky.ten_ky == ky_id).first()
+    # data = db.session.query(Nganh, Khoa).join(Nganh, Khoa.id == Nganh.khoa_id)
+    return jsonify({'data': [lop.to_dict() for lop in Lop.query.filter(Lop.ky_id == ky.id).all()]})
 
 @blueprint.route('/api/select/lop', methods=['GET'])
 def selectLop():

@@ -9,6 +9,11 @@
 {% block content %}
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
+
+
+            
+
+
             <!-- [ breadcrumb ] start -->
             <div class="page-header">
                 <div class="page-block">
@@ -34,6 +39,22 @@
                             <div class="card-header d-flex align-items-center">
                                 <h5 class="mr-auto">Danh sách lớp học</h5>
                                 <div class="ml-auto">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ forml.nam_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ forml.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25", style="padding: 6px 12px;") }}</td>      
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                                <div class="ml-2">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ forml.ky_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ forml.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25", style="padding: 6px 12px;") }}</td>           
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                                <div class="ml-4">
                                     <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới lớp học">
                                         <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
                                     </button>
@@ -454,26 +475,44 @@
 
             var datatablesOptionsLL = '';
             var datatablesOptionsSV = '';
-            var datatablesOptions = {
-                ajax: {
-                    url: '/api/lop',
-                    type: 'POST'
-                },
-                columns: [
-                    {data: 'ma_mon'},
-                    {data: 'ten_mon'},
-                    {data: 'ten_lop'},
-                    {
-                        render: function (data, type, row) {
-                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
-                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editLop list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Xóa" class="delLop hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
-                                    '</ul>'
-                        }, orderable: false, searchable: false
-                    }             
-                ], autoWidth: false, bDestroy: true, ordering: false
-            };
-            $('#table').dataTable(datatablesOptions);
+            function datatablesOptions(nam_id, ky_id) {
+                return {
+                    ajax: {
+                        url: '/api/lop/'+nam_id+'/'+ky_id,
+                        type: 'GET'
+                    },
+                    columns: [
+                        {data: 'ma_mon'},
+                        {data: 'ten_mon'},
+                        {data: 'ten_lop'},
+                        {
+                            render: function (data, type, row) {
+                                return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                            '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editLop list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                            '<li data-id="'+ row.id + '" title="Xóa" class="delLop hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                        '</ul>'
+                            }, orderable: false, searchable: false
+                        }             
+                    ], autoWidth: false, bDestroy: true, ordering: false
+                };
+            }
+            var nam_id = $('#nam_id').val();
+            var ky_id = $('#ky_id').val();
+            $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+
+
+            $('#nam_id').on('change', function(){
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
+
+            $('#ky_id').on('change', function(){
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
+
 
             // call function invalid-feedback
             invalidFeedback('#ten_lop', '#ifb_ten_lop');
@@ -547,7 +586,9 @@
                                 $('#lop_id').select2(select2Lop);
                                 $('#lopsv_id').select2(select2Lop);
 
-                                $('#table').dataTable(datatablesOptions);
+                                var nam_id = $('#nam_id').val();
+                                var ky_id = $('#ky_id').val();
+                                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
                             }
                         }
                     });
@@ -674,7 +715,9 @@
                             notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
                         }else if(data.success){
                             notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
-                            $('#table').dataTable(datatablesOptions);
+                            var nam_id = $('#nam_id').val();
+                            var ky_id = $('#ky_id').val();
+                            $('#table').dataTable(datatablesOptions(nam_id, ky_id));
                             $('#deleteConfirmationModal').modal('hide');
                         }
                     }

@@ -125,9 +125,9 @@
                                                     <td class="address"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="">Bộ môn</td>
+                                                    <td class="">Lớp chuyên ngành</td>
                                                     <td class="">:</td>
-                                                    <td class="bomon_id"></td>
+                                                    <td class="ten_lcn"></td>
                                                 </tr>
 
                                             </tbody>
@@ -251,16 +251,23 @@
                     data: {id: id},
                     success: function(data){
                         if(data.data){
+                            
                             // Set input value
                             $('.ma_sv').html(data.data.ma_sv);
                             $('.name').html(data.data.last_name + ' ' + data.data.first_name);
                             $('.date_birth').html(data.data.date_birth);
                             $('.email').html(data.data.email);
                             $('.phone').html(data.data.phone);
+
+                            var result = ''
+                            $.each(data.data.lcns, function(key, value){
+                                result += value.ten_lcn + ', ';
+                            });
+                            $('.ten_lcn').html(result);
+
                             if(data.data.address || data.data.xa || data.data.quan || data.data.city){
                                 $('.address').html(data.data.address + ' - ' + data.data.xa + ' - ' + data.data.quan + ' - ' + data.data.city);
                             }
-                            $('.bomon_id').html(data.data.ten_bomon);
 
                             $('#username').val(data.data.username);
                             

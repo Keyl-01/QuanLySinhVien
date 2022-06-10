@@ -159,6 +159,7 @@
 
     <script>
         $(document).ready(function () {
+            var id = '{{ current_user.id }}';
 
             function datatablesOptionsDiem(sv_id) {
                 return {
@@ -212,18 +213,18 @@
             $('#nam_id').on('change', function() {
                 var nam_id = $('#nam_id').val();
                 var ky_id = $('#ky_id').val();
-                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
+                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(id, nam_id, ky_id));
             });
             $('#ky_id').on('change', function() {
                 var nam_id = $('#nam_id').val();
                 var ky_id = $('#ky_id').val();
-                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
+                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(id, nam_id, ky_id));
             });
             
 
 
                 // Call api
-                var id = '{{ current_user.id }}';
+                
                 $.ajax({
                     url: '/api/sinhvien/info',
                     type: 'POST',

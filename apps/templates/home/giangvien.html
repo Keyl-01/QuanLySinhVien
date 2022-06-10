@@ -35,7 +35,7 @@
                             <div class="card-header d-flex align-items-center">
                                 <h5 class="mr-auto">Danh sách giảng viên</h5>
                                 <div class="ml-auto">
-                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới ngành">
+                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới giảng viên">
                                         <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
                                     </button>
                                 </div>
@@ -376,7 +376,7 @@
                                     '</ul>'
                         }, orderable: false, searchable: false
                     }             
-                ], autoWidth: false, bDestroy: true, ordering: false
+                ], autoWidth: false, bDestroy: true
             };
             $('#table').dataTable(datatablesOptions);
 
@@ -612,7 +612,7 @@
 
                             //Open modal
                             $('button.saveTK').attr('data-id', id);
-                            $('#formModalLabelTK').html('Cấp mật khẩu: ' + data.data.ma_nv + ' - ' + data.data.last_name + ' ' + data.data.first_name); 
+                            $('#formModalLabelTK').html('Cấp mật khẩu: ' + data.data.ma_gv + ' - ' + data.data.last_name + ' ' + data.data.first_name); 
                             $('#formModalTK').modal('show'); 
                             
                         }else if(data.error){

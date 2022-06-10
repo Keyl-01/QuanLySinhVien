@@ -4,15 +4,37 @@
     <script src="/static/assets/js/app.min.js"></script>
     <!-- <script src="/static/assets/plugins/bootstrap/js/bootstrap.min.js"></script> -->
     <script src="/static/assets/plugins/bootstrap/js/bootstrap421.min.js"></script>
+    <!-- <script src="/static/assets/plugins/bootstrap/js/bootstrappro.min.js"></script> -->
     <script src="/static/assets/plugins/select2/js/select2.min.js"></script>
     <script src="/static/assets/plugins/data-tables/js/datatables.min.js"></script>
     <script src="/static/assets/plugins/modal-window-effects/js/classie.js"></script>
     <script src="/static/assets/plugins/modal-window-effects/js/modalEffects.js"></script>
     <script src="/static/assets/plugins/notification/js/bootstrap-growl.min.js"></script>
-    <script src="/static/assets/plugins/inputmask/js/autoNumeric.js"></script>
+    <script src="/static/assets/plugins/inputmask/js/autoNumeric.min.js"></script>
     <script src="/static/assets/plugins/js/collapse.js"></script>
+    <script src="/static/assets/plugins/choices.min.js"></script>
+    <script src="/static/assets/plugins/perfect-scrollbar.min.js"></script>
+    <script src="/static/assets/plugins/popper.min.js"></script>
+    <!-- <script src="/static/assets/plugins/menu-setting.js"></script> -->
     <!-- <script src="/static/assets/plugins/smart-wizard/js/jquery.smartizard.min.css"></script> -->
     <script src="/static/assets/js/pcoded.min.js"></script>
+
+        <!-- Specific Page JS goes HERE  -->
+    <script>
+        
+        // var textRemove = new Choices(
+        //     document.getElementById('skill-mlt-select'), {
+        //     delimiter: ',',
+        //     editItems: true,
+        //     maxItemCount: 5,
+        //     removeItemButton: true,
+        // }
+        // );
+    </script>
+
+
+
+	<!-- <script src="https://appsrv1-147a1.kxcdn.com/datta-able-pro-v100/js/menu-setting.js"></script> -->
     
     <script>
         //notification 
@@ -57,6 +79,36 @@
                 },
                 keyup: function() {
                     checkInput(input, feedback);
+                }
+            });
+        }
+
+
+        function checkInputPassword(){
+            var password = $('#password').val();
+            var confirm_password = $('#confirm_password').val();
+            if(password!=confirm_password && confirm_password!=''){
+                $('#confirm_password').css('border', '1px solid red');
+                $('#ifb_confirm_password').hide();
+                $('#ifb_confirm_password_check').show();
+            } else if (confirm_password==''){
+                $('#confirm_password').css('border', '1px solid red');
+                $('#ifb_confirm_password_check').hide();
+                $('#ifb_confirm_password').show();
+            } else if (password == confirm_password){
+                $('#confirm_password').css('border', '');
+                $('#ifb_confirm_password').hide();
+                $('#ifb_confirm_password_check').hide();
+            }
+        };
+
+        function invalidFeedbackPassword(){
+            $('#confirm_password').on({
+                focusout: function() {
+                    checkInputPassword();
+                },
+                keyup: function() {
+                    checkInputPassword();
                 }
             });
         }

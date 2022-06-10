@@ -8,7 +8,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
-    <div class="pcoded-content">
+    <div class="pcoded-content pt-2">
         <div class="pcoded-inner-content">
             <!-- [ breadcrumb ] start -->
             <div class="page-header">
@@ -227,6 +227,70 @@
             </div>
         </div>
 
+
+        <!-- Tài khoản Form Modal -->
+        <div class="modal fade" id="formModalTK" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelTK"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalTK" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formTK" class="form-edit" role="form" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.username.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-7 align-self-end">
+                                        {{ form.username(class="form-control bg-white shadow-none", style="padding: 6px 12px;", disabled="disabled") }}
+                                        <!-- <small id="ifb_username" class="invalid-feedback text-danger position-absolute text-truncate">Mã nhân viên là trường bắt buộc.</small> -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.password.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-7 align-self-end">
+                                        {{ form.password(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_password" class="invalid-feedback text-danger position-absolute text-truncate">Mật khẩu là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ form.confirm_password.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-7 align-self-end">
+                                        {{ form.confirm_password(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_confirm_password" class="invalid-feedback text-danger position-absolute text-truncate">Xác nhận mật khẩu là trường bắt buộc.</small>
+                                        <small id="ifb_confirm_password_check" class="invalid-feedback text-danger position-absolute text-truncate">Mật khẩu không trùng khớp.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveTK">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
+
         <!-- Delete Comfirm Modal  -->
         <div id="deleteConfirmationModal" role="dialog" tabindex="-1" class="modal fade" aria-modal="true">
             <div class="modal-dialog modal-md">
@@ -306,6 +370,7 @@
                     {
                         render: function (data, type, row) {
                             return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                        '<li data-id="'+ row.id + '" title="Cấp mật khẩu" class="taikhoanGV list-inline-item c-pointer px-2 m-0"><i class="feather icon-unlock"></i></li>'+
                                         '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editGV list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
                                         '<li data-id="'+ row.id + '" title="Xóa" class="delGV hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
                                     '</ul>'
@@ -470,6 +535,91 @@
             $('#table').on('click', '.delGV', function(){
                 $('#deleteConfirmationModal').modal('show'); 
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
+            });
+
+
+
+
+
+
+
+            invalidFeedbackPassword();
+            invalidFeedback('#password', '#ifb_password');
+            // invalidFeedback('#confirm_password', '#ifb_confirm_password');
+            
+            $('#password').on('keyup', function(){
+                checkInputPassword();
+            });
+            $('#confirm_password').on('keyup', function(){
+                // alert('keyup');
+                checkInputPassword();
+            });
+
+            // Reset form when close modal
+            $('button.closeFormModalTK').on('click', function(){
+                $('#formTK').trigger('reset');
+                $('input').css('border', '');
+                $('.select2-selection').css('border', '');
+                $('small.invalid-feedback').hide('');
+            });
+
+            // Event click the save button to edit
+            $('.saveTK').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveFormTK(id, 'PUT');
+            });
+
+            // Function save form TK
+            function saveFormTK(id, method){
+                var password = $('#password').val();
+                var confirm_password = $('#confirm_password').val();
+                if(password=='' || confirm_password=='' || password!=confirm_password){
+                    checkInputPassword();
+                    checkInput('#password', '#ifb_password');
+                    // checkInput('#confirm_password', '#ifb_confirm_password');
+                }else{
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/taikhoan'+id,
+                        type: method,
+                        data: {giangvien: 'giangvien', password: password},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Thông báo trùng lặp', data.duplicate);
+                            }else if(data.success){
+                                notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                                $('#formModalTK').modal('hide');
+                                $('#formTK').trigger('reset');
+
+                                // $('#table').dataTable(datatablesOptions);
+                            }
+                        }
+                    });
+                }
+            }
+
+            $('#table').on('click', '.taikhoanGV', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/giangvien/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#username').val(data.data.username);
+
+                            //Open modal
+                            $('button.saveTK').attr('data-id', id);
+                            $('#formModalLabelTK').html('Cấp mật khẩu: ' + data.data.ma_nv + ' - ' + data.data.last_name + ' ' + data.data.first_name); 
+                            $('#formModalTK').modal('show'); 
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
             });
         });
     </script>

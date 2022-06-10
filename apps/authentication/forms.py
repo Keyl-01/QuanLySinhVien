@@ -9,29 +9,29 @@ from wtforms.fields import DateField
 from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, IntegerField, FileField
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.validators import Email, DataRequired, NumberRange, InputRequired
-from apps.authentication.models import Khoa
+# from apps.authentication.models import Khoa
 from apps import db, login_manager
 
 # login and registration
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username',
+    username = StringField('Tên đăng nhập',
                          id='username_login',
                          validators=[DataRequired()])
-    password = PasswordField('Password',
+    password = PasswordField('Mật khẩu',
                              id='pwd_login',
                              validators=[DataRequired()])
 
 
 class CreateAccountForm(FlaskForm):
-    username = StringField('Username',
+    username = StringField('Tên đăng nhập',
                          id='username_create',
                          validators=[DataRequired()])
     email = StringField('Email',
                       id='email_create',
                       validators=[DataRequired(), Email()])
-    password = PasswordField('Password',
+    password = PasswordField('Mật khẩu',
                              id='pwd_create',
                              validators=[DataRequired()])
     # photo = FileField('Your photo', validators=[
@@ -46,6 +46,99 @@ class CreateAccountForm(FlaskForm):
     #                          ('worker', 'worker'),
     #                          ('teacher', 'teacher'),
     #                          ])
+
+#----------------------------------Filter Nam hoc----------------------------------
+
+class CreateFilterNamHocForm(FlaskForm):
+    nam_id = SelectField('Năm học',
+                        id='nam_id',
+                        validators=[DataRequired()])
+
+    ky_id = SelectField('Kỳ học',
+                        id='ky_id',
+                        choices=[('1', 'Học kỳ I'), ('2', 'Học kỳ II'), ('3', 'Học kỳ III')],
+                        validators=[DataRequired()])
+
+
+#----------------------------------Filter Nam hoc----------------------------------
+
+class CreateFilterCTDTForm(FlaskForm):
+    nganh_id = SelectField('Ngành',
+                        id='nganh_id',
+                        validators=[DataRequired()])
+
+    ctdt_id = SelectField('Chương trình đào tạo',
+                        id='ctdt_id',
+                        validators=[DataRequired()])
+
+
+#----------------------------------Tài khoản----------------------------------
+
+class CreateTaiKhoanForm(FlaskForm):
+    username = StringField('Tên đăng nhập',
+                         id='username',
+                         validators=[DataRequired()])
+    password = PasswordField('Mật khẩu',
+                             id='password',
+                             validators=[DataRequired()])
+    type = SelectField('Phòng ban',
+                        id='type',
+                        choices=[('1', 'Phòng Đào tạo'), ('2', 'Phòng Công tác HSSV')],
+                        validators=[DataRequired()])
+
+
+#----------------------------------NhanVien----------------------------------
+
+class CreateNhanVienForm(FlaskForm):
+    ma_nv = StringField('Mã nhân viên',
+                         id='ma_nv',
+                         validators=[DataRequired()])
+    first_name = StringField('Tên',
+                         id='first_name',
+                         validators=[DataRequired()])
+    last_name = StringField('Họ đệm',
+                         id='last_name',
+                         validators=[DataRequired()])
+    date_birth = DateField('Ngày sinh',
+                         id='date_birth',
+                         format='%d-%m-%Y',
+                         validators=[DataRequired()])
+    address = StringField('Địa chỉ cụ thể',
+                         id='address',
+                         validators=[DataRequired()])
+    xa = StringField('Phường/Xã',
+                         id='xa',
+                         validators=[DataRequired()])
+    quan = StringField('Quận/Huyện',
+                         id='quan',
+                         validators=[DataRequired()])
+    city = StringField('Tỉnh/Thành phố',
+                         id='city',
+                         validators=[DataRequired()])
+    email = StringField('Email',
+                      id='email',
+                      validators=[DataRequired(), Email()])
+    phone = StringField('Số điện thoại',
+                      id='phone',
+                      validators=[DataRequired()])
+    type = SelectField('Phòng ban',
+                        id='type',
+                        choices=[('1', 'Phòng Đào tạo'), ('2', 'Phòng Công tác HSSV')],
+                        validators=[DataRequired()])
+    username = StringField('Tên đăng nhập',
+                         id='username',
+                         validators=[DataRequired()])
+
+    current_password = PasswordField('Mật khẩu hiện tại',
+                             id='current_password',
+                             validators=[DataRequired()])
+    password = PasswordField('Mật khẩu',
+                             id='password',
+                             validators=[DataRequired()])
+
+    confirm_password = PasswordField('Xác nhận mật khẩu',
+                             id='confirm_password',
+                             validators=[DataRequired()])
 
 
 
@@ -160,6 +253,18 @@ class CreateGiangVienForm(FlaskForm):
                       validators=[DataRequired()])
     bomon_id = SelectField('Bộ môn',
                         id='bomon_id')
+    username = StringField('Tên đăng nhập',
+                         id='username',
+                         validators=[DataRequired()])
+    current_password = PasswordField('Mật khẩu hiện tại',
+                             id='current_password',
+                             validators=[DataRequired()])
+    password = PasswordField('Mật khẩu',
+                             id='password',
+                             validators=[DataRequired()])
+    confirm_password = PasswordField('Xác nhận mật khẩu',
+                             id='confirm_password',
+                             validators=[DataRequired()])
 
 
 #----------------------------------LopChuyenNganh----------------------------------
@@ -212,6 +317,18 @@ class CreateSinhVienForm(FlaskForm):
                       validators=[DataRequired()])
     lcn_id = SelectMultipleField('Lớp chuyên ngành',
                         id='lcn_id')
+    username = StringField('Tên đăng nhập',
+                         id='username',
+                         validators=[DataRequired()])
+    current_password = PasswordField('Mật khẩu hiện tại',
+                             id='current_password',
+                             validators=[DataRequired()])
+    password = PasswordField('Mật khẩu',
+                             id='password',
+                             validators=[DataRequired()])
+    confirm_password = PasswordField('Xác nhận mật khẩu',
+                             id='confirm_password',
+                             validators=[DataRequired()])
 
 
 #----------------------------------LopHoc----------------------------------
@@ -329,6 +446,78 @@ class CreateKyForm(FlaskForm):
                         id='date_start',
                         validators=[DataRequired()])
 
+
+
+#----------------------------------LichThi----------------------------------
+
+class CreateLichThiForm(FlaskForm):
+    nam_id = SelectField('Năm học',
+                        id='nam_id',
+                        validators=[DataRequired()])
+
+    ky_id = SelectField('Kỳ học',
+                        id='ky_id',
+                        choices=[('1', 'Học kỳ I'), ('2', 'Học kỳ II'), ('3', 'Học kỳ III')],
+                        validators=[DataRequired()])
+
+    mon_id = SelectField('Môn học',
+                         id='mon_id',
+                         validators=[DataRequired()])
+    date = DateField('Ngày thi',
+                         id='date',
+                         validators=[DataRequired()])
+    start = SelectField('Ca bắt đầu',
+                         id='start',
+                         validators=[DataRequired()],
+                         choices=[('1', 'Ca 1'), ('2', 'Ca 2'), ('3', 'Ca 3'), ('4', 'Ca 4'), ('5', 'Ca 5')])
+    end = SelectField('Ca kết thúc',
+                         id='end',
+                         validators=[DataRequired()],
+                         choices=[('1', 'Ca 1'), ('2', 'Ca 2'), ('3', 'Ca 3'), ('4', 'Ca 4'), ('5', 'Ca 5')])
+    phong_id = SelectField('Phòng',
+                         id='phong_id',
+                         validators=[DataRequired()])
+                        
+
+
+#----------------------------------SinhVien_LichThi----------------------------------
+
+class CreateSinhVien_LichThiForm(FlaskForm):
+    lichthi_id = SelectField('Lịch thi',
+                         id='lichthi_id',
+                         validators=[DataRequired()])
+    sv_id = SelectField('Sinh viên',
+                        id='sv_id',
+                        validators=[DataRequired()])
+    diemCK = StringField('Điểm cuối kỳ',
+                         id='diemCK',
+                         validators=[DataRequired()])
+
+
+#----------------------------------BangDiem----------------------------------
+
+class CreateBangDiemForm(FlaskForm):
+    nam_id = SelectField('Năm học',
+                        id='nam_id',
+                        validators=[DataRequired()])
+
+    ky_id = SelectField('Kỳ học',
+                        id='ky_id',
+                        choices=[('1', 'Học kỳ I'), ('2', 'Học kỳ II'), ('3', 'Học kỳ III')],
+                        validators=[DataRequired()])
+
+    lop_id = SelectField('Lớp học',
+                         id='lop_id',
+                         validators=[DataRequired()])
+    lichthi_id = SelectField('Lịch thi',
+                         id='lichthi_id',
+                         validators=[DataRequired()])
+    diemQT = StringField('Điểm quá trình',
+                         id='diemQT',
+                         validators=[DataRequired()])
+    diemCK = StringField('Điểm cuối kỳ',
+                         id='diemCK',
+                         validators=[DataRequired()])
 
 # #----------------------------------Teacher----------------------------------
 

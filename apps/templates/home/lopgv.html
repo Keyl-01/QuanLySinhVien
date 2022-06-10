@@ -1,0 +1,190 @@
+
+{% extends "layouts/basegv.html" %}
+
+{% block title %} Danh sách sinh viên {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="pcoded-content pt-2">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Danh sách sinh viên</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Danh sách sinh viên</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="row col-xl-12 mb-3">
+                        <div class="mr-4">
+                            <table>
+                                <tbody><tr>
+                                    <td>{{ form.nam_id.label(class="text-dark mb-0") }}</td>
+                                    <td>{{ form.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
+                                </tr>
+                            </tbody></table>
+                        </div>
+                        <div class="mr-auto">
+                            <table>
+                                <tbody><tr>
+                                    <td>{{ form.ky_id.label(class="text-dark mb-0") }}</td>
+                                    <td>{{ form.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                </tr>
+                            </tbody></table>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <h5 class="mr-auto">Danh sách sinh viên</h5>
+                                <div class="ml-auto">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td><label class="text-dark mb-0" for="lop_id">Lớp học</label></td>
+                                            <td><select class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1" id="lop_id" name="lop_id" required="" style="padding: 6px 12px;"></select></td>      
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-border-style">
+                                    <div class="table-responsive">
+                                        <table id="table" class="table table-hover" data-provide="selectall">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mã Sinh Viên</th>
+                                                    <th>Tên Sinh Viên</th>
+                                                    <th>Ngày Sinh</th>
+                                                    <th>Email</th>
+                                                    <th>Số Điện Thoại</th>
+                                                    <th>Lớp Chuyên Ngành</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ Hover-table ] end -->
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteConfirmationModal">
+                Open modal
+            </button> -->
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+
+            function datatablesOptions(lop_id) {
+                return {
+                    ajax: {
+                        url: '/api/sv_lop/'+lop_id,
+                        type: 'GET'
+                    },
+                    columns: [  
+                        {data: 'ma_sv'},
+                        {
+                            render: function (data, type, row) {
+                                return row.sv_last_name + ' ' + row.sv_first_name
+                            }
+                        },
+                        {data: 'date_birth'},
+                        {data: 'email'},
+                        {data: 'phone'},
+                        {
+                            render: function (data, type, row) {
+                                var result = ''
+                                $.each(row.lcns, function(key, value){
+                                    result += value.ten_lcn + ', ';
+                                });
+                                return result
+                            }
+                        },
+                    ], autoWidth: false, bDestroy: true
+                };
+            };
+
+
+            function selectLop(nam_id, ky_id) {
+                $.ajax({
+                    url: 'api/select/lop/'+nam_id+'/'+ky_id+'/'+'{{ current_user.id }}',
+                    type: 'GET',
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#lop_id').empty();
+                            var count = 0;
+                            $.each(data.data, function(key, value){
+                                if(count == 0){
+                                    var option = new Option(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_lop, value.id, true, true);
+                                    $("#lop_id").val(value.id);
+                                } else {
+                                    var option = new Option(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_lop, value.id, false, false);
+                                }
+                                // jquerify the DOM object 'o' so we can use the html method
+                                $(option).html(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_lop);
+                                $("#lop_id").append(option);
+                                count++;
+                            });
+                        }
+                    }
+                }).then(function() {
+                    var lop_id = $('#lop_id').val();
+                    // alert(lop_id);
+                    if(!lop_id) {
+                        lop_id = 0;
+                    }
+                    $('#table').dataTable(datatablesOptions(lop_id));
+                });
+            };
+            var nam_id = $('#nam_id').val();
+            var ky_id = $('#ky_id').val();
+            selectLop(nam_id, ky_id);
+
+            $('#nam_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                selectLop(nam_id, ky_id);
+            });
+
+            $('#ky_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                selectLop(nam_id, ky_id);
+            });
+
+            $('#lop_id').on('change', function() {
+                var lop_id = $('#lop_id').val();
+                $('#table').dataTable(datatablesOptions(lop_id));
+            });
+
+        });
+    </script>
+
+{% endblock javascripts %}

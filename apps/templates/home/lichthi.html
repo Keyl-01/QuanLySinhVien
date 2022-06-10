@@ -1,7 +1,7 @@
 
 {% extends "layouts/base.html" %}
 
-{% block title %} Danh sách lịch lớp học {% endblock %} 
+{% block title %} Danh sách lịch thi {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -15,11 +15,11 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Lịch lớp học</h5>
+                                <h5 class="m-b-10">Lịch thi</h5>
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                                <li class="breadcrumb-item"><a href="javascript:">Lịch lớp học</a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Lịch thi</a></li>
                             </ul>
                         </div>
                     </div>
@@ -32,9 +32,25 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
-                                <h5 class="mr-auto">Danh sách lịch lớp học</h5>
+                                <h5 class="mr-auto">Danh sách lịch thi</h5>
                                 <div class="ml-auto">
-                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới lịch lớp học">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ form.nam_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ form.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                                <div class="ml-3">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ form.ky_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ form.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                                <div class="ml-4">
+                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới lịch thi">
                                         <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
                                     </button>
                                 </div>
@@ -47,12 +63,9 @@
                                                 <tr>
                                                     <th>Mã Môn</th>
                                                     <th>Tên Môn</th>
-                                                    <th>Lớp</th>
-                                                    <th>Thứ</th>
-                                                    <th>Ca</th>
-                                                    <th>Phòng</th>
-                                                    <th>Tín Chỉ</th>
-                                                    <th>Giảng Viên</th>
+                                                    <th>Ca Thi</th>
+                                                    <th>Phòng Thi</th>
+                                                    <th>Ngày Thi</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -74,7 +87,7 @@
             </button> -->
         </div>
 
-        <!-- Lịch Lớp Học Form Modal -->
+        <!-- Lịch Thi Form Modal -->
         <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content rounded">
@@ -85,17 +98,17 @@
                     </button>
                 </div>
                 <div class="modal-body px-4 pt-4 pb-0">
-                    <form id="formLichLop" class="form-edit" role="form" method="POST">
+                    <form id="formLichThi" class="form-edit" role="form" method="POST">
                         {{ form.hidden_tag() }}
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.lop_id.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.mon_id.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-8 align-self-end">
-                                        {{ form.lop_id(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_lop_id" class="invalid-feedback text-danger position-absolute text-truncate">Lớp là trường bắt buộc.</small>
+                                        {{ form.mon_id(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_mon_id" class="invalid-feedback text-danger position-absolute text-truncate">Môn học là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -103,11 +116,11 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.thu.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.date.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.thu(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_thu" class="invalid-feedback text-danger position-absolute text-truncate">Thứ là trường bắt buộc.</small>
+                                        {{ form.date(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_date" class="invalid-feedback text-danger position-absolute text-truncate">Ngày thi là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +132,7 @@
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ form.start(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_start" class="invalid-feedback text-danger position-absolute text-truncate">Ca bắt đầu là trường bắt buộc.</small>
+                                        <!-- <small id="ifb_start" class="invalid-feedback text-danger position-absolute text-truncate">Ca bắt đầu là trường bắt buộc.</small> -->
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +144,7 @@
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ form.end(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_end" class="invalid-feedback text-danger position-absolute text-truncate">Ca kết thúc là trường bắt buộc.</small>
+                                        <!-- <small id="ifb_end" class="invalid-feedback text-danger position-absolute text-truncate">Ca kết thúc là trường bắt buộc.</small> -->
                                     </div>
                                 </div>
                             </div>
@@ -145,17 +158,6 @@
                                         {{ form.phong_id(class="form-control") }}
                                         <small id="ifb_phong_id" class="invalid-feedback text-danger position-absolute text-truncate">Phòng là trường bắt buộc.</small>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <div class="form-group d-flex w-100 mb-2">
-                                <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                    {{ form.gv_id.label(class="text-dark") }}
-                                </div>
-                                <div class="fieldName pr-0 col-5 align-self-end">
-                                    {{ form.gv_id(class="form-control") }}
                                 </div>
                             </div>
                         </div>
@@ -185,7 +187,7 @@
                         <div class="bg-grey px-3 mt-3 modal-bottom-radius">
                             <div class="text-center pt-4 text-dark">
                                 <div class="pt-2">
-                                    Xóa lịch lớp học này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa lịch lớp học này không?
+                                    Xóa lịch thi này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa lịch thi này không?
                                 </div>
                             </div>
                             <div class="d-flex py-3 justify-content-center">
@@ -198,6 +200,46 @@
                 </div>
             </div>
         </div>
+
+
+
+        <!-- Danh Sách SV Form Modal -->
+        <div class="modal fade" id="formModalSV" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelSV"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalSV" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formSV" class="form-edit" role="form" method="POST">
+                        {{ formsv.hidden_tag() }}
+                        <div class="row">
+                            
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        <small class="text-danger mr-1">*</small>{{ formsv.sv_id.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-8 align-self-end">
+                                        {{ formsv.sv_id(class="form-control bg-white shadow-none", style="padding: 6px 12px;" , multiple="multiple") }}
+                                        <small id="ifb_sv_id" class="invalid-feedback text-danger position-absolute text-truncate">Sinh viên là trường bắt buộc.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveSV">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        
 
         <!-- Modal Alert -->
         <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-modal="true">
@@ -239,32 +281,39 @@
             //     $('body').css('overflow', 'auto');
             // });
 
-            var select2Lop = {
+            function select2SV(mon_id, nam_id, ky_id) {
                 // minimumInputLength: 0,
                 // tags: [],
-                ajax: {
-                    url: 'api/select/lop',
-                    dataType: 'json',
-                    type: "GET",
-                    quietMillis: 50,
-                    results: function (data) {
-                        return {
-                            results: $.map(data, function (item) {
-                                return {
-                                    text: item.text,
-                                    id: item.id
-                                }
-                            })
-                        };
+                return {
+                    ajax: {
+                        closeOnSelect : false,
+                        // placeholder : "Chọn môn học",
+                        allowHtml: true,
+                        allowClear: true,
+                        tags: true,
+                        url: 'api/select/sv_lichthi/'+mon_id+'/'+nam_id+'/'+ky_id,
+                        dataType: 'json',
+                        type: "GET",
+                        quietMillis: 50,
+                        results: function (data) {
+                            return {
+                                results: $.map(data, function (item) {
+                                    return {
+                                        text: item.text,
+                                        id: item.id
+                                    }
+                                })
+                            };
+                        }
                     }
-                }
-            }
+                };
+            };
 
 
             $('form select').select2();
             $('form select').val('').trigger('change');
-            // $('#lop_id').select2(select2Lop);
-            // $('#lop_id').val(4).trigger('change');
+            // $('#lichthi_id').select2(select2Thi);
+            // $('#lichthi_id').val(4).trigger('change');
             $('.select2-container').addClass('d-block');
 
             $("#start").on("select2:select", function() {
@@ -287,55 +336,66 @@
                 }
             });
 
-            var datatablesOptions = {
-                ajax: {
-                    url: '/api/lichlop',
-                    type: 'POST'
-                },
-                columns: [  
-                    {data: 'ma_mon'},
-                    {data: 'ten_mon'},
-                    {data: 'ten_lop'},
-                    {data: 'thu'},
-                    {
-                        render: function (data, type, row) {
-                            return row.start + '-' + row.end
-                        }
+            function datatablesOptions(nam_id, ky_id) {
+                return {
+                    ajax: {
+                        url: '/api/lichthi/'+nam_id+'/'+ky_id,
+                        type: 'GET'
                     },
-                    {data: 'ten_phong'},
-                    {data: 'tinchi'},
-                    {
-                        render: function (data, type, row) {
-                            if(row.gv_id == ''){
-                                return ''
+                    columns: [  
+                        {data: 'ma_mon'},
+                        {data: 'ten_mon'},
+                        {
+                            render: function (data, type, row) {
+                                if (row.start=='' || row.end==''){
+                                    return ''
+                                }
+                                return row.start + ' - ' + row.end
                             }
-                            return row.gv_last_name + ' ' + row.gv_first_name + ' (' + row.ma_gv + ')'
-                        }
-                    },
-                    {
-                        render: function (data, type, row) {
-                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
-                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editLichLop list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Xóa" class="delLichLop hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
-                                    '</ul>'
-                        }, orderable: false, searchable: false
-                    }             
-                ], autoWidth: false, bDestroy: true
+                        },
+                        {data: 'ten_phong'},
+                        {
+                            render: function (data, type, row) {
+                                const [year, month, day] = row.date.split('-');
+                                return day + '/' + month + '/' + year;
+                            }
+                        },
+                        {
+                            render: function (data, type, row) {
+                                return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                            '<li data-id="'+ row.id + '" title="Sinh viên" class="editSV_Thi list-inline-item c-pointer px-2 m-0"><i class="feather icon-users"></i></li>'+
+                                            '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editLichThi list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                            '<li data-id="'+ row.id + '" title="Xóa" class="delLichThi hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                        '</ul>'
+                            }, orderable: false, searchable: false
+                        }             
+                    ], autoWidth: false, bDestroy: true
+                };
             };
-            $('#table').dataTable(datatablesOptions);
+            var nam_id = $('#nam_id').val();
+            var ky_id = $('#ky_id').val();
+            $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+
+            $('#nam_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
+            $('#ky_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
 
             // call function invalid-feedback
-            invalidFeedbackSelect('#lop_id', '#ifb_lop_id');
-            invalidFeedbackSelect('#thu', '#ifb_thu');
-            invalidFeedbackSelect('#start', '#ifb_start');
-            invalidFeedbackSelect('#end', '#ifb_end');
-            invalidFeedbackSelect('#phong_id', '#ifb_phong_id');
-            // invalidFeedbackSelect('#lop_id', '#ifb_lop_id');
+            invalidFeedbackSelect('#mon_id', '#ifb_mon_id');
+            invalidFeedback('#date', '#ifb_date');
             
             
             // Reset form when close modal
             $('button.closeFormModal').on('click', function(){
-                $('form select').val('').trigger('change');
+                $('#formLichThi').trigger('reset');
+                $('#formLichThi select').val('').trigger('change');
                 $('.select2-selection').css('border', '');
                 $('small.invalid-feedback').hide('');
             });
@@ -345,7 +405,7 @@
                 // Change class save button
                 $('button.saveEdit').hide();
                 $('button.saveAdd').show();
-                showFormModal('Thêm mới lịch lớp học');
+                showFormModal('Thêm mới lịch thi');
             });
 
             // Event click the save button to add new
@@ -361,33 +421,33 @@
 
             // Function save form
             function saveForm(id, method){
-                var lop_id = $('#lop_id').val();
-                var thu = $('#thu').val();
+                var mon_id = $('#mon_id').val();
+                var date = $('#date').val();
                 var start = $('#start').val();
                 var end = $('#end').val();
-                var gv_id = $('#gv_id').val();
+                var ky_id = $('#ky_id').val();
                 var phong_id = $('#phong_id').val();
-                if(lop_id==null || thu==null || start==null || end==null || phong_id==null){
-                    checkInputSelect('#lop_id', '#ifb_lop_id');
-                    checkInputSelect('#thu', '#ifb_thu');
-                    checkInputSelect('#start', '#ifb_start');
-                    checkInputSelect('#end', '#ifb_end');
-                    checkInputSelect('#phong_id', '#ifb_phong_id');
+                if(mon_id==null || date==null || ky_id==null){
+                    checkInputSelect('#mon_id', '#ifb_mon_id');
+                    checkInput('#date', '#ifb_date');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({
-                        url: '/lichlop'+id,
+                        url: '/lichthi'+id,
                         type: method,
                         traditional: true,
-                        data: {lop_id: lop_id, thu: thu, start: start, end: end, gv_id: gv_id, phong_id: phong_id},
+                        data: {mon_id: mon_id, date: date, start: start, end: end, ky_id: ky_id, phong_id: phong_id},
                         success: function(data){
                             if(data.duplicate){
                                 showAlertModal('Thông báo trùng lặp', data.duplicate);
                             }else if(data.success){
                                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
                                 $('#formModal').modal('hide');
-                                $('form select').val('').trigger('change');
-                                $('#table').dataTable(datatablesOptions);
+                                $('#formLichThi').trigger('reset');
+                                $('#formLichThi select').val('').trigger('change');
+
+                                var nam_id = $('#nam_id').val();
+                                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
                             }
                         }
                     });
@@ -395,27 +455,26 @@
             }
 
             // Edit
-            $('#table').on('click', '.editLichLop', function(){
+            $('#table').on('click', '.editLichThi', function(){
                 // Call api
                 var id = $(this).attr("data-id");
                 $.ajax({
-                    url: '/api/lichlop/info',
+                    url: '/api/lichthi/info',
                     type: 'POST',
                     data: {id: id},
                     success: function(data){
                         if(data.data){
                             // Set input value
-                            $('#lop_id').val(data.data.lop_id).trigger('change');
-                            $("#thu").val(data.data.thu).trigger('change');
+                            $('#mon_id').val(data.data.mon_id).trigger('change');
+                            $("#date").val(data.data.date).trigger('change');
                             $("#start").val(data.data.start).trigger('change');
                             $("#end").val(data.data.end).trigger('change');
-                            $("#gv_id").val(data.data.gv_id).trigger('change');
                             $("#phong_id").val(data.data.phong_id).trigger('change');
 
                             //Open modal
                             $('button.saveAdd').hide();
                             $('button.saveEdit').show().attr('data-id', id);
-                            showFormModal('Chỉnh sửa lịch lớp học: ' + data.data.lop_id);
+                            showFormModal('Chỉnh sửa lịch thi: ' + data.data.ma_mon + '-' + data.data.ten_mon + ' | Ca: ' + data.data.start + '-' + data.data.end + ' | Ngày thi: ' + data.data.date);
                             
                         }else if(data.error){
                             notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
@@ -427,14 +486,16 @@
 
             $('#deleteConfirmationModal').on('click', 'button.delete', function(){
                 $.ajax({
-                    url: '/lichlop/'+$(this).attr("data-id"),
+                    url: '/lichthi/'+$(this).attr("data-id"),
                     type: 'DELETE',
                     success: function(data){
                         if(data.error){
                             notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
                         }else if(data.success){
                             notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
-                            $('#table').dataTable(datatablesOptions);
+                            var nam_id = $('#nam_id').val();
+                            var ky_id = $('#ky_id').val();
+                            $('#table').dataTable(datatablesOptions(nam_id, ky_id));
                             $('#deleteConfirmationModal').modal('hide');
                         }
                     }
@@ -442,10 +503,100 @@
             });
 
             // Event click the save button to remove
-            $('#table').on('click', '.delLichLop', function(){
+            $('#table').on('click', '.delLichThi', function(){
                 $('#deleteConfirmationModal').modal('show'); 
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
             });
+
+
+
+
+
+            // Reset form when close modal
+            $('button.closeFormModalSV').on('click', function(){
+                $('#formSV').trigger('reset');
+                $('#formSV select').val('').trigger('change');
+                $('.select2-selection').css('border', '');
+                $('small.invalid-feedback').hide('');
+            });
+
+
+            // Event click the save button to edit
+            $('.saveSV').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveForm(id, 'PUT');
+            });
+
+            // Function save form
+            function saveForm(id, method){
+                var sv_id = $('#sv_id').val();
+                if(sv_id==null){
+                    checkInputSelect('#sv_id', '#ifb_sv_id');
+                }else{
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/sv_lichthi'+id,
+                        type: method,
+                        traditional: true,
+                        data: {sv_id: sv_id},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Thông báo trùng lặp', data.duplicate);
+                            }else if(data.success){
+                                notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                                $('#formModalSV').modal('hide');
+                                $('#formSV').trigger('reset');
+                                $('#formSV select').val('').trigger('change');
+
+                                // var nam_id = $('#nam_id').val();
+                                // $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Sinh viên Thi
+            $('#table').on('click', '.editSV_Thi', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/lichthi/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            var nam_id = $('#nam_id').val();
+                            var ky_id = $('#ky_id').val();
+                            $('#sv_id').select2(select2SV(data.data.mon_id, nam_id, ky_id));
+
+                            // Set input value
+                            var substr = []
+                            $.each(data.data.sv_lichthis, function(key, value){
+                                if ($('#sv_id').find("option[value='" + value.sv_id + "']").length) {
+                                    substr.push(value.sv_id);
+                                } else { 
+                                    var option = new Option(value.ma_sv + ' - ' + value.last_name + ' ' + value.first_name, value.sv_id, true, true);
+                                    $("#sv_id").append(option).trigger('change');
+                                }
+                            });
+                            if(substr.length != 0){
+                                $("#sv_id").val(substr).trigger('change');
+                            }
+                            
+                            $('button.saveSV').attr('data-id', id);
+                            //Open modal
+                            $('#formModalLabelSV').html('Danh sách sinh viên thi: ' + data.data.ma_mon + ' - ' + data.data.ten_mon + ' | Ca: ' + data.data.start + '-' + data.data.end + ' | Ngày thi: ' + data.data.date);
+                            $('#formModalSV').modal('show');
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            });
+
+
         });
     </script>
 

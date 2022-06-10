@@ -10,10 +10,6 @@
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
 
-
-            
-
-
             <!-- [ breadcrumb ] start -->
             <div class="page-header">
                 <div class="page-block">
@@ -42,15 +38,15 @@
                                     <table style="float:right">
                                         <tbody><tr>
                                             <td>{{ forml.nam_id.label(class="text-dark mb-0") }}</td>
-                                            <td>{{ forml.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25", style="padding: 6px 12px;") }}</td>      
+                                            <td>{{ forml.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
                                         </tr>
                                     </tbody></table>
                                 </div>
-                                <div class="ml-2">
+                                <div class="ml-3">
                                     <table style="float:right">
                                         <tbody><tr>
                                             <td>{{ forml.ky_id.label(class="text-dark mb-0") }}</td>
-                                            <td>{{ forml.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25", style="padding: 6px 12px;") }}</td>           
+                                            <td>{{ forml.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
                                         </tr>
                                     </tbody></table>
                                 </div>
@@ -440,6 +436,22 @@
 
     <script>
         $(document).ready(function () {
+            $('#nam_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
+            $('#ky_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
+
+            // }).on('blur', function() {
+                //when select is no longer in focus here
+
+
+
             var select2Lop = {
                 // minimumInputLength: 0,
                 // tags: [],
@@ -558,10 +570,11 @@
 
             // Function save form
             function saveForm(id, method){
+                var ky_id = $('#ky_id').val();
                 var ten_lop = $('#ten_lop').val();
                 var so_luong = $('#so_luong').val();
                 var mon_id = $('#mon_id').val();
-                // var gv_id = $('#gv_id').val();
+                var gv_id = $('#gv_id').val();
                 // var sv_id = $('#sv_id').val();
                 if(ten_lop=='' || so_luong=='' || mon_id==null){
                     checkInput('#ten_lop', '#ifb_ten_lop');
@@ -573,7 +586,7 @@
                         url: '/lop'+id,
                         type: method,
                         traditional: true,
-                        data: {ten_lop: ten_lop, so_luong: so_luong, mon_id: mon_id},
+                        data: {ten_lop: ten_lop, so_luong: so_luong, mon_id: mon_id, ky_id: ky_id},
                         success: function(data){
                             if(data.duplicate){
                                 showAlertModal('Thông báo trùng lặp', data.duplicate);
@@ -808,6 +821,7 @@
                 var end = $('#end').val();
                 var gv_id = $('#gv_id').val();
                 var phong_id = $('#phong_id').val();
+                var ky_id = $('#ky_id').val();
                 if(lop_id==null || thu==null || start==null || end==null || phong_id==null){
                     checkInputSelect('#lop_id', '#ifb_lop_id');
                     checkInputSelect('#thu', '#ifb_thu');
@@ -820,7 +834,7 @@
                         url: '/lichlop'+id,
                         type: method,
                         traditional: true,
-                        data: {lop_id: lop_id, thu: thu, start: start, end: end, gv_id: gv_id, phong_id: phong_id},
+                        data: {lop_id: lop_id, thu: thu, start: start, end: end, gv_id: gv_id, phong_id: phong_id, ky_id: ky_id},
                         success: function(data){
                             if(data.duplicate){
                                 showAlertModal('Thông báo trùng lặp', data.duplicate);
@@ -938,6 +952,7 @@
             function saveFormSV(id, method){
                 var lop_id = $('#lopsv_id').val();
                 var sv_id = $('#sv_id').val();
+                var ky_id = $('#ky_id').val();
                 if(lop_id==null || sv_id==null){
                     checkInputSelect('#lopsv_id', '#ifb_lopsv_id');
                     checkInputSelect('#sv_id', '#ifb_sv_id');
@@ -947,7 +962,7 @@
                         url: '/sv_lop'+id,
                         type: method,
                         traditional: true,
-                        data: {lop_id: lop_id, sv_id: sv_id},
+                        data: {lop_id: lop_id, sv_id: sv_id, ky_id: ky_id},
                         success: function(data){
                             if(data.duplicate){
                                 showAlertModal('Thông báo trùng lặp', data.duplicate);

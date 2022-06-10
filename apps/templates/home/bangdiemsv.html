@@ -1,0 +1,256 @@
+
+{% extends "layouts/basesv.html" %}
+
+{% block title %} Bảng điểm {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="pcoded-content pt-2 text-body">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Bảng điểm</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Bảng điểm</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="row">
+                        <!-- [ sample-page ] start -->
+                        <div class="col-lg-2 pr-0">
+                            <div class="card user-card user-card-1">
+                                <div class="nav flex-column nav-pills list-group list-group-flush list-pills" id="user-set-tab" role="tablist" aria-orientation="vertical">
+                                    <a class="nav-link list-group-item list-group-item-action active" id="user-set-profile-tab" data-toggle="pill" href="#user-set-profile" role="tab" aria-controls="user-set-profile" aria-selected="false">
+                                        <span class="f-w-500">Bảng điểm</span>
+                                        <span class="float-right"><i class="feather icon-chevron-right"></i></span>
+                                    </a>
+                                    <a class="nav-link list-group-item list-group-item-action" id="user-set-passwort-tab" data-toggle="pill" href="#user-set-passwort" role="tab" aria-controls="user-set-passwort" aria-selected="true">
+                                        <span class="f-w-500">Bảng điểm chi tiết</span>
+                                        <span class="float-right"><i class="feather icon-chevron-right"></i></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="col-lg-10">
+                            <div class="tab-content bg-transparent p-0 shadow-none" id="user-set-tabContent">
+                                <div class="tab-pane fade active show" id="user-set-profile" role="tabpanel" aria-labelledby="user-set-profile-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5><span class="p-l-5">Bảng điểm</span></h5>
+                                        </div>
+                                        <div class="card-body px-4 pt-4 pb-3">
+                                            
+                                            <div class="table-border-style">
+                                                <div class="table-responsive">
+                                                    <table id="tableDiem" class="table table-hover" data-provide="selectall">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Mã Môn</th>
+                                                                <th>Tên Môn</th>
+                                                                <th>Số TC</th>
+                                                                <th>Điểm</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <div>
+                                                    <table>
+                                                        <tbody><tr>
+                                                            <td class="font-weight-bold">Tổng số tín chỉ tích lũy:</td>
+                                                            <td class="tin"></td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </div>
+
+                                                <div class="mt-1">
+                                                    <table>
+                                                        <tbody><tr>
+                                                            <td class="font-weight-bold">Trung bình chung tích lũy:</td>
+                                                            <td class="diemTB"></td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="user-set-passwort" role="tabpanel" aria-labelledby="user-set-passwort-tab">
+                                    <div class="card">
+                                        <div class="card-header d-flex align-items-center">
+                                            <h5 class='mr-auto'>Bảng điểm chi tiết</h5>
+                                            <div class="ml-auto">
+                                                <table style="float:right">
+                                                    <tbody><tr>
+                                                        <td>{{ form.nam_id.label(class="text-dark mb-0") }}</td>
+                                                        <td>{{ form.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
+                                                    </tr>
+                                                </tbody></table>
+                                            </div>
+                                            <div class="ml-3">
+                                                <table style="float:right">
+                                                    <tbody><tr>
+                                                        <td>{{ form.ky_id.label(class="text-dark mb-0") }}</td>
+                                                        <td>{{ form.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                                    </tr>
+                                                </tbody></table>
+                                            </div>
+                                        </div>
+                                        <div class="card-body px-4 pt-4">
+                                            <div class="table-border-style">
+                                                <div class="table-responsive">
+                                                    <table id="tableDiemCT" class="table table-hover" data-provide="selectall">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Mã Môn</th>
+                                                                <th>Tên Môn</th>
+                                                                <th>Điểm QT</th>
+                                                                <th>Điểm CK</th>
+                                                                <th>Kết Quả</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <!-- [ sample-page ] end -->
+                    </div>
+                    <!-- [ Hover-table ] end -->
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteConfirmationModal">
+                Open modal
+            </button> -->
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+
+            function datatablesOptionsDiem(sv_id) {
+                return {
+                    ajax: {
+                        url: '/api/diemsv/'+sv_id,
+                        type: 'GET'
+                    },
+                    columns: [
+                        {data: 'ma_mon'},
+                        {data: 'ten_mon'},
+                        {data: 'tinchi'},
+                        {
+                            render: function (data, type, row) {   
+                                var diem = row.diemQT*0.3 + row.diemCK*0.7;  
+                                return Math.round(diem * 100) / 100    
+                            }
+                        }           
+                    ], autoWidth: false, bDestroy: true
+                };
+            };
+
+
+            function datatablesOptionsDiemCT(sv_id, nam_id, ky_id) {
+                return {
+                    ajax: {
+                        url: '/api/diemsv/'+sv_id+'/'+nam_id+'/'+ky_id,
+                        type: 'GET'
+                    },
+                    columns: [
+                        {data: 'ma_mon'},
+                        {data: 'ten_mon'},
+                        {data: 'diemQT'},
+                        {data: 'diemCK'},
+                        {
+                            render: function (data, type, row) { 
+                                var diem = row.diemQT*0.3 + row.diemCK*0.7;     
+                                return Math.round(diem * 100) / 100      
+                            }
+                        }           
+                    ], autoWidth: false, bDestroy: true
+                };
+            };
+
+            // var nam_id = $('#nam_id').val();
+            // var ky_id = $('#ky_id').val();
+            // var sv_id = '{{ current_user.id }}';
+            // $('#tableDiem').dataTable(datatablesOptionsDiem(sv_id));
+            
+            // $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
+
+            $('#nam_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
+            });
+            $('#ky_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
+            });
+            
+
+
+                // Call api
+                var id = '{{ current_user.id }}';
+                $.ajax({
+                    url: '/api/sinhvien/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('.tin').html(data.data.tinchi);
+                            $('.diemTB').html(Math.round(data.data.diemTB * 100) / 100);
+
+                            $('#tableDiem').dataTable(datatablesOptionsDiem(id));
+
+                            var nam_id = $('#nam_id').val();
+                            var ky_id = $('#ky_id').val();
+                            $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(id, nam_id, ky_id));
+
+                            //Open modal
+                            $('#formModalLabelDiem').html('Bảng điểm sinh viên: ' + data.data.ma_sv + ' - ' + data.data.last_name + ' ' + data.data.first_name); 
+                            $('#formModalDiem').modal('show'); 
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+
+        });
+    </script>
+
+{% endblock javascripts %}

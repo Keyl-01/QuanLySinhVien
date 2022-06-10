@@ -1,0 +1,156 @@
+
+{% if current_user.role == 3 %}
+{% extends "layouts/basegv.html" %}
+{% elif current_user.role == 4 %}
+{% extends "layouts/basesv.html" %}
+{% endif %} 
+
+{% block title %} Chương trình đào tạo {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="pcoded-content pt-2">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Chương trình đào tạo</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Chương trình đào tạo</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <h5 class="mr-auto">Chương trình đào tạo</h5>
+                                <div class="ml-auto">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ form.nganh_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ form.nganh_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                                <div class="ml-3">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ form.ctdt_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ form.ctdt_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-border-style">
+                                    <div class="table-responsive">
+                                        <table id="table" class="table table-hover" data-provide="selectall">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mã Môn</th>
+                                                    <th>Tên Môn</th>
+                                                    <th>Số Tín Chỉ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ Hover-table ] end -->
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteConfirmationModal">
+                Open modal
+            </button> -->
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+
+            function datatablesOptions(ctdt_id) {
+                return {
+                    ajax: {
+                        url: '/api/ctdt/'+ctdt_id,
+                        type: 'GET'
+                    },
+                    columns: [  
+                        {data: 'ma_mon'},
+                        {data: 'ten_mon'},   
+                        {data: 'tinchi'},      
+                    ], autoWidth: false, bDestroy: true
+                };
+            };
+
+
+            function selectCTDT(nganh_id) {
+                $.ajax({
+                    url: '/api/select/ctdt/'+nganh_id,
+                    type: 'GET',
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#ctdt_id').empty();
+                            var count = 0;
+                            $.each(data.data, function(key, value){
+                                if(count == 0){
+                                    var option = new Option(value.ten_ctdt, value.id, true, true);
+                                    $("#ctdt_id").val(value.id);
+                                } else {
+                                    var option = new Option(value.ten_ctdt, value.id, false, false);
+                                }
+                                // jquerify the DOM object 'o' so we can use the html method
+                                $(option).html(value.ten_ctdt);
+                                $("#ctdt_id").append(option);
+                                count++;
+                            });
+                        }
+                    }
+                }).then(function() {
+                    var ctdt_id = $('#ctdt_id').val();
+                    // alert(lichthi_id);
+                    if(!ctdt_id) {
+                        ctdt_id = 0;
+                    }
+                    $('#table').dataTable(datatablesOptions(ctdt_id));
+                });
+            };
+            var nganh_id = $('#nganh_id').val();
+            selectCTDT(nganh_id);
+
+            $('#nganh_id').on('change', function() {
+                var nganh_id = $('#nganh_id').val();
+                selectCTDT(nganh_id);
+            });
+
+            $('#ctdt_id').on('change', function() {
+                var ctdt_id = $('#ctdt_id').val();
+                $('#table').dataTable(datatablesOptions(ctdt_id));
+            });
+
+        });
+    </script>
+
+{% endblock javascripts %}

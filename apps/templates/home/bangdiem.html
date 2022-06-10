@@ -1,0 +1,526 @@
+
+{% extends "layouts/base.html" %}
+
+{% block title %} Bảng điểm sinh viên {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="pcoded-content pt-2">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Bảng điểm</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Bảng điểm</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="row col-xl-12 mb-3">
+                        <div class="mr-4">
+                            <table>
+                                <tbody><tr>
+                                    <td>{{ form.nam_id.label(class="text-dark mb-0") }}</td>
+                                    <td>{{ form.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
+                                </tr>
+                            </tbody></table>
+                        </div>
+                        <div class="mr-auto">
+                            <table>
+                                <tbody><tr>
+                                    <td>{{ form.ky_id.label(class="text-dark mb-0") }}</td>
+                                    <td>{{ form.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                </tr>
+                            </tbody></table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center">
+                                    <h5 class="mr-auto">Bảng điểm quá trình</h5>
+                                    <div class="ml-auto">
+                                        <table>
+                                            <tbody><tr>
+                                                <td>{{ form.lop_id.label(class="text-dark mb-0") }}</td>
+                                                <td>{{ form.lop_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                            </tr>
+                                        </tbody></table>
+
+                                                <!-- <div class="d-flex w-100">
+                                                    <div class="d-flex justify-content-end align-items-top col-4 pr-1">
+                                                        {{ form.lop_id.label(class="text-dark") }}
+                                                    </div>
+                                                    <div class="pr-0 col-8 align-self-end">
+                                                        {{ form.lop_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}
+                                                    </div>
+                                                </div> -->
+
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-border-style">
+                                        <div class="table-responsive">
+                                            <table id="tableDiemQT" class="table table-hover" data-provide="selectall">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Mã Sinh Viên</th>
+                                                        <th>Tên Sinh Viên</th>
+                                                        <th>Điểm QT</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center">
+                                    <h5 class="mr-auto">Bảng điểm cuối kỳ</h5>
+                                    <div class="ml-auto">
+                                        <table style="float:right">
+                                            <tbody><tr>
+                                                <td>{{ form.lichthi_id.label(class="text-dark mb-0") }}</td>
+                                                <td>{{ form.lichthi_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-border-style">
+                                        <div class="table-responsive">
+                                            <table id="tableDiemCK" class="table table-hover" data-provide="selectall">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Mã Sinh Viên</th>
+                                                        <th>Tên Sinh Viên</th>
+                                                        <th>Điểm CK</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ Hover-table ] end -->
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Diểm QT Form Modal -->
+        <div class="modal fade" id="formModalDiemQT" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelDiemQT"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalDiemQT" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formDiemQT" class="form-edit" role="form" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        {{ form.diemQT.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ form.diemQT(class="form-control autonumber", **{'data-v-max':'10', 'data-v-min':'0'}) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveQT">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
+        <!-- Điểm CK Form Modal -->
+        <div class="modal fade" id="formModalDiemCK" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelDiemCK"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalDiemCK" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formDiemCK" class="form-edit" role="form" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+                            
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                        {{ form.diemCK.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-8 align-self-end">
+                                        {{ form.diemCK(class="form-control autonumber", **{'data-v-max':'10', 'data-v-min':'0'}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveCK">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        
+
+        <!-- Modal Alert -->
+        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-modal="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content rounded" role="document">
+                    <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                        <h5 class="modal-title font-weight-bold" id="alertModalLabel">Thông báo trùng lặp</h5>
+                        <button type="button" class="close btn btn-lg" data-dismiss="modal" aria-label="Close">
+                            <h3 class="m-0" aria-hidden="true">&times;</h3>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="p-2" id="msg"></div>
+                    </div>
+                    <div class="modal-footer" style="padding: 12px 24px;">
+                        <!-- <button type="button" name="insert_data" id="btn_save" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button> -->
+                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+
+            $('.autonumber').autoNumeric('init');
+
+            function datatablesOptionsQT(lop_id) {
+                return {
+                    ajax: {
+                        url: '/api/sv_lop/'+lop_id,
+                        type: 'GET'
+                    },
+                    columns: [  
+                        {data: 'ma_sv'},
+                        {
+                            render: function (data, type, row) {
+                                return row.sv_last_name + ' ' + row.sv_first_name
+                            }
+                        },
+                        {data: 'diemQT'},
+                        {
+                            render: function (data, type, row) {
+                                return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                            '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editDiemQT list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '</ul>'
+                            }, orderable: false, searchable: false
+                        }             
+                    ], autoWidth: false, bDestroy: true
+                };
+            };
+
+
+            function datatablesOptionsCK(lichthi_id) {
+                return {
+                    ajax: {
+                        url: '/api/sv_lichthi/'+lichthi_id,
+                        type: 'GET'
+                    },
+                    columns: [  
+                        {data: 'ma_sv'},
+                        {
+                            render: function (data, type, row) {
+                                return row.sv_last_name + ' ' + row.sv_first_name
+                            }
+                        },
+                        {data: 'diemCK'},
+                        {
+                            render: function (data, type, row) {
+                                return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                            '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editDiemCK list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '</ul>'
+                            }, orderable: false, searchable: false
+                        }             
+                    ], autoWidth: false, bDestroy: true
+                };
+            };
+
+
+            function select2Lop(nam_id, ky_id) {
+                $.ajax({
+                    url: 'api/select/lop/'+nam_id+'/'+ky_id,
+                    type: 'GET',
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#lop_id').empty();
+                            var count = 0;
+                            $.each(data.data, function(key, value){
+                                if(count == 0){
+                                    var option = new Option(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_lop, value.id, true, true);
+                                    $("#lop_id").val(value.id);
+                                } else {
+                                    var option = new Option(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_lop, value.id, false, false);
+                                }
+                                // jquerify the DOM object 'o' so we can use the html method
+                                $(option).html(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_lop);
+                                $("#lop_id").append(option);
+                                count++;
+                            });
+                        }
+                    }
+                }).then(function() {
+                    var lop_id = $('#lop_id').val();
+                    // alert(lop_id);
+                    if(!lop_id) {
+                        lop_id = 0;
+                    }
+                    $('#tableDiemQT').dataTable(datatablesOptionsQT(lop_id));
+                });
+            };
+
+            function select2LichThi(nam_id, ky_id) {
+                $.ajax({
+                    url: 'api/select/lichthi/'+nam_id+'/'+ky_id,
+                    type: 'GET',
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#lichthi_id').empty();
+                            var count = 0;
+                            $.each(data.data, function(key, value){
+                                if(count == 0){
+                                    var option = new Option(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_phong + '; ' + value.start + '-' + value.end + '; ' + value.date, value.id, true, true);
+                                    $("#lichthi_id").val(value.id);
+                                } else {
+                                    var option = new Option(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_phong + '; ' + value.start + '-' + value.end + '; ' + value.date, value.id, false, false);
+                                }
+                                // jquerify the DOM object 'o' so we can use the html method
+                                $(option).html(value.ma_mon + '-' + value.ten_mon + ' | ' + value.ten_phong + '; ' + value.start + '-' + value.end + '; ' + value.date);
+                                $("#lichthi_id").append(option);
+                                count++;
+                            });
+                        }
+                    }
+                }).then(function() {
+                    var lichthi_id = $('#lichthi_id').val();
+                    // alert(lichthi_id);
+                    if(!lichthi_id) {
+                        lichthi_id = 0;
+                    }
+                    $('#tableDiemCK').dataTable(datatablesOptionsCK(lichthi_id));
+                });
+            };
+
+
+            var nam_id = $('#nam_id').val();
+            var ky_id = $('#ky_id').val();
+            select2Lop(nam_id, ky_id);
+            select2LichThi(nam_id, ky_id);
+
+            $('#nam_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                select2Lop(nam_id, ky_id);
+                select2LichThi(nam_id, ky_id);
+            });
+
+            $('#ky_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                select2Lop(nam_id, ky_id);
+                select2LichThi(nam_id, ky_id);
+            });
+
+            $('#lop_id').on('change', function() {
+                var lop_id = $('#lop_id').val();
+                $('#tableDiemQT').dataTable(datatablesOptionsQT(lop_id));
+            });
+
+            $('#lichthi_id').on('change', function() {
+                var lichthi_id = $('#lichthi_id').val();
+                $('#tableDiemCK').dataTable(datatablesOptionsCK(lichthi_id));
+            });
+
+            
+            
+            // Reset form when close modal
+            $('button.closeFormModalQT').on('click', function(){
+                $('#formDiemQT').trigger('reset');
+                $('#formDiemQT select').val('').trigger('change');
+                $('.select2-selection').css('border', '');
+                $('small.invalid-feedback').hide('');
+            });
+
+            // Event click the save button to edit
+            $('.saveQT').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveFormQT(id, 'PUT');
+            });
+
+            // Function save form
+            function saveFormQT(id, method){
+                var diemQT = $('#diemQT').val();
+                if(method!='POST'){id='/'+id;}
+                $.ajax({
+                    url: '/bangdiem'+id,
+                    type: method,
+                    traditional: true,
+                    data: {diemQT: diemQT},
+                    success: function(data){
+                        if(data.duplicate){
+                            showAlertModal('Thông báo trùng lặp', data.duplicate);
+                        }else if(data.success){
+                            notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                            $('#formModalDiemQT').modal('hide');
+                            $('#formDiemQT').trigger('reset');
+                            $('#formDiemQT select').val('').trigger('change');
+
+                            var lop_id = $('#lop_id').val();
+                            $('#tableDiemQT').dataTable(datatablesOptionsQT(lop_id));
+                        }
+                    }
+                });
+            }
+
+            // Edit
+            $('#tableDiemQT').on('click', '.editDiemQT', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/sv_lop/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#diemQT').val(data.data.diemQT).trigger('change');
+
+                            //Open modal
+                            $('button.saveQT').attr('data-id', id);
+                            $('#formModalLabelDiemQT').html('Chỉnh sửa điểm quá trình: ' + data.data.ma_sv + ' - ' + data.data.sv_last_name + ' ' + data.data.sv_first_name + ' | ' + data.data.ma_mon + '-' + data.data.ten_mon + ' | ' + data.data.ten_lop);
+                            $('#formModalDiemQT').modal('show');                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            });
+
+
+
+
+            // Reset form when close modal
+            $('button.closeFormModalCK').on('click', function(){
+                $('#formDiemCK').trigger('reset');
+                $('#formDiemCK select').val('').trigger('change');
+                $('.select2-selection').css('border', '');
+                $('small.invalid-feedback').hide('');
+            });
+
+            // Event click the save button to edit
+            $('.saveCK').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveFormCK(id, 'PUT');
+            });
+
+            // Function save form
+            function saveFormCK(id, method){
+                var diemCK = $('#diemCK').val();
+                if(method!='POST'){id='/'+id;}
+                $.ajax({
+                    url: '/bangdiem'+id,
+                    type: method,
+                    traditional: true,
+                    data: {diemCK: diemCK},
+                    success: function(data){
+                        if(data.duplicate){
+                            showAlertModal('Thông báo trùng lặp', data.duplicate);
+                        }else if(data.success){
+                            notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                            $('#formModalDiemCK').modal('hide');
+                            $('#formDiemCK').trigger('reset');
+                            $('#formDiemCK select').val('').trigger('change');
+
+                            var lichthi_id = $('#lichthi_id').val();
+                            $('#tableDiemCK').dataTable(datatablesOptionsCK(lichthi_id));
+                        }
+                    }
+                });
+            }
+
+            // Edit
+            $('#tableDiemCK').on('click', '.editDiemCK', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/sv_lichthi/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#diemCK').val(data.data.diemCK).trigger('change');
+
+                            //Open modal
+                            $('button.saveCK').attr('data-id', id);
+                            $('#formModalLabelDiemCK').html('Chỉnh sửa điểm cuối kỳ: ' + data.data.ma_sv + ' - ' + data.data.sv_last_name + ' ' + data.data.sv_first_name + ' | ' + data.data.ma_mon + '-' + data.data.ten_mon);
+                            $('#formModalDiemCK').modal('show');                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            });
+
+            
+        });
+    </script>
+
+{% endblock javascripts %}

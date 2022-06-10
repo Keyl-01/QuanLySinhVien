@@ -1,0 +1,331 @@
+
+{% extends "layouts/basesv.html" %}
+
+{% block title %} Thông tin cá nhân {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="pcoded-content pt-2">
+    <div class="pcoded-inner-content">
+        <div class="main-body text-body">
+            <div class="page-wrapper">
+                <!-- [ breadcrumb ] start -->
+                <div class="page-header">
+                    <div class="page-block">
+                        <div class="row align-items-center">
+                            <div class="col-md-12">
+                                <div class="page-header-title">
+                                    <h5 class="m-b-10">Thông tin cá nhân</h5>
+                                </div>
+                                <ul class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
+                                    <li class="breadcrumb-item"><a href="#!">Thông tin cá nhân</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- [ breadcrumb ] end -->
+                <!-- [ Main Content ] start -->
+                <div class="row">
+                    <!-- [ sample-page ] start -->
+                    <div class="col-lg-4">
+                        <div class="card user-card user-card-1">
+                            <div class="card-body pb-0">
+                                <!-- <div class="float-end">
+                                    <span class="badge badge-success">Pro</span>
+                                </div> -->
+                                <div class="media user-about-block align-items-center mt-0 mb-3">
+                                    <div class="position-relative d-inline-block">
+                                        <img class="img-radius img-fluid wid-80" src="https://appsrv1-147a1.kxcdn.com/datta-able-pro-v100/images/user/avatar-2.jpg" alt="User image">
+                                        <div class="certificated-badge">
+                                            <!-- <i class="fas fa-certificate text-primary bg-icon"></i>
+                                            <i class="fas fa-check front-icon text-white"></i> -->
+                                        </div>
+                                    </div>
+                                    <div class="media-body ms-3">
+                                        <h6 class="mb-1">
+                                            {{ current_user.username + ' - ' + current_user.last_name + ' ' + current_user.first_name }}
+                                        </h6>
+                                        <!-- <p class="mb-0 text-muted">UI/UX Designer</p> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <span class="f-w-500"><i class="feather icon-mail m-r-10"></i>Email</span>
+                                    <div class="float-right text-body">
+                                        {{ current_user.email }}
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="f-w-500"><i class="feather icon-phone-call m-r-10"></i>Số điện thoại</span>
+                                    <div href="#" class="float-right text-body">{{ current_user.phone }}</div>
+                                </li>
+                                <li class="list-group-item border-bottom-0">
+                                    <!-- <span class="f-w-500"><i class="feather icon-map-pin m-r-10"></i>Location</span>
+                                    <span class="float-end">Melbourne</span> -->
+                                </li>
+                            </ul>
+                            <div class="nav flex-column nav-pills list-group list-group-flush list-pills" id="user-set-tab" role="tablist" aria-orientation="vertical">
+                                <a class="nav-link list-group-item list-group-item-action active" id="user-set-profile-tab" data-toggle="pill" href="#user-set-profile" role="tab" aria-controls="user-set-profile" aria-selected="false">
+                                    <span class="f-w-500"><i class="feather icon-user m-r-10 h5 "></i>Thông tin cá nhân</span>
+                                    <span class="float-right"><i class="feather icon-chevron-right"></i></span>
+                                </a>
+                                <a class="nav-link list-group-item list-group-item-action" id="user-set-passwort-tab" data-toggle="pill" href="#user-set-passwort" role="tab" aria-controls="user-set-passwort" aria-selected="true">
+                                    <span class="f-w-500"><i class="feather icon-shield m-r-10 h5 "></i>Đổi mật khẩu</span>
+                                    <span class="float-right"><i class="feather icon-chevron-right"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="tab-content bg-transparent p-0 shadow-none" id="user-set-tabContent">
+                            <div class="tab-pane fade active show" id="user-set-profile" role="tabpanel" aria-labelledby="user-set-profile-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="feather icon-user text-c-blue wid-20"></i><span class="p-l-5">Thông tin cá nhân</span></h5>
+                                    </div>
+                                    <div class="card-body pb-2">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="">Mã sinh viên</td>
+                                                    <td class="">:</td>
+                                                    <td class="ma_sv"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="">Họ tên</td>
+                                                    <td class="">:</td>
+                                                    <td class="name"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="">Ngày sinh</td>
+                                                    <td class="">:</td>
+                                                    <td class="date_birth"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="">Email</td>
+                                                    <td class="">:</td>
+                                                    <td class="email"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="">Số điện thoại</td>
+                                                    <td class="">:</td>
+                                                    <td class="phone"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="">Địa chỉ</td>
+                                                    <td class="">:</td>
+                                                    <td class="address"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="">Bộ môn</td>
+                                                    <td class="">:</td>
+                                                    <td class="bomon_id"></td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="user-set-passwort" role="tabpanel" aria-labelledby="user-set-passwort-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i data-feather="lock" class="icon-svg-primary wid-20"></i><span class="p-l-5">Đổi mật khẩu</span></h5>
+                                    </div>
+                                    <div class="card-body px-4 pt-4 pb-0">
+                                        <form id="formTK" class="form-edit" role="form" method="POST">
+                                            {{ form.hidden_tag() }}
+                                            <div class="row">
+                                                <div class="form-group col-md-12">
+                                                    <div class="form-group d-flex w-100 mb-2">
+                                                        <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                                            <small class="text-danger mr-1">*</small>{{ form.username.label(class="text-dark") }}
+                                                        </div>
+                                                        <div class="fieldName pr-0 col-7 align-self-end">
+                                                            {{ form.username(class="form-control bg-white shadow-none", style="padding: 6px 12px;", disabled="disabled") }}
+                                                            <!-- <small id="ifb_username" class="invalid-feedback text-danger position-absolute text-truncate">Mã nhân viên là trường bắt buộc.</small> -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="form-group d-flex w-100 mb-2">
+                                                        <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                                            <small class="text-danger mr-1">*</small>{{ form.current_password.label(class="text-dark") }}
+                                                        </div>
+                                                        <div class="fieldName pr-0 col-7 align-self-end">
+                                                            {{ form.current_password(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                                            <small id="ifb_current_password" class="invalid-feedback text-danger position-absolute text-truncate">Mật khẩu hiện tại là trường bắt buộc.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                    
+                                                <div class="form-group col-md-12">
+                                                    <div class="form-group d-flex w-100 mb-2">
+                                                        <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                                            <small class="text-danger mr-1">*</small>{{ form.password.label(class="text-dark") }}
+                                                        </div>
+                                                        <div class="fieldName pr-0 col-7 align-self-end">
+                                                            {{ form.password(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                                            <small id="ifb_password" class="invalid-feedback text-danger position-absolute text-truncate">Mật khẩu là trường bắt buộc.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                    
+                                                <div class="form-group col-md-12">
+                                                    <div class="form-group d-flex w-100 mb-2">
+                                                        <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
+                                                            <small class="text-danger mr-1">*</small>{{ form.confirm_password.label(class="text-dark") }}
+                                                        </div>
+                                                        <div class="fieldName pr-0 col-7 align-self-end">
+                                                            {{ form.confirm_password(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                                            <small id="ifb_confirm_password" class="invalid-feedback text-danger position-absolute text-truncate">Xác nhận mật khẩu là trường bắt buộc.</small>
+                                                            <small id="ifb_confirm_password_check" class="invalid-feedback text-danger position-absolute text-truncate">Mật khẩu không trùng khớp.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                    
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-footer p-3">
+                                        <button class="btn btn-primary float-right m-0 mr-1 saveTK" data-id="{{ current_user.id }}">Đổi mật khẩu</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!-- [ sample-page ] end -->
+                </div>
+                <!-- [ Main Content ] end -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Alert -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-modal="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content rounded" role="document">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="alertModalLabel">Thông báo trùng lặp</h5>
+                    <button type="button" class="close btn btn-lg" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-2" id="msg"></div>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <!-- <button type="button" name="insert_data" id="btn_save" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button> -->
+                    <button type="button" data-dismiss="modal" class="btn btn-primary btn-sm m-0">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+
+            // Call api
+            function setInputValue() {
+                var id = $('.saveTK').attr("data-id");
+                $.ajax({
+                    url: '/api/sinhvien/info',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('.ma_sv').html(data.data.ma_sv);
+                            $('.name').html(data.data.last_name + ' ' + data.data.first_name);
+                            $('.date_birth').html(data.data.date_birth);
+                            $('.email').html(data.data.email);
+                            $('.phone').html(data.data.phone);
+                            if(data.data.address || data.data.xa || data.data.quan || data.data.city){
+                                $('.address').html(data.data.address + ' - ' + data.data.xa + ' - ' + data.data.quan + ' - ' + data.data.city);
+                            }
+                            $('.bomon_id').html(data.data.ten_bomon);
+
+                            $('#username').val(data.data.username);
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            }
+            setInputValue();
+            
+
+            
+
+
+
+            invalidFeedbackPassword();
+            invalidFeedback('#current_password', '#ifb_current_password');
+            invalidFeedback('#password', '#ifb_password');
+            
+            $('#password').on('keyup', function(){
+                checkInputPassword();
+            });
+            $('#confirm_password').on('keyup', function(){
+                // alert('keyup');
+                checkInputPassword();
+            });
+
+            // Event click the save button to edit
+            $('.saveTK').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveFormTK(id, 'PUT');
+            });
+
+            // Function save form TK
+            function saveFormTK(id, method){
+                var current_password = $('#current_password').val();
+                var password = $('#password').val();
+                var confirm_password = $('#confirm_password').val();
+                if(current_password=='' || password=='' || confirm_password=='' || password!=confirm_password){
+                    checkInputPassword();
+                    checkInput('#current_password', '#ifb_current_password');
+                    checkInput('#password', '#ifb_password');
+                    // checkInput('#confirm_password', '#ifb_confirm_password');
+                }else{
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/changepass'+id,
+                        type: method,
+                        data: {current_password: current_password, password: password},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Mật khẩu hiện tại không chính xác', data.duplicate);
+                            }else if(data.success){
+                                location.reload();
+                                // notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                            }
+                        }
+                    });
+                }
+            }
+
+
+
+        });
+    </script>
+
+{% endblock javascripts %}

@@ -1,11 +1,7 @@
 
-{% if current_user.type == 1 %}
-    {% extends "layouts/base.html" %}
-{% elif current_user.type == 2 %}
-    {% extends "layouts/basenvhssv.html" %}
-{% endif %} 
+{% extends "layouts/base.html" %}
 
-{% block title %} Danh sách sinh viên {% endblock %} 
+{% block title %} Danh sách nhân viên {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
@@ -20,11 +16,11 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Sinh viên</h5>
+                                <h5 class="m-b-10">Nhân viên</h5>
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                                <li class="breadcrumb-item"><a href="javascript:">Sinh viên</a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Nhân viên</a></li>
                             </ul>
                         </div>
                     </div>
@@ -37,9 +33,9 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
-                                <h5 class="mr-auto">Danh sách sinh viên</h5>
+                                <h5 class="mr-auto">Danh sách nhân viên</h5>
                                 <div class="ml-auto">
-                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới sinh viên">
+                                    <button id="add" type="button" class="btn btn-outline-primary btn-sm mr-0 mb-0" title="Thêm mới nhân viên">
                                         <div>Thêm mới <i class="feather icon-plus-circle"></i></div>
                                     </button>
                                 </div>
@@ -50,12 +46,12 @@
                                         <table id="table" class="table table-hover" data-provide="selectall">
                                             <thead>
                                                 <tr>
-                                                    <th>Mã Sinh Viên</th>
-                                                    <th>Tên Sinh Viên</th>
+                                                    <th>Mã Nhân Viên</th>
+                                                    <th>Tên Nhân Viên</th>
                                                     <th>Ngày Sinh</th>
                                                     <th>Email</th>
                                                     <th>Số Điện Thoại</th>
-                                                    <th>Lớp Chuyên Ngành</th>
+                                                    <th>Phòng Ban</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -77,8 +73,7 @@
             </button> -->
         </div>
 
-        <!-- Sinh Viên Form Modal -->
-        <div></div>
+        <!-- Nhân Viên Form Modal -->
         <div class="modal fade" id="formModal" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content rounded">
@@ -89,17 +84,17 @@
                     </button>
                 </div>
                 <div class="modal-body px-4 pt-4 pb-0">
-                    <form id="formSV" class="form-edit" role="form" method="POST">
+                    <form id="formNV" class="form-edit" role="form" method="POST">
                         {{ form.hidden_tag() }}
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        <small class="text-danger mr-1">*</small>{{ form.ma_sv.label(class="text-dark") }}
+                                        <small class="text-danger mr-1">*</small>{{ form.ma_nv.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-8 align-self-end">
-                                        {{ form.ma_sv(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_ma_sv" class="invalid-feedback text-danger position-absolute text-truncate">Mã sinh viên là trường bắt buộc.</small>
+                                        {{ form.ma_nv(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
+                                        <small id="ifb_ma_nv" class="invalid-feedback text-danger position-absolute text-truncate">Mã nhân viên là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +106,7 @@
                                     </div>
                                     <div class="fieldName pr-0 col-8 align-self-end">
                                         {{ form.first_name(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_first_name" class="invalid-feedback text-danger position-absolute text-truncate">Tên sinh viên là trường bắt buộc.</small>
+                                        <small id="ifb_first_name" class="invalid-feedback text-danger position-absolute text-truncate">Tên nhân viên là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +118,7 @@
                                     </div>
                                     <div class="fieldName pr-0 col-8 align-self-end">
                                         {{ form.last_name(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_last_name" class="invalid-feedback text-danger position-absolute text-truncate">Họ đệm sinh viên là trường bắt buộc.</small>
+                                        <small id="ifb_last_name" class="invalid-feedback text-danger position-absolute text-truncate">Họ đệm nhân viên là trường bắt buộc.</small>
                                     </div>
                                 </div>
                             </div>
@@ -211,11 +206,10 @@
                             <div class="form-group col-md-12">
                                 <div class="form-group d-flex w-100 mb-2">
                                     <div class="fieldLabel d-flex justify-content-end align-items-top col-3 pt-2 pr-1">
-                                        {{ form.lcn_id.label(class="text-dark") }}
+                                        {{ form.type.label(class="text-dark") }}
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
-                                        {{ form.lcn_id(class="form-control") }}
-                                        <!-- <small id="ifb_lcn_id" class="invalid-feedback text-danger position-absolute text-truncate">Bộ môn là trường bắt buộc.</small> -->
+                                        {{ form.type(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
                                     </div>
                                 </div>
                             </div>
@@ -230,6 +224,7 @@
             </div>
             </div>
         </div>
+
 
 
         <!-- Tài khoản Form Modal -->
@@ -293,123 +288,6 @@
             </div>
         </div>
 
-
-
-        <!-- Bảng Điểm Modal -->
-        <div class="modal fade" id="formModalDiem" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content rounded">
-                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
-                    <h5 class="modal-title font-weight-bold" id="formModalLabelDiem"></h5>
-                    <button type="button" class="close btn btn-lg closeFormModalDiem" data-dismiss="modal" aria-label="Close">
-                        <h3 class="m-0" aria-hidden="true">&times;</h3>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <!-- [ sample-page ] start -->
-                        <div class="col-lg-3">
-                            <div class="card user-card user-card-1">
-                                <div class="nav flex-column nav-pills list-group list-group-flush list-pills" id="user-set-tab" role="tablist" aria-orientation="vertical">
-                                    <a class="nav-link list-group-item list-group-item-action active" id="user-set-profile-tab" data-toggle="pill" href="#user-set-profile" role="tab" aria-controls="user-set-profile" aria-selected="false">
-                                        <span class="f-w-500">Bảng điểm</span>
-                                        <span class="float-right"><i class="feather icon-chevron-right"></i></span>
-                                    </a>
-                                    <a class="nav-link list-group-item list-group-item-action" id="user-set-passwort-tab" data-toggle="pill" href="#user-set-passwort" role="tab" aria-controls="user-set-passwort" aria-selected="true">
-                                        <span class="f-w-500">Bảng điểm chi tiết</span>
-                                        <span class="float-right"><i class="feather icon-chevron-right"></i></span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="col-lg-9 pl-0">
-                            <div class="tab-content bg-transparent p-0 shadow-none" id="user-set-tabContent">
-                                <div class="tab-pane fade active show" id="user-set-profile" role="tabpanel" aria-labelledby="user-set-profile-tab">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5><span class="p-l-5">Bảng điểm</span></h5>
-                                        </div>
-                                        <div class="card-body pb-2">
-                                            <div class="table-border-style">
-                                                <div class="table-responsive">
-                                                    <table id="tableDiem" class="table table-hover" data-provide="selectall">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Mã Môn</th>
-                                                                <th>Tên Môn</th>
-                                                                <th>Số TC</th>
-                                                                <th>Điểm</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="tab-pane fade" id="user-set-passwort" role="tabpanel" aria-labelledby="user-set-passwort-tab">
-                                    <div class="card">
-                                        <div class="card-header d-flex align-items-center">
-                                            <h5 class='mr-auto'>Bảng điểm chi tiết</h5>
-                                            <div class="ml-auto">
-                                                <table style="float:right">
-                                                    <tbody><tr>
-                                                        <td>{{ formNam.nam_id.label(class="text-dark mb-0") }}</td>
-                                                        <td>{{ formNam.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
-                                                    </tr>
-                                                </tbody></table>
-                                            </div>
-                                            <div class="ml-3">
-                                                <table style="float:right">
-                                                    <tbody><tr>
-                                                        <td>{{ formNam.ky_id.label(class="text-dark mb-0") }}</td>
-                                                        <td>{{ formNam.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
-                                                    </tr>
-                                                </tbody></table>
-                                            </div>
-                                        </div>
-                                        <div class="card-body px-4 pt-4 pb-0">
-                                            <div class="table-border-style">
-                                                <div class="table-responsive">
-                                                    <table id="tableDiemCT" class="table table-hover" data-provide="selectall">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Mã Môn</th>
-                                                                <th>Tên Môn</th>
-                                                                <th>Điểm QT</th>
-                                                                <th>Điểm CK</th>
-                                                                <th>Kết Quả</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- [ sample-page ] end -->
-                    </div>
-                    
-                </div>
-            </div>
-            </div>
-        </div>
-
-        
-
-
-
         <!-- Delete Comfirm Modal  -->
         <div id="deleteConfirmationModal" role="dialog" tabindex="-1" class="modal fade" aria-modal="true">
             <div class="modal-dialog modal-md">
@@ -425,7 +303,7 @@
                         <div class="bg-grey px-3 mt-3 modal-bottom-radius">
                             <div class="text-center pt-4 text-dark">
                                 <div class="pt-2">
-                                    Xóa ngành này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa ngành này không?
+                                    Xóa nhân viên này sẽ xóa các bản ghi có liên quan. Bạn có chắc chắn muốn xóa nhân viên này không?
                                 </div>
                             </div>
                             <div class="d-flex py-3 justify-content-center">
@@ -466,23 +344,14 @@
 
     <script>
         $(document).ready(function () {
-            $('#lcn_id').select2({
-                closeOnSelect : false,
-                // placeholder : "Chọn môn học",
-                allowHtml: true,
-                allowClear: true,
-                tags: true
-            });
-            $("#lcn_id").val('').trigger('change');
-            $('.select2-container').addClass('d-block');
 
             var datatablesOptions = {
                 ajax: {
-                    url: '/api/sinhvien',
+                    url: '/api/nhanvien',
                     type: 'POST'
                 },
                 columns: [
-                    {data: 'ma_sv'},
+                    {data: 'ma_nv'},
                     {
                         render: function (data, type, row) {
                             return row.last_name + ' ' + row.first_name
@@ -493,44 +362,39 @@
                     {data: 'phone'},
                     {
                         render: function (data, type, row) {
-                            var result = ''
-                            $.each(row.lcns, function(key, value){
-                                result += value.ten_lcn + ', ';
-                            });
-                            return result
+                            if(row.type == 1){
+                                return 'Phòng Đào tạo'
+                            }
+                            return 'Phòng Công tác HSSV'
                         }
                     },
                     {
                         render: function (data, type, row) {
                             return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
-                                        '<li data-id="'+ row.id + '" title="Cấp mật khẩu" class="taikhoanSV list-inline-item c-pointer px-2 m-0"><i class="feather icon-unlock"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Bảng điểm" class="diemSV list-inline-item c-pointer px-2 m-0"><i class="feather icon-clipboard"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editSV list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
-                                        '<li data-id="'+ row.id + '" title="Xóa" class="delSV hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Cấp mật khẩu" class="taikhoanNV list-inline-item c-pointer px-2 m-0"><i class="feather icon-unlock"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editNV list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                        '<li data-id="'+ row.id + '" title="Xóa" class="delNV hoverDanger list-inline-item c-pointer px-2 m-0"><i class="feather icon-trash-2"></i></li>'+
                                     '</ul>'
                         }, orderable: false, searchable: false
                     }             
-                ], autoWidth: false, bDestroy: true
+                ], autoWidth: false, bDestroy: true, ordering: false
             };
             $('#table').dataTable(datatablesOptions);
 
             // call function invalid-feedback
-            invalidFeedback('#ma_sv', '#ifb_ma_sv');
+            invalidFeedback('#ma_nv', '#ifb_ma_nv');
             invalidFeedback('#first_name', '#ifb_first_name');
             invalidFeedback('#last_name', '#ifb_last_name');
             invalidFeedback('#date_birth', '#ifb_date_birth');
             invalidFeedbackEmail();
             invalidFeedback('#phone', '#ifb_phone');
-            invalidFeedbackSelect('#lcn_id', '#ifb_lcn_id');
             
             
             // notify('top', 'right', '', 'info', 'animated fadeIn', 'animated fadeOut', 'Thêm thành công!');
             
-            
             // Reset form when close modal
             $('button.closeFormModal').on('click', function(){
-                $('#formSV').trigger('reset');
-                $("#lcn_id").val('').trigger('change')
+                $('#formNV').trigger('reset');
                 $('input').css('border', '');
                 $('.select2-selection').css('border', '');
                 $('small.invalid-feedback').hide('');
@@ -541,7 +405,7 @@
                 // Change class save button
                 $('button.saveEdit').hide();
                 $('button.saveAdd').show();
-                showFormModal('Thêm mới sinh viên');
+                showFormModal('Thêm mới nhân viên');
             });
 
             // Event click the save button to add new
@@ -557,7 +421,7 @@
 
             // Function save form
             function saveForm(id, method){
-                var ma_sv = $('#ma_sv').val();
+                var ma_nv = $('#ma_nv').val();
                 var first_name = $('#first_name').val();
                 var last_name = $('#last_name').val();
                 var date_birth = $('#date_birth').val();
@@ -567,23 +431,21 @@
                 var xa = $('#xa').val();
                 var quan = $('#quan').val();
                 var city = $('#city').val();
-                var lcn_id = $('#lcn_id').val();
-                if(ma_sv=='' || first_name=='' || last_name=='' || email=='' || phone=='' || date_birth=='' || lcn_id==null){
-                    checkInput('#ma_sv', '#ifb_ma_sv');
+                var type = $('#type').val();
+                if(ma_nv=='' || first_name=='' || last_name=='' || email=='' || phone=='' || date_birth=='' || type==null){
+                    checkInput('#ma_nv', '#ifb_ma_nv');
                     checkInput('#first_name', '#ifb_first_name');
                     checkInput('#last_name', '#ifb_last_name');
                     checkInput('#date_birth', '#ifb_date_birth');
                     // checkInputEmail('#email', '#ifb_email');
                     checkInputEmail();
                     checkInput('#phone', '#ifb_phone');
-                    checkInputSelect('#lcn_id', '#ifb_lcn_id');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({
-                        url: '/sinhvien'+id,
+                        url: '/nhanvien'+id,
                         type: method,
-                        traditional: true,
-                        data: {ma_sv: ma_sv, 
+                        data: {ma_nv: ma_nv, 
                             first_name: first_name, 
                             last_name: last_name, 
                             date_birth: date_birth,
@@ -593,7 +455,7 @@
                             xa: xa,
                             quan: quan,
                             city: city,
-                            lcn_id: lcn_id
+                            type: type
                         },
                         success: function(data){
                             if(data.duplicate){
@@ -601,8 +463,8 @@
                             }else if(data.success){
                                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
                                 $('#formModal').modal('hide');
-                                $('#formSV').trigger('reset');
-                                // $("#lcn_id").val('').trigger('change')
+                                $('#formNV').trigger('reset');
+                                // $("#bomon_id").val('').trigger('change')
                                 // $('#ma_mon').removeAttr('value');
                                 // $('#ten_mon').removeAttr('value');
                                 $('#table').dataTable(datatablesOptions);
@@ -613,17 +475,17 @@
             }
 
             // Edit
-            $('#table').on('click', '.editSV', function(){
+            $('#table').on('click', '.editNV', function(){
                 // Call api
                 var id = $(this).attr("data-id");
                 $.ajax({
-                    url: '/api/sinhvien/info',
+                    url: '/api/nhanvien/info',
                     type: 'POST',
                     data: {id: id},
                     success: function(data){
                         if(data.data){
                             // Set input value
-                            $('#ma_sv').val(data.data.ma_sv);
+                            $('#ma_nv').val(data.data.ma_nv);
                             $('#first_name').val(data.data.first_name);
                             $('#last_name').val(data.data.last_name);
                             $('#date_birth').val(data.data.date_birth);
@@ -633,18 +495,14 @@
                             $('#xa').val(data.data.xa);
                             $('#quan').val(data.data.quan);
                             $('#city').val(data.data.city);
-                            var substr = []
-                            $.each(data.data.lcns, function(key, value){
-                                substr.push(value.lcn_id);
-                            });
-                            $("#lcn_id").val(substr).trigger('change');
+                            $("#type").val(data.data.type).trigger('change');
                             //Open modal
                             $('button.saveAdd').hide();
                             $('button.saveEdit').show().attr('data-id', id);
                             // $('#formModal').on('click', '.editMon', function() {
                             // $('.saveAdd').removeClass('saveAdd').addClass('saveEdit');
                             // });
-                            showFormModal('Chỉnh sửa sinh viên: ' + data.data.ma_sv + ' - ' + data.data.last_name + ' ' + data.data.first_name);
+                            showFormModal('Chỉnh sửa nhân viên: ' + data.data.ma_nv + ' - ' + data.data.last_name + ' ' + data.data.first_name);
                             
                         }else if(data.error){
                             notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
@@ -656,7 +514,7 @@
 
             $('#deleteConfirmationModal').on('click', 'button.delete', function(){
                 $.ajax({
-                    url: '/sinhvien/'+$(this).attr("data-id"),
+                    url: '/nhanvien/'+$(this).attr("data-id"),
                     type: 'DELETE',
                     success: function(data){
                         if(data.error){
@@ -671,12 +529,12 @@
             });
 
             // Event click the save button to remove
-            $('#table').on('click', '.delSV', function(){
+            $('#table').on('click', '.delNV', function(){
                 $('#deleteConfirmationModal').modal('show'); 
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
             });
 
-
+            
 
 
 
@@ -720,7 +578,7 @@
                     $.ajax({
                         url: '/taikhoan'+id,
                         type: method,
-                        data: {sinhvien: 'sinhvien', password: password},
+                        data: {nhanvien: 'nhanvien', password: password},
                         success: function(data){
                             if(data.duplicate){
                                 showAlertModal('Thông báo trùng lặp', data.duplicate);
@@ -736,11 +594,11 @@
                 }
             }
 
-            $('#table').on('click', '.taikhoanSV', function(){
+            $('#table').on('click', '.taikhoanNV', function(){
                 // Call api
                 var id = $(this).attr("data-id");
                 $.ajax({
-                    url: '/api/sinhvien/info',
+                    url: '/api/nhanvien/info',
                     type: 'POST',
                     data: {id: id},
                     success: function(data){
@@ -761,98 +619,6 @@
             });
 
 
-
-
-
-
-
-
-            function datatablesOptionsDiem(sv_id) {
-                return {
-                    ajax: {
-                        url: '/api/diemsv/'+sv_id,
-                        type: 'GET'
-                    },
-                    columns: [
-                        {data: 'ma_mon'},
-                        {data: 'ten_mon'},
-                        {data: 'tinchi'},
-                        {
-                            render: function (data, type, row) {            
-                                var diem = row.diemQT*0.3 + row.diemCK*0.7;     
-                                return Math.round(diem * 100) / 100    
-                            }
-                        }           
-                    ], autoWidth: false, bDestroy: true
-                };
-            };
-
-
-            function datatablesOptionsDiemCT(sv_id, nam_id, ky_id) {
-                return {
-                    ajax: {
-                        url: '/api/diemsv/'+sv_id+'/'+nam_id+'/'+ky_id,
-                        type: 'GET'
-                    },
-                    columns: [
-                        {data: 'ma_mon'},
-                        {data: 'ten_mon'},
-                        {data: 'diemQT'},
-                        {data: 'diemCK'},
-                        {
-                            render: function (data, type, row) { 
-                                var diem = row.diemQT*0.3 + row.diemCK*0.7;     
-                                return Math.round(diem * 100) / 100      
-                            }
-                        }           
-                    ], autoWidth: false, bDestroy: true
-                };
-            };
-
-            // var nam_id = $('#nam_id').val();
-            // var ky_id = $('#ky_id').val();
-            // var sv_id;
-            // $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
-
-            $('#nam_id').on('change', function() {
-                var nam_id = $('#nam_id').val();
-                var ky_id = $('#ky_id').val();
-                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
-            });
-            $('#ky_id').on('change', function() {
-                var nam_id = $('#nam_id').val();
-                var ky_id = $('#ky_id').val();
-                $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(sv_id, nam_id, ky_id));
-            });
-            
-
-
-            $('#table').on('click', '.diemSV', function(){
-                // Call api
-                var id = $(this).attr("data-id");
-                sv_id = id;
-                $.ajax({
-                    url: '/api/sinhvien/info',
-                    type: 'POST',
-                    data: {id: id},
-                    success: function(data){
-                        if(data.data){
-                            // Set input value
-                            $('#tableDiem').dataTable(datatablesOptionsDiem(id));
-                            var nam_id = $('#nam_id').val();
-                            var ky_id = $('#ky_id').val();
-                            $('#tableDiemCT').dataTable(datatablesOptionsDiemCT(id, nam_id, ky_id));
-
-                            //Open modal
-                            $('#formModalLabelDiem').html('Bảng điểm sinh viên: ' + data.data.ma_sv + ' - ' + data.data.last_name + ' ' + data.data.first_name); 
-                            $('#formModalDiem').modal('show'); 
-                            
-                        }else if(data.error){
-                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
-                        }
-                    }
-                });
-            });
         });
     </script>
 

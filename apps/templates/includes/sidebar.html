@@ -3,11 +3,10 @@
         <div class="navbar-wrapper">
             <div class="navbar-brand header-logo">
                 <a target="_blank" 
-                   href="https://appseed.us/admin-dashboards/flask-datta-able" class="b-brand">
-                    <div class="b-bg">
-                        <i class="feather icon-trending-up"></i>
-                    </div>
-                    <span class="b-title">Thang Long University</span>
+                   href="/" class="b-brand">
+                    <span class="p-4" style='background-image: url(/static/assets/images/LogoTLU.jpg)!important; background-size: 2.2rem; background-repeat: no-repeat;'>
+                    </span>
+                    <span class="b-title">TLU</span>
                 </a>
                 <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
             </div>
@@ -21,60 +20,107 @@
                         <a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li class="nav-item pcoded-menu-caption">
-                        <label>Thông tin toàn trường</label>
+                        <label>Nhân viên</label>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'profilenv' in segment %} active {% endif %}">
+                        <a href="/profilenv" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file"></i></span><span class="pcoded-mtext">Thông tin cá nhân</span></a>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'nhanvien' in segment %} active {% endif %}">
+                        <a href="/nhanvien" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Nhân viên</span></a>
+                    </li>
+
+
+
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Ban ngành</label>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" 
                         class="nav-item {% if 'khoa' in segment %} active {% endif %}">
-                        <a href="/khoa" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Khoa</span></a>
+                        <a href="/khoa" class="nav-link "><span class="pcoded-micon"><i class="feather icon-package"></i></span><span class="pcoded-mtext">Khoa</span></a>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" 
                         class="nav-item {% if 'nganh' in segment %} active {% endif %}">
-                        <a href="/nganh" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Ngành</span></a>
-                    </li>
-                    <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'bomon' in segment %} active {% endif %}">
-                        <a href="/bomon" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Bộ môn</span></a>
-                    </li>
-                    <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'mon' in segment %} active {% endif %}">
-                        <a href="/mon" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Môn</span></a>
+                        <a href="/nganh" class="nav-link "><span class="pcoded-micon"><i class="feather icon-inbox"></i></span><span class="pcoded-mtext">Ngành</span></a>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" 
                         class="nav-item {% if 'chuongtrinhdaotao' in segment %} active {% endif %}">
-                        <a href="/chuongtrinhdaotao" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Chương trình đào tạo</span></a>
+                        <a href="/chuongtrinhdaotao" class="nav-link "><span class="pcoded-micon"><i class="feather icon-clipboard"></i></span><span class="pcoded-mtext">Chương trình đào tạo</span></a>
+                    </li>
+
+
+
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Bộ môn</label>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'giangvien' in segment %} active {% endif %}">
-                        <a href="/giangvien" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Giảng viên</span></a>
+                        class="nav-item {% if 'bomon' in segment %} active {% endif %}">
+                        <a href="/bomon" class="nav-link "><span class="pcoded-micon"><i class="feather icon-briefcase"></i></span><span class="pcoded-mtext">Bộ môn</span></a>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'lopchuyennganh' in segment %} active {% endif %}">
-                        <a href="/lopchuyennganh" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Lớp chuyên ngành</span></a>
+                        class="nav-item {% if 'mon' in segment %} active {% endif %}">
+                        <a href="/mon" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Môn</span></a>
                     </li>
-                    <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'sinhvien' in segment %} active {% endif %}">
-                        <a href="/sinhvien" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Sinh viên</span></a>
-                    </li>
-                    <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'lop' in segment %} active {% endif %}">
-                        <a href="/lop" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Lớp học</span></a>
-                    </li>
-                    <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'phong' in segment %} active {% endif %}">
-                        <a href="/phong" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Phòng học</span></a>
-                    </li>
-                    <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item {% if 'lichlop' in segment %} active {% endif %}">
-                        <a href="/lichlop" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Lịch lớp học</span></a>
+
+
+
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Toàn trường</label>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" 
                         class="nav-item {% if 'nam' in segment %} active {% endif %}">
-                        <a href="/nam" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Năm học</span></a>
+                        <a href="/nam" class="nav-link "><span class="pcoded-micon"><i class="feather icon-calendar"></i></span><span class="pcoded-mtext">Năm học</span></a>
                     </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'phong' in segment %} active {% endif %}">
+                        <a href="/phong" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Phòng học</span></a>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'lop' in segment %} active {% endif %}">
+                        <a href="/lop" class="nav-link "><span class="pcoded-micon"><i class="feather icon-bookmark"></i></span><span class="pcoded-mtext">Lớp học</span></a>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'lichthi' in segment %} active {% endif %}">
+                        <a href="/lichthi" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Lịch thi</span></a>
+                    </li>
+                    
+                    <!-- <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'lichlop' in segment %} active {% endif %}">
+                        <a href="/lichlop" class="nav-link "><span class="pcoded-micon"><i class="feather icon-award"></i></span><span class="pcoded-mtext">Lịch lớp học</span></a>
+                    </li> -->
+                    
+                    
+                    
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Giảng viên</label>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'giangvien' in segment %} active {% endif %}">
+                        <a href="/giangvien" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Giảng viên</span></a>
+                    </li>
+
+
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Sinh viên</label>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'lopchuyennganh' in segment %} active {% endif %}">
+                        <a href="/lopchuyennganh" class="nav-link "><span class="pcoded-micon"><i class="feather icon-layers"></i></span><span class="pcoded-mtext">Lớp chuyên ngành</span></a>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'sinhvien' in segment %} active {% endif %}">
+                        <a href="/sinhvien" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Sinh viên</span></a>
+                    </li>
+                    <li data-username="form elements advance componant validation masking wizard picker select" 
+                        class="nav-item {% if 'bangdiem' in segment %} active {% endif %}">
+                        <a href="/bangdiem" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Bảng điểm</span></a>
+                    </li>
+
 
                     <li data-username="Disabled Menu" class="nav-item">
                         <a href="{{ url_for('authentication_blueprint.logout') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Logout</span>
+                            <span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Đăng xuất</span>
                         </a>
                     </li>
                 </ul>

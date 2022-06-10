@@ -1,0 +1,130 @@
+
+{% extends "layouts/basesv.html" %}
+
+{% block title %} Thời khóa biểu {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="pcoded-content pt-2">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Thời khóa biểu</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Thời khóa biểu</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <h5 class="mr-auto">Thời khóa biểu</h5>
+                                <div class="ml-auto">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ form.nam_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ form.nam_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>      
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                                <div class="ml-3">
+                                    <table style="float:right">
+                                        <tbody><tr>
+                                            <td>{{ form.ky_id.label(class="text-dark mb-0") }}</td>
+                                            <td>{{ form.ky_id(class="form-control bg-white shadow-none border-secondary w-100 h-25 m-1", style="padding: 6px 12px;") }}</td>           
+                                        </tr>
+                                    </tbody></table>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-border-style">
+                                    <div class="table-responsive">
+                                        <table id="table" class="table table-hover" data-provide="selectall">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mã Môn</th>
+                                                    <th>Tên Môn</th>
+                                                    <th>Lớp</th>
+                                                    <th>Thứ</th>
+                                                    <th>Ca</th>
+                                                    <th>Phòng</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ Hover-table ] end -->
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteConfirmationModal">
+                Open modal
+            </button> -->
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+
+            function datatablesOptions(nam_id, ky_id) {
+                return {
+                    ajax: {
+                        url: '/api/lichlop/sinhvien/'+'{{ current_user.id }}'+'/'+nam_id+'/'+ky_id,
+                        type: 'GET'
+                    },
+                    columns: [  
+                        {data: 'ma_mon'},
+                        {data: 'ten_mon'},
+                        {data: 'ten_lop'},
+                        {data: 'thu'},
+                        {
+                            render: function (data, type, row) {
+                                return row.start + '-' + row.end
+                            }
+                        },
+                        {data: 'ten_phong'}          
+                    ], autoWidth: false, bDestroy: true
+                };
+            };
+            var nam_id = $('#nam_id').val();
+            var ky_id = $('#ky_id').val();
+            $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+
+            $('#nam_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
+            $('#ky_id').on('change', function() {
+                var nam_id = $('#nam_id').val();
+                var ky_id = $('#ky_id').val();
+                $('#table').dataTable(datatablesOptions(nam_id, ky_id));
+            });
+
+        });
+    </script>
+
+{% endblock javascripts %}

@@ -80,6 +80,7 @@
                                                         <th>Năm Học</th>
                                                         <th>Kỳ Học</th>
                                                         <th>Ngày Bắt Đầu</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -190,6 +191,81 @@
             </div>
         </div>
 
+
+        <!-- Kỳ Học Form Modal -->
+        <div class="modal fade" id="formModalKy" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="formModalLabelKy" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded">
+                <div class="modal-header d-flex align-items-center shadow-sm px-4 py-3">
+                    <h5 class="modal-title font-weight-bold" id="formModalLabelKy"></h5>
+                    <button type="button" class="close btn btn-lg closeFormModalKy" data-dismiss="modal" aria-label="Close">
+                        <h3 class="m-0" aria-hidden="true">&times;</h3>
+                    </button>
+                </div>
+                <div class="modal-body px-4 pt-4 pb-0">
+                    <form id="formKy" class="form-edit" role="form" method="POST">
+                        {{ formk.hidden_tag() }}
+                        <div class="row">
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        {{ formk.dkh_start.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formk.dkh_start(class="form-control") }}
+                                        <small id="ifb_dkh_start" class="invalid-feedback text-danger position-absolute text-truncate">Nhập giá trị cho trường thời gian bắt đầu đăng ký học.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        {{ formk.dkh_end.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formk.dkh_end(class="form-control") }}
+                                        <small id="ifb_dkh_end" class="invalid-feedback text-danger position-absolute text-truncate">Nhập giá trị cho trường thời gian kết thúc đăng ký học.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        {{ formk.dkt_start.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formk.dkt_start(class="form-control") }}
+                                        <small id="ifb_dkt_start" class="invalid-feedback text-danger position-absolute text-truncate">Nhập giá trị cho trường thời gian bắt đầu đăng ký thi.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="form-group d-flex w-100 mb-2">
+                                    <div class="fieldLabel d-flex justify-content-end align-items-top col-4 pt-2 pr-1">
+                                        {{ formk.dkt_end.label(class="text-dark") }}
+                                    </div>
+                                    <div class="fieldName pr-0 col-5 align-self-end">
+                                        {{ formk.dkt_end(class="form-control") }}
+                                        <small id="ifb_dkt_end" class="invalid-feedback text-danger position-absolute text-truncate">Nhập giá trị cho trường thời gian kết thúc đăng ký thi.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="padding: 12px 24px;">
+                    <button type="button" class="btn btn-primary btn-sm m-0 saveEditKy">Lưu</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
         <!-- Delete Comfirm Modal  -->
         <div id="deleteConfirmationModal" role="dialog" tabindex="-1" class="modal fade" aria-modal="true">
             <div class="modal-dialog modal-md">
@@ -274,7 +350,14 @@
                             const [year, month, day] = row.date_start.split('-');
                             return day + '/' + month + '/' + year;
                         }
-                    }            
+                    },
+                    {
+                        render: function (data, type, row) {
+                            return '<ul class="list-inline mb-0 p-0 rounded-6 w-maxContent d-flex align-items-center rowActions">'+
+                                        '<li data-id="'+ row.id + '" title="Chỉnh sửa" class="editKy list-inline-item c-pointer px-2 m-0"><i class="feather icon-edit-2"></i></li>'+
+                                    '</ul>'
+                        }, orderable: false, searchable: false
+                    }             
                 ], autoWidth: false, bDestroy: true
             };
             $('#tableKy').dataTable(datatablesOptionsKy);
@@ -515,6 +598,155 @@
                 $('button.delete').attr('data-id', $(this).attr("data-id"));
                 $('button.delete').addClass('deleteNam');
             });
+
+
+
+
+
+
+
+
+            $('#dkh_start').on('change', function() {
+                var dkh_start = $(this).val();
+                var dkh_end = $('#dkh_end').val();
+
+                if (dkh_start && dkh_end) {
+                    if (dkh_start > dkh_end){
+                        $(this).val(dkh_end);
+                        $('#dkh_end').val(dkh_start);
+                    }
+                }
+            });
+
+            $('#dkh_end').on('change', function() {
+                var dkh_start = $('#dkh_start').val();
+                var dkh_end = $(this).val();
+
+                if (dkh_start && dkh_end) {
+                    if (dkh_start > dkh_end){
+                        $('#dkh_start').val(dkh_end);
+                        $(this).val(dkh_start);
+                    }
+                }
+            });
+
+            $('#dkt_start').on('change', function() {
+                var dkt_start = $(this).val();
+                var dkt_end = $('#dkt_end').val();
+
+                if (dkt_start && dkt_end) {
+                    if (dkt_start > dkt_end){
+                        $(this).val(dkt_end);
+                        $('#dkt_end').val(dkt_start);
+                    }
+                }
+            });
+
+            $('#dkt_end').on('change', function() {
+                var dkt_start = $('#dkt_start').val();
+                var dkt_end = $(this).val();
+
+                if (dkt_start && dkt_end) {
+                    if (dkt_start > dkt_end){
+                        $('#dkt_start').val(dkt_end);
+                        $(this).val(dkt_start);
+                    }
+                }
+            });
+
+            // Reset form when close modal
+            $('button.closeFormModalKy').on('click', function(){
+                $('#formKy').trigger('reset');
+                $('input').css('border', '');
+                $('small.invalid-feedback').hide('');
+            });
+
+            // Event click the save button to edit
+            $('.saveEditKy').on('click', function(){
+                var id = $(this).attr("data-id");
+                saveFormKy(id, 'PUT');
+            });
+
+            // Function save form
+            function saveFormKy(id, method){
+                var dkh_start = $('#dkh_start').val();
+                var dkh_end = $('#dkh_end').val();
+                var dkt_start = $('#dkt_start').val();
+                var dkt_end = $('#dkt_end').val();
+                if(!dkh_start&&dkh_end || dkh_start&&!dkh_end || !dkt_start&&dkt_end || dkt_start&&!dkt_end){
+                    checkInput('#dkh_start', '#ifb_dkh_start');
+                    checkInput('#dkh_end', '#ifb_dkh_end');
+                    checkInput('#dkt_start', '#ifb_dkt_start');
+                    checkInput('#dkt_end', '#ifb_dkt_end');
+                } else {
+                    if(method!='POST'){id='/'+id;}
+                    $.ajax({
+                        url: '/ky'+id,
+                        type: method,
+                        traditional: true,
+                        data: {dkh_start: dkh_start, dkh_end: dkh_end, dkt_start: dkt_start, dkt_end: dkt_end},
+                        success: function(data){
+                            if(data.duplicate){
+                                showAlertModal('Thông báo trùng lặp', data.duplicate);
+                            }else if(data.success){
+                                notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
+                                $('#formModalKy').modal('hide');
+                                $('#formKy').trigger('reset');
+                                
+                                $('#tableNam').dataTable(datatablesOptionsNam);
+                                $('#tableKy').dataTable(datatablesOptionsKy);
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Edit
+            $('#tableKy').on('click', '.editKy', function(){
+                // Call api
+                var id = $(this).attr("data-id");
+                $.ajax({
+                    url: '/api/ky/'+id,
+                    type: 'GET',
+                    success: function(data){
+                        if(data.data){
+                            // Set input value
+                            $('#dkh_start').val(data.data.dkh_start);
+                            $('#dkh_end').val(data.data.dkh_end);
+
+                            $('#dkt_start').val(data.data.dkt_start);
+                            $('#dkt_end').val(data.data.dkt_end);
+                            
+                            var ten_ky = ''
+                            if (data.data.ten_ky == '1') {
+                                ten_ky = 'Học kỳ I';
+                            } else if (data.data.ten_ky == '2') {
+                                ten_ky = 'Học kỳ II';
+                            } else if (data.data.ten_ky == '3') {
+                                ten_ky = 'Học kỳ III';
+                            }
+                            
+                            
+                            hk1 = (new Date(data.data.hk1)).getFullYear();
+                            end = (new Date(data.data.date_end)).getFullYear();
+                            // $('#date_end').val(data.data.date_end);
+
+                            // $('#namhoc').val(start + ' - ' + end);
+                            
+
+                            //Open modal
+                            $('button.saveEditKy').attr('data-id', id);
+
+                            $('#formModalLabelKy').html('Chỉnh sửa kỳ học: ' + ten_ky + ' Năm học ' + hk1 + ' - ' + end); 
+                            $('#formModalKy').modal('show'); 
+                            
+                        }else if(data.error){
+                            notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.error);
+                        }
+                    }
+                });
+            });
+
         });
     </script>
 

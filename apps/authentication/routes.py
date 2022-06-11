@@ -368,13 +368,15 @@ def dataNamInfo():
 def dataKy():
     return jsonify({'data': [ky.to_dict() for ky in Ky.query.all()]})
 
-@blueprint.route('/api/ky/info', methods=['POST'])
-def dataKyInfo():
-    if 'id' in request.form:
-        id = request.form['id']
-        ky = Ky.query.filter_by(id=id).first()
-        return jsonify({'data': ky.to_dict()})
-    return jsonify({'error': 'Không tồn tại dữ liệu này.'})
+@blueprint.route('/api/ky/<int:ky_id>', methods=['GET'])
+def dataKyInfo(ky_id):
+    ky = Ky.query.filter_by(id = ky_id).first()
+    return jsonify({'data': ky.to_dict()})
+    # if 'id' in request.form:
+    #     id = request.form['id']
+    #     ky = Ky.query.filter_by(id=id).first()
+    #     return jsonify({'data': ky.to_dict()})
+    # return jsonify({'error': 'Không tồn tại dữ liệu này.'})
 
 
 

@@ -612,6 +612,13 @@ class Ky(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ten_ky = db.Column(db.Integer, nullable=False)
     date_start = db.Column(db.Date, nullable=False)
+
+    dkh_start = db.Column(db.DateTime)
+    dkh_end = db.Column(db.DateTime)
+
+    dkt_start = db.Column(db.DateTime)
+    dkt_end = db.Column(db.DateTime)
+
     nam_id = db.Column(db.Integer, ForeignKey(Nam.id), nullable=False)
     lops = relationship('Lop', backref='ky', lazy=True, cascade="all, delete-orphan")
     lichthis = relationship('LichThi', backref='ky', lazy=True, cascade="all, delete-orphan")
@@ -621,17 +628,30 @@ class Ky(db.Model):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if property == 'date_start':
+            if property=='date_start':
                 value = datetime.strptime(value, '%Y-%m-%d')
+            if property=='dkh_start' or property=='dkh_end' or property=='dkt_start' or property=='dkt_end':
+                if value:
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M')
+                else:
+                    value = None
 
             setattr(self, property, value)
 
     def to_dict(self):
         hk1 = Ky.query.filter(Ky.nam_id == self.nam_id, Ky.ten_ky == 1).first()
+        dkh_start = self.dkh_start.strftime("%Y-%m-%dT%H:%M") if self.dkh_start else None
+        dkh_end = self.dkh_end.strftime("%Y-%m-%dT%H:%M") if self.dkh_end else None
+        dkt_start = self.dkt_start.strftime("%Y-%m-%dT%H:%M") if self.dkt_start else None
+        dkt_end = self.dkt_end.strftime("%Y-%m-%dT%H:%M") if self.dkt_end else None
         return {
             'id': self.id,
             'ten_ky': self.ten_ky,
             'date_start': self.date_start.strftime("%Y-%m-%d"),
+            'dkh_start': dkh_start,
+            'dkh_end': dkh_end,
+            'dkt_start': dkt_start,
+            'dkt_end': dkt_end,
             'nam_id': self.nam_id,
             'hk1': hk1.date_start.strftime("%Y-%m-%d"),
             'date_end': self.nam.date_end.strftime("%Y-%m-%d")
@@ -906,246 +926,3 @@ class SinhVien_LichThi(db.Model):
             # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
         }
 
-
-
-
-
-
-
-# -------------------------CaHoc--------------------------------
-
-# class Ca(db.Model):
-
-#     __tablename__ = 'Ca'
-
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     ca = db.Column(db.String(30), unique=True, nullable=False)
-#     start = db.Column(db.DateTime, unique=True, nullable=False)
-#     end = db.Column(db.DateTime, unique=True, nullable=False)
-    
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-#             if property=='start' or property=='end':
-#                 value = datetime.strptime(value, '%Y-%m-%d')
-
-#             setattr(self, property, value)
-
-#     def to_dict(self):
-#         return {
-#             'id': self.id,
-#             'ten_phong': self.ten_phong,
-#             'so_luong': self.so_luong
-#             # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
-#         }
-
-
-
-# # -------------------------STUDENT--------------------------------
-
-# class Student(db.Model):
-
-#     __tablename__ = 'student'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     student_code = db.Column(db.String(30), unique=True, nullable=False)
-#     first_name = db.Column(db.String(100))
-#     last_name = db.Column(db.String(100))
-#     date_birth = db.Column(db.Date)
-#     address = db.Column(db.String(100))
-#     xa = db.Column(db.String(100))
-#     quan = db.Column(db.String(100))
-#     city = db.Column(db.String(100))
-#     email = db.Column(db.String(64), nullable=False)
-#     phone = db.Column(db.String(64), nullable=False)
-    
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-#             if property == 'date_birth':
-#                 value = datetime.strptime(value, '%Y-%m-%d')
-                
-#             setattr(self, property, value)
-
-# # -------------------------TEACHER--------------------------------
-
-# class Teacher(db.Model):
-
-#     __tablename__ = 'teacher'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     teacher_code = db.Column(db.String(30), unique=True, nullable=False)
-#     first_name = db.Column(db.String(100))
-#     last_name = db.Column(db.String(100))
-#     date_birth = db.Column(db.Date)
-#     address = db.Column(db.String(100))
-#     xa = db.Column(db.String(100))
-#     quan = db.Column(db.String(100))
-#     city = db.Column(db.String(100))
-#     email = db.Column(db.String(64), nullable=False)
-#     phone = db.Column(db.String(64), nullable=False)
-    
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-#             if property == 'date_birth':
-#                 value = datetime.strptime(value, '%Y-%m-%d')
-
-#             setattr(self, property, value)
-
-# # -------------------------CATEGORY--------------------------------
-
-# class Category(db.Model):
-
-#     __tablename__ = 'category'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(600), unique=True)
-
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-
-#             setattr(self, property, value)
-
-# # -------------------------COURSE--------------------------------
-
-# class Course(db.Model):
-
-#     __tablename__ = 'course'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     course_name = db.Column(db.String(600))
-#     category_id = db.Column(db.Integer, ForeignKey(Category.id), nullable=False)
-
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-
-#             setattr(self, property, value)
-
-# # -------------------------WEEKDAY--------------------------------
-
-# class Weekday(db.Model):
-
-#     __tablename__ = 'weekday'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(600))
-
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-
-#             setattr(self, property, value)
-
-# # -------------------------CLASS--------------------------------
-
-# class Class(db.Model):
-
-#     __tablename__ = 'class'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     lesson = db.Column(db.String(600), unique=True)
-#     start_date = db.Column(db.Date)
-#     end_date = db.Column(db.Date)
-#     teacher_id = db.Column(db.Integer, ForeignKey(Teacher.id), nullable=False)
-#     course_id = db.Column(db.Integer, ForeignKey(Course.id), nullable=False)
-
-    
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-#             if property=='start_date' or property=='end_date':
-#                 value = datetime.strptime(value, '%Y-%m-%d')
-
-#             setattr(self, property, value)
-
-# # -------------------------CLASS_STUDENT--------------------------------
-
-# class ClassStudent(db.Model):
-
-#     __tablename__ = 'class_student'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     class_id = db.Column(db.Integer, ForeignKey(Class.id), nullable=False)
-#     student_id = db.Column(db.Integer, ForeignKey(Student.id), nullable=False)
-    
-#     PrimaryKeyConstraint('class_id', 'student_id')
-    
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-#             if hasattr(value, '__iter__') and not isinstance(value, str):
-#                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
-#                 value = value[0]
-
-#             setattr(self, property, value)
-
-# # -------------------------CLASS_WEEKDAY--------------------------------
-
-# class ClassWeekday(db.Model):
-
-#     __tablename__ = 'class_weekday'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     class_id = db.Column(db.Integer, ForeignKey(Class.id), nullable=False)
-#     weekday_id = db.Column(db.Integer, ForeignKey(Weekday.id), nullable=False)
-#     hours = db.Column(db.String(600))
-    
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-#             if hasattr(value, '__iter__') and not isinstance(value, str):
-#                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
-#                 value = value[0]
-
-#             setattr(self, property, value)
-
-# # -------------------------ATTENDANCE--------------------------------
-
-# class Attendance(db.Model):
-
-#     __tablename__ = 'attendance'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     status = db.Column(db.String(600))
-#     class_id = db.Column(db.Integer, ForeignKey(Class.id), nullable=False)
-#     weekday_id = db.Column(db.Integer, ForeignKey(Weekday.id), nullable=False)
-#     student_id = db.Column(db.Integer, ForeignKey(Student.id), nullable=False)
-
-    
-#     def __init__(self, **kwargs):
-#         for property, value in kwargs.items():
-#             # depending on whether value is an iterable or not, we must
-#             # unpack it's value (when **kwargs is request.form, some values
-#             # will be a 1-element list)
-#             if hasattr(value, '__iter__') and not isinstance(value, str):
-#                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
-#                 value = value[0]
-
-#             setattr(self, property, value)
-
-#     def __init__(self, status, class_id, weekday_id, student_id):
-#         self.status = status
-#         self.class_id = class_id
-#         self.weekday_id = weekday_id
-#         self.student_id = student_id

@@ -1237,7 +1237,8 @@ def deleteSVLop(id):
 @login_required
 def nam():
     create_nam_form = CreateNamForm(request.form)
-    return render_template('home/nam.html', segment='nam', formn=create_nam_form)
+    create_ky_form = CreateKyForm(request.form)
+    return render_template('home/nam.html', segment='nam', formn=create_nam_form, formk=create_ky_form)
 
 @blueprint.route('/nam', methods=['POST'])
 @login_required
@@ -1316,6 +1317,25 @@ def deleteNam(id):
     db.session.delete(nam)
     db.session.commit()
     return jsonify({'success': 'Xóa thành công.'})
+
+
+
+#-------------------------------------Kỳ Học------------------------------------------
+
+@blueprint.route('/ky/<int:id>', methods=['PUT'])
+@login_required
+def updateKy(id):
+
+    found_ky = Ky.query.filter_by(id=id).first()
+
+    ky = Ky(**request.form)
+    found_ky.dkh_start = ky.dkh_start
+    found_ky.dkh_end = ky.dkh_end
+    found_ky.dkt_start = ky.dkt_start
+    found_ky.dkt_end = ky.dkt_end
+    db.session.commit()
+  
+    return jsonify({'success': 'Cập nhật thành công.'})
 
 
 

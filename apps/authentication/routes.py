@@ -4,9 +4,8 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from codecs import BOM
-import datetime
-import json
-from tabnanny import check
+from datetime import datetime
+from sqlalchemy import desc, asc
 from flask import jsonify, render_template, redirect, request, session, url_for
 import pandas as pd
 from flask_login import (
@@ -30,6 +29,126 @@ def route_default():
 
 
 # -------------------------------------------------API--------------------------------------------------------
+# -------------------------Dang ky thi--------------------------------
+@blueprint.route('/api/dotdkt')
+def dataDotDKTL():
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        return jsonify({'data': ky.to_dict()})
+    return jsonify({'data': ''})
+
+@blueprint.route('/api/dangkythilai/mon/<int:sv_id>')
+def dataDKTLMon(sv_id):
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if ky.dkh_start<=now and now<ky.dkh_end:
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+            monDK = []
+            for sv_lop in sv_lops:
+                if sv_lop.lop.ky_id < ky.id:
+                    monDK.append(sv_lop.lop.mon_id)
+            
+            sv = SinhVien.query.filter(SinhVien.id == sv_id).first()
+            mons = []
+            for lcn in sv.lcns:
+                for mon in lcn.ctdt.mons:
+                    for lop in mon.lops:
+                        if lop.ky_id == ky.id:
+                            if not(lop.mon_id in monDK):
+
+                                flag = True
+                                for check in mons:
+                                    if lop.mon_id == check.id:
+                                        flag = False
+                                if flag:     
+                                    mons.append(lop.mon)
+
+            return jsonify({'data': [mon.to_dict() for mon in mons]})
+    return jsonify({'data': ''})
+
+@blueprint.route('/api/dangkythilai/lichthi/<int:sv_id>/<int:mon_id>')
+def dataDKTLLop(sv_id, mon_id):
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if ky.dkh_start<=now and now<ky.dkh_end:
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+            monDK = []
+            for sv_lop in sv_lops:
+                if sv_lop.lop.ky_id < ky.id:
+                    monDK.append(sv_lop.lop.mon_id)
+            
+            lopDK = []
+            lops = Lop.query.filter(Lop.ky_id == ky.id, Lop.mon_id == mon_id).order_by(asc(Lop.ten_lop)).all()
+            for lop in lops:
+                if not(lop.mon_id in monDK):
+                    lopDK.append(lop)
+            return jsonify({'data': [lop.to_dictDKHLop(sv_id) for lop in lopDK]})
+    return jsonify({'data': ''})
+
+
+
+
+
+# -------------------------Dang ky hoc--------------------------------
+@blueprint.route('/api/dotdkh')
+def dataDotDKH():
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        return jsonify({'data': ky.to_dict()})
+    return jsonify({'data': ''})
+
+@blueprint.route('/api/dangkyhoc/mon/<int:sv_id>')
+def dataDKHMon(sv_id):
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if ky.dkh_start<=now and now<ky.dkh_end:
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+            monDK = []
+            for sv_lop in sv_lops:
+                if sv_lop.lop.ky_id < ky.id:
+                    monDK.append(sv_lop.lop.mon_id)
+            
+            sv = SinhVien.query.filter(SinhVien.id == sv_id).first()
+            mons = []
+            for lcn in sv.lcns:
+                for mon in lcn.ctdt.mons:
+                    for lop in mon.lops:
+                        if lop.ky_id == ky.id:
+                            if not(lop.mon_id in monDK):
+
+                                flag = True
+                                for check in mons:
+                                    if lop.mon_id == check.id:
+                                        flag = False
+                                if flag:     
+                                    mons.append(lop.mon)
+
+            return jsonify({'data': [mon.to_dict() for mon in mons]})
+    return jsonify({'data': ''})
+
+@blueprint.route('/api/dangkyhoc/lop/<int:sv_id>/<int:mon_id>')
+def dataDKHLop(sv_id, mon_id):
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if ky.dkh_start<=now and now<ky.dkh_end:
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+            monDK = []
+            for sv_lop in sv_lops:
+                if sv_lop.lop.ky_id < ky.id:
+                    monDK.append(sv_lop.lop.mon_id)
+            
+            lopDK = []
+            lops = Lop.query.filter(Lop.ky_id == ky.id, Lop.mon_id == mon_id).order_by(asc(Lop.ten_lop)).all()
+            for lop in lops:
+                if not(lop.mon_id in monDK):
+                    lopDK.append(lop)
+            return jsonify({'data': [lop.to_dictDKHLop(sv_id) for lop in lopDK]})
+    return jsonify({'data': ''})
+
 # -------------------------NhanVien--------------------------------
 @blueprint.route('/api/nhanvien', methods=['POST'])
 def dataNhanVien():
@@ -331,6 +450,19 @@ def dataTKBGVFilter(gv_id, nam_id, ky_id):
 def dataTKBSVFilter(sv_id, nam_id, ky_id):
     ky = Ky.query.filter(Ky.nam_id == nam_id, Ky.ten_ky == ky_id).first()
     lops = Lop.query.filter(Lop.ky_id == ky.id).all()
+    sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+    lichlops = []
+    for lop in lops:
+        for sv_lop in sv_lops:
+            if lop.id == sv_lop.lop_id:
+                for lichlop in LichLop.query.filter(LichLop.lop_id == lop.id).all():
+                    lichlops.append(lichlop)
+    return jsonify({'data': [lichlop.to_dict() for lichlop in lichlops]})
+
+
+@blueprint.route('/api/lichlop/sinhvien/<int:sv_id>/<int:ky_id>', methods=['GET'])
+def dataTKBDK(sv_id, ky_id):
+    lops = Lop.query.filter(Lop.ky_id == ky_id).all()
     sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
     lichlops = []
     for lop in lops:

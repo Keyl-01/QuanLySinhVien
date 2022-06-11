@@ -524,11 +524,11 @@
             // Event click the save button to edit
             $('.saveSV').on('click', function(){
                 var id = $(this).attr("data-id");
-                saveForm(id, 'PUT');
+                saveFormSV(id, 'PUT');
             });
 
             // Function save form
-            function saveForm(id, method){
+            function saveFormSV(id, method){
                 var sv_id = $('#sv_id').val();
                 if(sv_id==null){
                     checkInputSelect('#sv_id', '#ifb_sv_id');

@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, IntegerField, FileField, DateField, DateTimeLocalField
+from wtforms.fields import StringField, PasswordField, SelectField, SelectMultipleField, IntegerField, FileField, DateField, DateTimeLocalField
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.validators import Email, DataRequired, NumberRange, InputRequired
 # from apps.authentication.models import Khoa

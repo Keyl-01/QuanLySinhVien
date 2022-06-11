@@ -6,6 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 import json
 from re import S
+from sqlalchemy import desc, asc
 from apps.authentication.forms import CreateFilterCTDTForm, CreateFilterNamHocForm, CreateTaiKhoanForm, CreateNhanVienForm, CreateKhoaForm, CreateNganhForm, CreateBoMonForm, CreateMonForm, CreateChuongTrinhDaoTaoForm, CreateLopChuyenNganhForm, CreateSinhVienForm, CreateGiangVienForm, CreateLopForm, CreatePhongForm, CreateLichLopForm, CreateSinhVien_LopForm, CreateNamForm, CreateKyForm, CreateLichThiForm, CreateSinhVien_LichThiForm, CreateBangDiemForm
 from apps.authentication.models import Khoa, Nganh, BoMon, Mon, ChuongTrinhDaoTao, GiangVien, LopChuyenNganh, SinhVien, Lop, Phong, LichLop, SinhVien_LichThi, SinhVien_Lop, Nam, Ky, LichThi, NhanVien, Person
 from apps.authentication.util import verify_pass
@@ -64,6 +65,152 @@ def chuongTrinhDaoTaoTruong():
 def profileSV():
     create_sv_form = CreateSinhVienForm(request.form)
     return render_template('home/profilesv.html', segment='profilesv', form=create_sv_form)
+
+@blueprint.route('/dangkyhoc')
+@login_required
+def dangKyHoc():
+    return render_template('home/dangkyhoc.html', segment='dangkyhoc')
+
+@blueprint.route('/dangkyhoc', methods=['POST'])
+@login_required
+def addDKH():
+    lop_id = int(request.form['lop_id'])
+    sv_id = int(request.form['sv_id'])
+    ky_id = int(request.form['ky_id'])
+
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if now<ky.dkh_start or now>=ky.dkh_end:
+            return
+
+    mon_id = (Lop.query.filter_by(id=lop_id).first()).mon_id
+    lops = Lop.query.filter(Lop.ky_id == ky_id, Lop.mon_id == mon_id).all()
+    for lop in lops:
+        sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.lop_id == lop.id).first()
+        if sv_lop:
+            if sv_lop is None:
+                return jsonify({'duplicate': 'Không tìm thấy.'})
+            db.session.delete(sv_lop)
+            db.session.commit()
+
+    lichlop1 = LichLop.query.filter(LichLop.lop_id == lop_id).all()
+    mon1 = Lop.query.filter(Lop.id == lop_id).first()
+
+    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+
+    for lop in lops:
+        mon2 = Lop.query.filter(Lop.mon_id == lop.lop.mon_id).first()
+        if mon2 is not None and mon1.mon_id == mon2.mon_id:
+            return jsonify({'duplicate': 'Sinh viên này đã đăng ký học phần này. Không thể thêm sinh viên này.'})
+
+    for lop in lops:
+        check = Lop.query.filter(Lop.ky_id == ky_id, Lop.id == lop.lop_id).first()
+        if check:
+            lichlop2 = LichLop.query.filter(LichLop.lop_id == lop.lop_id).all()
+            for row2 in lichlop2:
+                for row1 in lichlop1:
+                    if row2.thu == row1.thu:
+                        if((row2.start<=row1.start and row1.start<=row2.end) or (row2.start<=row1.end and row1.end<=row2.end)):
+                            return jsonify({'duplicate': 'Sinh viên này bị trùng lịch. Không thể thêm sinh viên này.'})
+
+    sv_lop = SinhVien_Lop(**request.form)
+    db.session.add(sv_lop)
+    db.session.commit()
+        
+    return jsonify({'success': 'Đăng ký thành công.'})
+
+@blueprint.route('/dangkyhoc/<int:sv_id>/<int:lop_id>', methods=['DELETE'])
+@login_required
+def deleteDKH(sv_id, lop_id):
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if now<ky.dkh_start or now>=ky.dkh_end:
+            return
+
+    sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.lop_id == lop_id).first()
+    if sv_lop is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(sv_lop)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+
+
+@blueprint.route('/dangkythilai')
+@login_required
+def dangKyThiLai():
+    return render_template('home/dangkythilai.html', segment='dangkythilai')
+
+@blueprint.route('/dangkythilai', methods=['POST'])
+@login_required
+def addDKTL():
+    lichthi_id = int(request.form['lichthi_id'])
+    sv_id = int(request.form['sv_id'])
+    ky_id = int(request.form['ky_id'])
+
+    ky = Ky.query.filter(Ky.dkt_start != None, Ky.dkt_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if now<ky.dkt_start or now>=ky.dkt_end:
+            return
+
+    mon_id = (Lop.query.filter_by(id=lop_id).first()).mon_id
+    lops = Lop.query.filter(Lop.ky_id == ky_id, Lop.mon_id == mon_id).all()
+    for lop in lops:
+        sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.lop_id == lop.id).first()
+        if sv_lop:
+            if sv_lop is None:
+                return jsonify({'duplicate': 'Không tìm thấy.'})
+            db.session.delete(sv_lop)
+            db.session.commit()
+
+    lichlop1 = LichLop.query.filter(LichLop.lop_id == lop_id).all()
+    mon1 = Lop.query.filter(Lop.id == lop_id).first()
+
+    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+
+    for lop in lops:
+        mon2 = Lop.query.filter(Lop.mon_id == lop.lop.mon_id).first()
+        if mon2 is not None and mon1.mon_id == mon2.mon_id:
+            return jsonify({'duplicate': 'Sinh viên này đã đăng ký học phần này. Không thể thêm sinh viên này.'})
+
+    for lop in lops:
+        check = Lop.query.filter(Lop.ky_id == ky_id, Lop.id == lop.lop_id).first()
+        if check:
+            lichlop2 = LichLop.query.filter(LichLop.lop_id == lop.lop_id).all()
+            for row2 in lichlop2:
+                for row1 in lichlop1:
+                    if row2.thu == row1.thu:
+                        if((row2.start<=row1.start and row1.start<=row2.end) or (row2.start<=row1.end and row1.end<=row2.end)):
+                            return jsonify({'duplicate': 'Sinh viên này bị trùng lịch. Không thể thêm sinh viên này.'})
+
+    sv_lop = SinhVien_Lop(**request.form)
+    db.session.add(sv_lop)
+    db.session.commit()
+        
+    return jsonify({'success': 'Đăng ký thành công.'})
+
+@blueprint.route('/dangkythilai/<int:sv_id>/<int:lop_id>', methods=['DELETE'])
+@login_required
+def deleteDKTL(sv_id, lop_id):
+    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    if ky:
+        now = datetime.now()
+        if now<ky.dkh_start or now>=ky.dkh_end:
+            return
+
+    sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.lop_id == lop_id).first()
+    if sv_lop is None:
+        return jsonify({'error': 'Không tìm thấy.'})
+    db.session.delete(sv_lop)
+    db.session.commit()
+    return jsonify({'success': 'Xóa thành công.'})
+
+
+
 
 @blueprint.route('/tkbsv')
 @login_required

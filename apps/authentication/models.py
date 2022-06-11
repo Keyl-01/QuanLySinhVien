@@ -280,7 +280,6 @@ class Mon(db.Model):
             'bomon_id': self.bomon_id,
             'ten_bomon': self.bomon.ten_bomon
         }
-    
 
 # -------------------------ChuongTrinhDaoTao--------------------------------
 
@@ -685,17 +684,55 @@ class Lop(db.Model):
             setattr(self, property, value)
 
     def to_dict(self):
+        sv_ls = SinhVien_Lop.query.filter(SinhVien_Lop.lop_id == self.id).all()
         return {
             'id': self.id,
             'ten_lop': self.ten_lop,
             'so_luong': self.so_luong,
+            'so_luong_sv': len(sv_ls),
             'mon_id': self.mon_id,
             'ma_mon': self.mon.ma_mon,
             'ten_mon': self.mon.ten_mon,
+            'tinchi': self.mon.tinchi,
             'ky_id': self.ky_id,
             'ky': self.ky.ten_ky,
-            'nam_id': self.ky.nam_id
-            # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
+            'nam_id': self.ky.nam_id,
+            'lichlops': [{'lichlop_id': lichlop.id, 
+                        'thu': lichlop.thu,
+                        'start': lichlop.start,
+                        'end': lichlop.end,
+                        'phong_id': lichlop.phong_id,
+                        'ten_phong': lichlop.phong.ten_phong,
+                        'so_luong': lichlop.phong.so_luong} for lichlop in self.lichlops]
+        }
+
+    def to_dictDKHLop(self, sv_id):
+        sv_ls = SinhVien_Lop.query.filter(SinhVien_Lop.lop_id == self.id).all()
+        isDK = 0
+        for sv in sv_ls:
+            if sv.sv_id == sv_id:
+                isDK = 1
+                break
+        return {
+            'id': self.id,
+            'ten_lop': self.ten_lop,
+            'isDK': isDK,
+            'so_luong': self.so_luong,
+            'so_luong_sv': len(sv_ls),
+            'mon_id': self.mon_id,
+            'ma_mon': self.mon.ma_mon,
+            'ten_mon': self.mon.ten_mon,
+            'tinchi': self.mon.tinchi,
+            'ky_id': self.ky_id,
+            'ky': self.ky.ten_ky,
+            'nam_id': self.ky.nam_id,
+            'lichlops': [{'lichlop_id': lichlop.id, 
+                        'thu': lichlop.thu,
+                        'start': lichlop.start,
+                        'end': lichlop.end,
+                        'phong_id': lichlop.phong_id,
+                        'ten_phong': lichlop.phong.ten_phong,
+                        'so_luong': lichlop.phong.so_luong} for lichlop in self.lichlops]
         }
 
 

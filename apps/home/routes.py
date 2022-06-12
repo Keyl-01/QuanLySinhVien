@@ -12,7 +12,7 @@ from apps.authentication.models import Khoa, Nganh, BoMon, Mon, ChuongTrinhDaoTa
 from apps.authentication.util import verify_pass
 from apps.home import blueprint
 from apps import db, login_manager, create_app
-from flask import Flask, render_template, jsonify, redirect, request, session, url_for, Response
+from flask import Flask, render_template, jsonify, redirect, request, session, url_for, Response, abort
 from flask_login import login_required, current_user
 from jinja2 import TemplateNotFound
 from sqlalchemy import or_, and_
@@ -26,13 +26,54 @@ from datetime import datetime
 @blueprint.route('/index')
 @login_required
 def index():
-    return render_template('home/index.html', segment='index')
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+
+    dataSV = []
+    tongSV = len(SinhVien.query.all())
+    tongGV = len(SinhVien.query.all())
+    tongNV = len(SinhVien.query.all())
+
+    nganhs = Nganh.query.all()
+    for nganh in nganhs:
+        dictData = {
+            'ten_nganh': (nganh.ten_nganh).replace("Ngành ",''), 
+            'soluong': 0
+        }
+        countSV = 0
+        for ctdt in nganh.ctdts:
+            for lcn in ctdt.lcns:
+                countSV += len(lcn.svs)
+        dictData.update({'soluong': countSV})
+        # dictData.update({'phantram': countSV/tongSV})
+        dataSV.append(dictData)
+
+    dataGV = []
+    bomons = BoMon.query.all()
+    for bomon in bomons:
+        dictData = {
+            'ten_bomon': (bomon.ten_bomon).replace("Bộ môn ",''), 
+            'soluong': len(bomon.gvs)
+        }
+        dataGV.append(dictData)
+
+    tongNVDT = len(NhanVien.query.filter(NhanVien.type == 1).all())
+    tongNVCT = len(NhanVien.query.filter(NhanVien.type == 2).all())
+
+    return render_template('home/index.html', segment='index', dataSV=dataSV, dataGV=dataGV, tongNVDT=tongNVDT, tongNVCT=tongNVCT, tongSV=tongSV, tongGV=tongGV, tongNV=tongNV)
 
 #-------------------------------------Toan truong---------------------------------------------
 
 @blueprint.route('/tkbtruong')
 @login_required
 def tkbTruong():
+    if current_user.role == 1:
+        abort(403)
+        
+
     create_filter_nam_form = CreateFilterNamHocForm(request.form)
     nam = Nam.query.all()
     create_filter_nam_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -41,6 +82,10 @@ def tkbTruong():
 @blueprint.route('/lichthitruong')
 @login_required
 def lichThiTruong():
+    if current_user.role == 1:
+        abort(403)
+
+
     create_filter_nam_form = CreateFilterNamHocForm(request.form)
     nam = Nam.query.all()
     create_filter_nam_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -49,6 +94,10 @@ def lichThiTruong():
 @blueprint.route('/chuongtrinhdaotaotruong')
 @login_required
 def chuongTrinhDaoTaoTruong():
+    if current_user.role == 1:
+        abort(403)
+
+
     create_filter_ctdt_form = CreateFilterCTDTForm(request.form)
     khoa =  Khoa.query.all()
     create_filter_ctdt_form.nganh_id.choices = dict([(row.ten_khoa, [(nganh.id, nganh.ten_nganh) for nganh in row.nganhs]) for row in khoa])
@@ -63,17 +112,28 @@ def chuongTrinhDaoTaoTruong():
 @blueprint.route('/profilesv')
 @login_required
 def profileSV():
+    if current_user.role != 4:
+        abort(403)
+
     create_sv_form = CreateSinhVienForm(request.form)
     return render_template('home/profilesv.html', segment='profilesv', form=create_sv_form)
 
 @blueprint.route('/dangkyhoc')
 @login_required
 def dangKyHoc():
+    if current_user.role != 4:
+        abort(403)
+
+
     return render_template('home/dangkyhoc.html', segment='dangkyhoc')
 
 @blueprint.route('/dangkyhoc', methods=['POST'])
 @login_required
 def addDKH():
+    if current_user.role != 4:
+        abort(403)
+
+
     lop_id = int(request.form['lop_id'])
     sv_id = int(request.form['sv_id'])
     ky_id = int(request.form['ky_id'])
@@ -122,6 +182,9 @@ def addDKH():
 @blueprint.route('/dangkyhoc/<int:sv_id>/<int:lop_id>', methods=['DELETE'])
 @login_required
 def deleteDKH(sv_id, lop_id):
+    if current_user.role != 4:
+        abort(403)
+
     ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
     if ky:
         now = datetime.now()
@@ -141,11 +204,17 @@ def deleteDKH(sv_id, lop_id):
 @blueprint.route('/dangkythilai')
 @login_required
 def dangKyThiLai():
+    if current_user.role != 4:
+        abort(403)
+
     return render_template('home/dangkythilai.html', segment='dangkythilai')
 
 @blueprint.route('/dangkythilai', methods=['POST'])
 @login_required
 def addDKTL():
+    if current_user.role != 4:
+        abort(403)
+
     lichthi_id = int(request.form['lichthi_id'])
     sv_id = int(request.form['sv_id'])
     ky_id = int(request.form['ky_id'])
@@ -183,6 +252,9 @@ def addDKTL():
 @blueprint.route('/dangkythilai/<int:sv_id>/<int:lichthi_id>', methods=['DELETE'])
 @login_required
 def deleteDKTL(sv_id, lichthi_id):
+    if current_user.role != 4:
+        abort(403)
+
     ky = Ky.query.filter(Ky.dkt_start != None, Ky.dkt_end != None).order_by(asc(Ky.date_start)).first()
     if ky:
         now = datetime.now()
@@ -202,6 +274,9 @@ def deleteDKTL(sv_id, lichthi_id):
 @blueprint.route('/tkbsv')
 @login_required
 def tkbSV():
+    if current_user.role != 4:
+        abort(403)
+
     create_filter_nam_form = CreateFilterNamHocForm(request.form)
     nam = Nam.query.all()
     create_filter_nam_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -210,6 +285,9 @@ def tkbSV():
 @blueprint.route('/bangdiemsv')
 @login_required
 def bangDiemSV():
+    if current_user.role != 4:
+        abort(403)
+
     create_filter_nam_form = CreateFilterNamHocForm(request.form)
     nam = Nam.query.all()
     create_filter_nam_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -218,6 +296,9 @@ def bangDiemSV():
 @blueprint.route('/lichthisv')
 @login_required
 def lichThiSV():
+    if current_user.role != 4:
+        abort(403)
+
     create_filter_nam_form = CreateFilterNamHocForm(request.form)
     nam = Nam.query.all()
     create_filter_nam_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -227,9 +308,43 @@ def lichThiSV():
 #-------------------------------------Phong Cong tac HSSV---------------------------------------------
 #-------------------------------------Thong tin ca nhan------------------------------------------
 
+@blueprint.route('/thongkect')
+@login_required
+def thongkect():
+    if current_user.role == 1:
+        if current_user.type != 2:
+            abort(403)
+    else:
+        abort(403)
+
+    dataSV = []
+    tongSV = len(SinhVien.query.all())
+
+    nganhs = Nganh.query.all()
+    for nganh in nganhs:
+        dictData = {
+            'ten_nganh': (nganh.ten_nganh).replace("Ngành ",''), 
+            'soluong': 0
+        }
+        countSV = 0
+        for ctdt in nganh.ctdts:
+            for lcn in ctdt.lcns:
+                countSV += len(lcn.svs)
+        dictData.update({'soluong': countSV})
+        # dictData.update({'phantram': countSV/tongSV})
+        dataSV.append(dictData)
+
+    return render_template('home/thongkect.html', segment='thongkect', dataSV=dataSV, tongSV=tongSV)
+
 @blueprint.route('/profilenvhssv')
 @login_required
 def profileNVHSSV():
+    if current_user.role == 1:
+        if current_user.type != 2:
+            abort(403)
+    else:
+        abort(403)
+
     create_nv_form = CreateNhanVienForm(request.form)
     return render_template('home/profilenvhssv.html', segment='profilenvhssv', form=create_nv_form)
 
@@ -240,12 +355,18 @@ def profileNVHSSV():
 @blueprint.route('/profilegv')
 @login_required
 def profileGV():
+    if current_user.role != 3:
+        abort(403)
+
     create_gv_form = CreateGiangVienForm(request.form)
     return render_template('home/profilegv.html', segment='profilegv', form=create_gv_form)
 
 @blueprint.route('/tkbgv')
 @login_required
 def tkbGV():
+    if current_user.role != 3:
+        abort(403)
+
     create_filter_nam_form = CreateFilterNamHocForm(request.form)
     nam = Nam.query.all()
     create_filter_nam_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -254,6 +375,9 @@ def tkbGV():
 @blueprint.route('/lopgv')
 @login_required
 def lopGV():
+    if current_user.role != 3:
+        abort(403)
+
     create_filter_nam_form = CreateFilterNamHocForm(request.form)
     nam = Nam.query.all()
     create_filter_nam_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -266,12 +390,24 @@ def lopGV():
 @blueprint.route('/profilenv')
 @login_required
 def profileNV():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+
     create_nv_form = CreateNhanVienForm(request.form)
     return render_template('home/profilenv.html', segment='profilenv', form=create_nv_form)
 
 @blueprint.route('/profilenv/<int:id>', methods=['PUT'])
 @login_required
 def updateProfileNV(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_nv = request.form['ma_nv']
     email = request.form['email']
     phone = request.form['phone']
@@ -330,15 +466,18 @@ def changePassword(id):
 
 #-------------------------------------Tài Khoản------------------------------------------
 
-@blueprint.route('/taikhoan')
-@login_required
-def taiKhoan():
-    create_taikhoan_form = CreateTaiKhoanForm(request.form)
-    return render_template('home/taikhoan.html', segment='taikhoan', form=create_taikhoan_form)
+# @blueprint.route('/taikhoan')
+# @login_required
+# def taiKhoan():
+#     create_taikhoan_form = CreateTaiKhoanForm(request.form)
+#     return render_template('home/taikhoan.html', segment='taikhoan', form=create_taikhoan_form)
 
 @blueprint.route('/taikhoan/<int:id>', methods=['PUT'])
 @login_required
 def updateTaiKhoan(id):
+    if current_user.role != 1:
+        abort(403)
+        
     if 'nhanvien' in request.form:
         found_nv = NhanVien.query.filter_by(id=id).first()
         nv = NhanVien(**request.form)
@@ -367,12 +506,25 @@ def updateTaiKhoan(id):
 @blueprint.route('/nhanvien')
 @login_required
 def nhanVien():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
+
     create_nv_form = CreateNhanVienForm(request.form)
     return render_template('home/nhanvien.html', segment='nhanvien', form=create_nv_form)
 
 @blueprint.route('/nhanvien', methods=['POST'])
 @login_required
 def addNhanVien():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_nv = request.form['ma_nv']
     email = request.form['email']
     phone = request.form['phone']
@@ -400,6 +552,12 @@ def addNhanVien():
 @blueprint.route('/nhanvien/<int:id>', methods=['PUT'])
 @login_required
 def updateNhanVien(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_nv = request.form['ma_nv']
     email = request.form['email']
     phone = request.form['phone']
@@ -438,6 +596,12 @@ def updateNhanVien(id):
 @blueprint.route('/nhanvien/<int:id>', methods=['DELETE'])
 @login_required
 def deleteNhanVien(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     nv = NhanVien.query.get_or_404(id)
     if nv is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -452,12 +616,24 @@ def deleteNhanVien(id):
 @blueprint.route('/khoa')
 @login_required
 def khoa():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_khoa_form = CreateKhoaForm(request.form)
     return render_template('home/khoa.html', segment='khoa', form=create_khoa_form)
 
 @blueprint.route('/khoa', methods=['POST'])
 @login_required
 def addKhoa():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_khoa = request.form['ma_khoa']
     ten_khoa = request.form['ten_khoa']
 
@@ -479,6 +655,12 @@ def addKhoa():
 @blueprint.route('/khoa/<int:id>', methods=['PUT'])
 @login_required
 def updateKhoa(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_khoa = request.form['ma_khoa']
     ten_khoa = request.form['ten_khoa']
 
@@ -504,6 +686,12 @@ def updateKhoa(id):
 @blueprint.route('/khoa/<int:id>', methods=['DELETE'])
 @login_required
 def deleteKhoa(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     khoa = Khoa.query.get_or_404(id)
     if khoa is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -517,6 +705,12 @@ def deleteKhoa(id):
 @blueprint.route('/nganh')
 @login_required
 def nganh():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_nganh_form = CreateNganhForm(request.form)
     khoa =  Khoa.query.all()
     create_nganh_form.khoa_id.choices = [(row.id, row.ten_khoa) for row in khoa]
@@ -525,6 +719,12 @@ def nganh():
 @blueprint.route('/nganh', methods=['POST'])
 @login_required
 def addNganh():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_nganh = request.form['ma_nganh']
     ten_nganh = request.form['ten_nganh']
 
@@ -545,6 +745,12 @@ def addNganh():
 @blueprint.route('/nganh/<int:id>', methods=['PUT'])
 @login_required
 def updateNganh(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_nganh = request.form['ma_nganh']
     ten_nganh = request.form['ten_nganh']
 
@@ -569,6 +775,12 @@ def updateNganh(id):
 @blueprint.route('/nganh/<int:id>', methods=['DELETE'])
 @login_required
 def deleteNganh(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     nganh = Nganh.query.get_or_404(id)
     if nganh is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -582,6 +794,12 @@ def deleteNganh(id):
 @blueprint.route('/bomon')
 @login_required
 def bomon():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_bomon_form = CreateBoMonForm(request.form)
     khoa =  Khoa.query.all()
     create_bomon_form.khoa_id.choices = [(row.id, row.ten_khoa) for row in khoa]
@@ -590,6 +808,12 @@ def bomon():
 @blueprint.route('/bomon', methods=['POST'])
 @login_required
 def addBoMon():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_bomon = request.form['ma_bomon']
     ten_bomon = request.form['ten_bomon']
 
@@ -610,6 +834,12 @@ def addBoMon():
 @blueprint.route('/bomon/<int:id>', methods=['PUT'])
 @login_required
 def updateBoMon(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_bomon = request.form['ma_bomon']
     ten_bomon = request.form['ten_bomon']
 
@@ -634,6 +864,12 @@ def updateBoMon(id):
 @blueprint.route('/bomon/<int:id>', methods=['DELETE'])
 @login_required
 def deleteBoMon(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     bomon = BoMon.query.get_or_404(id)
     if bomon is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -648,6 +884,12 @@ def deleteBoMon(id):
 @blueprint.route('/mon')
 @login_required
 def mon():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_mon_form = CreateMonForm(request.form)
     khoa =  Khoa.query.all()
     create_mon_form.bomon_id.choices = dict([(row.ten_khoa, [(bomon.id, bomon.ten_bomon) for bomon in row.bomons]) for row in khoa])
@@ -656,6 +898,12 @@ def mon():
 @blueprint.route('/mon', methods=['POST'])
 @login_required
 def addMon():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_mon = request.form['ma_mon']
     ten_mon = request.form['ten_mon']
 
@@ -676,6 +924,12 @@ def addMon():
 @blueprint.route('/mon/<int:id>', methods=['PUT'])
 @login_required
 def updateMon(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_mon = request.form['ma_mon']
     ten_mon = request.form['ten_mon']
 
@@ -700,6 +954,12 @@ def updateMon(id):
 @blueprint.route('/mon/<int:id>', methods=['DELETE'])
 @login_required
 def deleteMon(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     mon = Mon.query.get_or_404(id)
     if mon is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -713,6 +973,12 @@ def deleteMon(id):
 @blueprint.route('/chuongtrinhdaotao')
 @login_required
 def chuongTrinhDaoTao():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_ctdt_form = CreateChuongTrinhDaoTaoForm(request.form)
     khoa = Khoa.query.all()
     create_ctdt_form.nganh_id.choices = dict([(row.ten_khoa, [(nganh.id, nganh.ten_nganh) for nganh in row.nganhs]) for row in khoa])
@@ -723,6 +989,12 @@ def chuongTrinhDaoTao():
 @blueprint.route('/chuongtrinhdaotao', methods=['POST'])
 @login_required
 def addChuongTrinhDaoTao():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_ctdt = request.form['ma_ctdt']
     ten_ctdt = request.form['ten_ctdt']
     mon_id = request.form.getlist('mon_id')
@@ -747,6 +1019,12 @@ def addChuongTrinhDaoTao():
 @blueprint.route('/chuongtrinhdaotao/<int:id>', methods=['PUT'])
 @login_required
 def updateChuongTrinhDaoTao(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_ctdt = request.form['ma_ctdt']
     ten_ctdt = request.form['ten_ctdt']
     mon_id = request.form.getlist('mon_id')
@@ -779,6 +1057,12 @@ def updateChuongTrinhDaoTao(id):
 @blueprint.route('/chuongtrinhdaotao/<int:id>', methods=['DELETE'])
 @login_required
 def deleteChuongTrinhDaoTao(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ctdt = ChuongTrinhDaoTao.query.get_or_404(id)
     if ctdt is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -792,6 +1076,12 @@ def deleteChuongTrinhDaoTao(id):
 @blueprint.route('/giangvien')
 @login_required
 def giangVien():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_gv_form = CreateGiangVienForm(request.form)
     khoa =  Khoa.query.all()
     create_gv_form.bomon_id.choices = dict([(row.ten_khoa, [(bomon.id, bomon.ten_bomon) for bomon in row.bomons]) for row in khoa])
@@ -800,6 +1090,12 @@ def giangVien():
 @blueprint.route('/giangvien', methods=['POST'])
 @login_required
 def addGiangVien():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_gv = request.form['ma_gv']
     email = request.form['email']
     phone = request.form['phone']
@@ -827,6 +1123,12 @@ def addGiangVien():
 @blueprint.route('/giangvien/<int:id>', methods=['PUT'])
 @login_required
 def updateGiangVien(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ma_gv = request.form['ma_gv']
     email = request.form['email']
     phone = request.form['phone']
@@ -864,6 +1166,12 @@ def updateGiangVien(id):
 @blueprint.route('/giangvien/<int:id>', methods=['DELETE'])
 @login_required
 def deleteGiangVien(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     gv = GiangVien.query.get_or_404(id)
     if gv is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -877,6 +1185,12 @@ def deleteGiangVien(id):
 @blueprint.route('/lopchuyennganh')
 @login_required
 def lopChuyenNganh():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_lcn_form = CreateLopChuyenNganhForm(request.form)
     bomon = BoMon.query.all()
     create_lcn_form.gv_id.choices = dict([(row.ten_bomon, [(gv.id, gv.pcode+' - '+gv.last_name+' '+gv.first_name) for gv in row.gvs]) for row in bomon])
@@ -889,6 +1203,12 @@ def lopChuyenNganh():
 @blueprint.route('/lopchuyennganh', methods=['POST'])
 @login_required
 def addLopChuyenNganh():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ten_lcn = request.form['ten_lcn']
     sv_id = request.form.getlist('sv_id')
 
@@ -907,6 +1227,12 @@ def addLopChuyenNganh():
 @blueprint.route('/lopchuyennganh/<int:id>', methods=['PUT'])
 @login_required
 def updateLopChuyenNganh(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ten_lcn = request.form['ten_lcn']
     sv_id = request.form.getlist('sv_id')
 
@@ -932,6 +1258,12 @@ def updateLopChuyenNganh(id):
 @blueprint.route('/lopchuyennganh/<int:id>', methods=['DELETE'])
 @login_required
 def deleteLopChuyenNganh(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     lcn = LopChuyenNganh.query.get_or_404(id)
     if lcn is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -945,6 +1277,9 @@ def deleteLopChuyenNganh(id):
 @blueprint.route('/sinhvien')
 @login_required
 def sinhVien():
+    if current_user.role != 1:
+        abort(403)
+        
     create_sv_form = CreateSinhVienForm(request.form)
     ctdt = ChuongTrinhDaoTao.query.all()
     create_sv_form.lcn_id.choices = dict([(row.ten_ctdt, [(lcn.id, lcn.ten_lcn) for lcn in row.lcns]) for row in ctdt])
@@ -958,6 +1293,9 @@ def sinhVien():
 @blueprint.route('/sinhvien', methods=['POST'])
 @login_required
 def addSinhVien():
+    if current_user.role != 1:
+        abort(403)
+
     ma_sv = request.form['ma_sv']
     email = request.form['email']
     phone = request.form['phone']
@@ -988,6 +1326,9 @@ def addSinhVien():
 @blueprint.route('/sinhvien/<int:id>', methods=['PUT'])
 @login_required
 def updateSinhVien(id):
+    if current_user.role != 1:
+        abort(403)
+
     ma_sv = request.form['ma_sv']
     email = request.form['email']
     phone = request.form['phone']
@@ -1029,6 +1370,9 @@ def updateSinhVien(id):
 @blueprint.route('/sinhvien/<int:id>', methods=['DELETE'])
 @login_required
 def deleteSinhVien(id):
+    if current_user.role != 1:
+        abort(403)
+
     sv = SinhVien.query.get_or_404(id)
     if sv is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -1043,6 +1387,12 @@ def deleteSinhVien(id):
 @blueprint.route('/lop')
 @login_required
 def lop():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_lop_form = CreateLopForm(request.form)
     nam = Nam.query.all()
     create_lop_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -1067,6 +1417,12 @@ def lop():
 @blueprint.route('/lop', methods=['POST'])
 @login_required
 def addLop():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ten_lop = request.form['ten_lop']
     ky_id = request.form['ky_id']
 
@@ -1086,6 +1442,12 @@ def addLop():
 @blueprint.route('/lop/<int:id>', methods=['PUT'])
 @login_required
 def updateLop(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ten_lop = request.form['ten_lop']
     mon_id = int(request.form['mon_id'])
     ky_id = request.form['ky_id']
@@ -1124,6 +1486,12 @@ def updateLop(id):
 @blueprint.route('/lop/<int:id>', methods=['DELETE'])
 @login_required
 def deleteLop(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     lop = Lop.query.get_or_404(id)
     if lop is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -1138,11 +1506,23 @@ def deleteLop(id):
 @blueprint.route('/phong')
 @login_required
 def phong():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_phong_form = CreatePhongForm(request.form)
     return render_template('home/phong.html', segment='phong', form=create_phong_form)
 
 @blueprint.route('/phong', methods=['POST'])
 def addPhong():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ten_phong = request.form['ten_phong']
 
     phong = Phong.query.filter_by(ten_phong=ten_phong).first()
@@ -1158,6 +1538,12 @@ def addPhong():
 @blueprint.route('/phong/<int:id>', methods=['PUT'])
 @login_required
 def updatePhong(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     ten_phong = request.form['ten_phong']
 
     found_phong = Phong.query.filter_by(id=id).first()
@@ -1176,6 +1562,12 @@ def updatePhong(id):
 @blueprint.route('/phong/<int:id>', methods=['DELETE'])
 @login_required
 def deletePhong(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     phong = Phong.query.get_or_404(id)
     if phong is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -1187,20 +1579,26 @@ def deletePhong(id):
 
 #-------------------------------------Lịch Lớp------------------------------------------
 
-@blueprint.route('/lichlop')
-@login_required
-def lichlop():
-    create_lichlop_form = CreateLichLopForm(request.form)
-    mon = Mon.query.all()
-    create_lichlop_form.lop_id.choices = dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
-    bomon = BoMon.query.all()
-    create_lichlop_form.gv_id.choices = dict([(row.ten_bomon, [(gv.id, gv.pcode+' - '+gv.last_name+' '+gv.first_name) for gv in row.gvs]) for row in bomon])
-    create_lichlop_form.phong_id.choices = [(row.id, row.ten_phong) for row in Phong.query.all()]
-    return render_template('home/lichlop.html', segment='lichlop', form=create_lichlop_form)
+# @blueprint.route('/lichlop')
+# @login_required
+# def lichlop():
+#     create_lichlop_form = CreateLichLopForm(request.form)
+#     mon = Mon.query.all()
+#     create_lichlop_form.lop_id.choices = dict([(row.ma_mon + ' - ' + row.ten_mon, [(lop.id, lop.ten_lop) for lop in row.lops]) for row in mon])
+#     bomon = BoMon.query.all()
+#     create_lichlop_form.gv_id.choices = dict([(row.ten_bomon, [(gv.id, gv.pcode+' - '+gv.last_name+' '+gv.first_name) for gv in row.gvs]) for row in bomon])
+#     create_lichlop_form.phong_id.choices = [(row.id, row.ten_phong) for row in Phong.query.all()]
+#     return render_template('home/lichlop.html', segment='lichlop', form=create_lichlop_form)
 
 @blueprint.route('/lichlop', methods=['POST'])
 @login_required
 def addLichLop():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     lop_id = int(request.form['lop_id'])
     thu = int(request.form['thu'])
     start = int(request.form['start'])
@@ -1251,6 +1649,12 @@ def addLichLop():
 @blueprint.route('/lichlop/<int:id>', methods=['PUT'])
 @login_required
 def updateLichLop(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     lop_id = int(request.form['lop_id'])
     thu = int(request.form['thu'])
     start = int(request.form['start'])
@@ -1305,6 +1709,12 @@ def updateLichLop(id):
 @blueprint.route('/lichlop/<int:id>', methods=['DELETE'])
 @login_required
 def deleteLichLop(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     lichlop = LichLop.query.get_or_404(id)
     if lichlop is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -1319,6 +1729,12 @@ def deleteLichLop(id):
 @blueprint.route('/sv_lop', methods=['POST'])
 @login_required
 def addSVLop():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     lop_id = int(request.form['lop_id'])
     sv_id = int(request.form['sv_id'])
     ky_id = int(request.form['ky_id'])
@@ -1357,6 +1773,12 @@ def addSVLop():
 @blueprint.route('/sv_lop/<int:id>', methods=['DELETE'])
 @login_required
 def deleteSVLop(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     sv_lop = SinhVien_Lop.query.get_or_404(id)
     if sv_lop is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -1371,6 +1793,12 @@ def deleteSVLop(id):
 @blueprint.route('/nam')
 @login_required
 def nam():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_nam_form = CreateNamForm(request.form)
     create_ky_form = CreateKyForm(request.form)
     return render_template('home/nam.html', segment='nam', formn=create_nam_form, formk=create_ky_form)
@@ -1378,6 +1806,12 @@ def nam():
 @blueprint.route('/nam', methods=['POST'])
 @login_required
 def addNam():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     # namhoc = request.form['namhoc']
     hk1 = request.form['hk1']
     hk2 = request.form['hk2']
@@ -1413,6 +1847,12 @@ def addNam():
 @blueprint.route('/nam/<int:id>', methods=['PUT'])
 @login_required
 def updateNam(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     hk1 = request.form['hk1']
     hk2 = request.form['hk2']
     hk3 = request.form['hk3']
@@ -1446,6 +1886,12 @@ def updateNam(id):
 @blueprint.route('/nam/<int:id>', methods=['DELETE'])
 @login_required
 def deleteNam(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     nam = Nam.query.get_or_404(id)
     if nam is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -1460,6 +1906,12 @@ def deleteNam(id):
 @blueprint.route('/ky/<int:id>', methods=['PUT'])
 @login_required
 def updateKy(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
 
     found_ky = Ky.query.filter_by(id=id).first()
 
@@ -1479,6 +1931,12 @@ def updateKy(id):
 @blueprint.route('/lichthi')
 @login_required
 def lichthi():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_lichthi_form = CreateLichThiForm(request.form)
     nam = Nam.query.all()
     create_lichthi_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -1496,6 +1954,12 @@ def lichthi():
 @blueprint.route('/lichthi', methods=['POST'])
 @login_required
 def addLichThi():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     mon_id = request.form['mon_id']
     date = request.form['date']
     start = request.form['start']
@@ -1524,6 +1988,12 @@ def addLichThi():
 @blueprint.route('/lichthi/<int:id>', methods=['PUT'])
 @login_required
 def updateLichThi(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     mon_id = request.form['mon_id']
     date = request.form['date']
     start = request.form['start']
@@ -1556,6 +2026,12 @@ def updateLichThi(id):
 @blueprint.route('/lichthi/<int:id>', methods=['DELETE'])
 @login_required
 def deleteLichThi(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     lichthi = LichThi.query.get_or_404(id)
     if lichthi is None:
         return jsonify({'error': 'Không tìm thấy.'})
@@ -1571,6 +2047,12 @@ def deleteLichThi(id):
 @blueprint.route('/sv_lichthi/<int:lichthi_id>', methods=['PUT'])
 @login_required
 def updateSV_LichThi(lichthi_id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     sv_id = request.form.getlist('sv_id')
 
     found_lichthi = LichThi.query.filter_by(id=lichthi_id).first()
@@ -1593,6 +2075,12 @@ def updateSV_LichThi(lichthi_id):
 @blueprint.route('/bangdiem')
 @login_required
 def bangDiem():
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     create_bangdiem_form = CreateBangDiemForm(request.form)
     nam = Nam.query.all()
     create_bangdiem_form.nam_id.choices = [(row.id, 'Năm học ' + str((Ky.query.filter(Ky.nam_id == row.id, Ky.ten_ky == 1).first()).date_start.year) + ' - ' + str(row.date_end.year)) for row in nam]
@@ -1607,6 +2095,12 @@ def bangDiem():
 @blueprint.route('/bangdiem/<int:id>', methods=['PUT'])
 @login_required
 def updateBangDiem(id):
+    if current_user.role == 1:
+        if current_user.type != 1:# Phong Dao tao
+            abort(403)
+    else:
+        abort(403)
+        
     if 'diemQT' in request.form:
         diemQT = request.form['diemQT']
         if diemQT == '':
@@ -1744,3 +2238,18 @@ def get_segment(request):
 
     except:
         return None
+
+
+@blueprint.errorhandler(403)
+def access_forbidden(error):
+    return render_template('home/page-403.html'), 403
+
+
+@blueprint.errorhandler(404)
+def not_found_error(error):
+    return render_template('home/page-404.html'), 404
+
+
+@blueprint.errorhandler(500)
+def internal_error(error):
+    return render_template('home/page-500.html'), 500

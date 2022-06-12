@@ -22,7 +22,11 @@
                                 <h5 class="m-b-10">Chương trình đào tạo</h5>
                             </div>
                             <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+                                {% if current_user.role == 3 %}
+                                <li class="breadcrumb-item"><a href="{{ url_for('home_blueprint.tkbGV') }}"><i class="feather icon-home"></i></a></li>
+                                {% elif current_user.role == 4 %}
+                                <li class="breadcrumb-item"><a href="{{ url_for('home_blueprint.dangKyHoc') }}"><i class="feather icon-home"></i></a></li>
+                                {% endif %} 
                                 <li class="breadcrumb-item"><a href="javascript:">Chương trình đào tạo</a></li>
                             </ul>
                         </div>

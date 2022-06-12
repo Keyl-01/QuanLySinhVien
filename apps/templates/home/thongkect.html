@@ -1,0 +1,220 @@
+{% extends "layouts/basenvhssv.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="pcoded-content">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="row">
+                        <!--[ daily sales section ] start-->
+                        <div class="col-md-12 col-xl-4">
+                            <div class="card card-customer">
+                                <div class="card-block">
+                                    <div class="row align-items-center justify-content-center">
+                                        <div class="col">
+                                            <h2 class="mb-2 f-w-300">{{ tongSV }}</h2>
+                                            <h5 class="text-muted mb-0">Sinh viên</h5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="feather icon-users f-30 text-white theme-bg"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-xl-8">
+                        </div>
+                        <!--[ daily sales section ] end-->
+                        
+
+                        <!-- [ Amchart 4 chart ] start -->
+                        <div class="col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Biểu đồ phần trăm sinh viên theo ngành</h5>
+                                </div>
+                                <div class="card-block">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <div id="am-pie-2" style="height: 400px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Biểu đồ số lượng sinh viên theo ngành</h5>
+                                </div>
+                                <div class="card-block">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <div id="am-xy-1" style="height: 400px"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- [ Amchart 4 chart ] End -->
+                    </div>
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <!-- Specific Page JS goes HERE  -->
+     
+
+<!-- am chart js -->
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/usaLow.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+<script>
+    'use strict';
+    // [ pie-legend chart ] start
+    (function () {
+        var root = am5.Root.new("am-pie-2");
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+        var chart = root.container.children.push(
+            am5percent.PieChart.new(root, {
+                endAngle: 270
+            })
+        );
+        var series = chart.series.push(
+            am5percent.PieSeries.new(root, {
+                valueField: "value",
+                categoryField: "category",
+                endAngle: 270
+            })
+        );
+        series.states.create("hidden", {
+            endAngle: -90
+        });
+        series.data.setAll([
+            {% for i in dataSV %}
+                {
+                    category: "{{ i['ten_nganh'] }}",
+                    value: {{ i['soluong'] }}
+                },
+            {% endfor %}
+        ]);
+
+        series.appear(1000, 100);
+    })();
+
+    // [ pie-legend chart ] end
+
+    // [ XY-Stacked-1 chart ] start
+    (function () {
+        var root = am5.Root.new("am-xy-1");
+
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: true,
+            panY: true,
+            wheelX: "panX",
+            wheelY: "zoomX"
+        }));
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+        cursor.lineY.set("visible", false);
+
+        var xRenderer = am5xy.AxisRendererX.new(root, {
+            minGridDistance: 30
+        });
+        xRenderer.labels.template.setAll({
+            rotation: -90,
+            centerY: am5.p50,
+            centerX: am5.p100,
+            paddingRight: 15
+        });
+
+        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+            maxDeviation: 0.3,
+            categoryField: "country",
+            renderer: xRenderer,
+            tooltip: am5.Tooltip.new(root, {})
+        }));
+
+        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            maxDeviation: 0.3,
+            renderer: am5xy.AxisRendererY.new(root, {})
+        }));
+
+        var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+            name: "Series 1",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "value",
+            sequencedInterpolation: true,
+            categoryXField: "country",
+            tooltip: am5.Tooltip.new(root, {
+                labelText: "{valueY}"
+            })
+        }));
+
+        series.columns.template.setAll({
+            cornerRadiusTL: 5,
+            cornerRadiusTR: 5
+        });
+        series.columns.template.adapters.add("fill", (fill, target) => {
+            return chart.get("colors").getIndex(series.columns.indexOf(target));
+        });
+
+        series.columns.template.adapters.add("stroke", (stroke, target) => {
+            return chart.get("colors").getIndex(series.columns.indexOf(target));
+        });
+
+        // Set data
+        var data = [
+            {% for i in dataSV %}
+                {
+                    country: "{{ i['ten_nganh'] }}",
+                    value: {{ i['soluong'] }}
+                },
+            {% endfor %}
+        ];
+
+        xAxis.data.setAll(data);
+        series.data.setAll(data);
+
+
+        // Make stuff animate on load
+        series.appear(1000);
+        chart.appear(1000, 100);
+    })();
+    // [ XY-Stacked-1 chart ] end
+    1
+</script>
+
+{% endblock javascripts %}

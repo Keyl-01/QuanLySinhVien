@@ -474,6 +474,8 @@ class SinhVien(Person):
                     if not i['diemCK']:
                         i.update({'diemCK': sv_lichthi.diemCK})
                         break
+                    if not sv_lichthi.diemCK and i['diemCK']:
+                        break
                     if i['diemCK'] < sv_lichthi.diemCK:
                         i.update({'diemCK': sv_lichthi.diemCK})
                         break
@@ -522,6 +524,8 @@ class SinhVien(Person):
                 if i['ma_mon'] == sv_lichthi.lichthi.mon.ma_mon:
                     if not i['diemCK']:
                         i.update({'diemCK': sv_lichthi.diemCK})
+                        break
+                    if not sv_lichthi.diemCK and i['diemCK']:
                         break
                     if i['diemCK'] < sv_lichthi.diemCK:
                         i.update({'diemCK': sv_lichthi.diemCK})

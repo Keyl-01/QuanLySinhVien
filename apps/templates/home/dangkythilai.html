@@ -1,7 +1,7 @@
 
 {% extends "layouts/basesv.html" %}
 
-{% block title %} Đăng ký học {% endblock %} 
+{% block title %} Đăng ký thi lại {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
@@ -33,11 +33,11 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h5 class="m-b-10">Đăng ký học</h5>
+                                <h5 class="m-b-10">Đăng ký thi lại</h5>
                             </div>
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                                <li class="breadcrumb-item"><a href="javascript:">Đăng ký học</a></li>
+                                <li class="breadcrumb-item"><a href="javascript:">Đăng ký thi lại</a></li>
                             </ul>
                         </div>
                     </div>
@@ -50,14 +50,14 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
-                                <h5 class="">Đăng ký học</h5>
+                                <h5 class="">Đăng ký thi lại</h5>
                             </div>
                             <div class="card-body text-dark">
                                 <div class="row dotdkh">
                                     <div class="dot col-md-12 font-weight-bold">
                                     </div>
                                     <div class="tendot col-md-12">
-                                        Bạn chưa được đăng ký học
+                                        Bạn chưa được đăng ký thi lại
                                     </div>
                                 </div>
 
@@ -77,7 +77,7 @@
                                 </div>
 
 
-                                <h6 class="font-weight-bold text-center mt-5">Thời khóa biểu các môn đã đăng ký</h6>
+                                <h6 class="font-weight-bold text-center mt-5">Danh sách môn đã đăng ký</h6>
                                 <div class="table-border-style">
                                     <div class="table-responsive">
                                         <table id="table" class="table table-hover" data-provide="selectall">
@@ -85,8 +85,7 @@
                                                 <tr>
                                                     <th>Mã Môn</th>
                                                     <th>Tên Môn</th>
-                                                    <th>Lớp</th>
-                                                    <th>Thứ</th>
+                                                    <th>Ngày Thi</th>
                                                     <th>Ca</th>
                                                     <th>Phòng</th>
                                                 </tr>
@@ -119,7 +118,7 @@
 
             var ky_id;
             $.ajax({
-                    url: '/api/dotdkh',
+                    url: '/api/dotdktl',
                     type: 'GET',
                     success: function(data){
                         if(data.data){
@@ -140,19 +139,19 @@
                             hk1 = (new Date(data.data.hk1)).getFullYear();
                             end = (new Date(data.data.date_end)).getFullYear();
 
-                            var dkh_start = (new Date(data.data.dkh_start)).toLocaleString()
-                            var dkh_end = (new Date(data.data.dkh_end)).toLocaleString()
+                            var dkt_start = (new Date(data.data.dkt_start)).toLocaleString()
+                            var dkt_end = (new Date(data.data.dkt_end)).toLocaleString()
                             // alert(dkh_start)
                             
                             $('.dot').text('Đợt đăng ký: ');
-                            $('.tendot').html(ten_ky + ' Năm học ' + hk1 + ' - ' + end + ' (' + dkh_start + ' - ' + dkh_end + ')').attr('data-id', data.data.id);
+                            $('.tendot').html(ten_ky + ' Năm học ' + hk1 + ' - ' + end + ' (' + dkt_start + ' - ' + dkt_end + ')').attr('data-id', data.data.id);
                         }   
                     }
                 });
 
             function datatablesOptionsMonDK() {
                 $.ajax({
-                    url: '/api/dangkyhoc/mon/'+'{{ current_user.id }}',
+                    url: '/api/dangkythilai/mon/'+'{{ current_user.id }}',
                     type: 'GET',
                     success: function(data){
                         if(data.data){
@@ -182,8 +181,6 @@
                                 $('#DanhSachMonDKH tbody').append(elements);
                             }
                             
-                            // $('.dot').text('Đợt đăng ký: ');
-                            // $('.tendot').html(ten_ky + ' Năm học ' + hk1 + ' - ' + end + ' (' + dkh_start + ' - ' + dkh_end + ')');
                         
                         }
                     }
@@ -193,7 +190,7 @@
 
             function datatablesOptionsLopDK(mon_id) {
                 $.ajax({
-                    url: '/api/dangkyhoc/lop/'+'{{ current_user.id }}'+'/'+mon_id,
+                    url: '/api/dangkythilai/lichthi/'+'{{ current_user.id }}'+'/'+mon_id,
                     type: 'GET',
                     success: function(data){
                         if(data.data){
@@ -202,19 +199,17 @@
                             $.each(data.data, function(key, value){
                                 ma_mon = value.ma_mon;
                                 ten_mon = value.ten_mon;
-                                elements += '<div class="form-check mb-2"><input class="form-check-input" type="checkbox" mon-id="'+value.mon_id+'" value="'+value.id+'" id="'+value.ten_lop+'"';
+                                elements += '<div class="form-check mb-2"><input class="form-check-input" type="checkbox" mon-id="'+value.mon_id+'" value="'+value.id+'"';
                                 if(value.isDK == 1){
                                     elements += ' checked';
                                 }
-                                elements += '><label class="form-check-label" for="'+value.ten_lop+'">Lớp '+value.ten_lop+'; Số lượng: '+value.so_luong_sv+'/'+value.so_luong+' (';
-                                $.each(value.lichlops, function(key, value){
-                                    elements += 'Thứ '+value.thu+'; Ca '+value.start+'-'+value.end+'; Phòng '+value.ten_phong+' ';
-                                });
-                                elements += ')'+'</label></div>';
+                                elements += '><label class="form-check-label">'+value.ma_mon+'-'+value.ten_mon+' ';
+                                elements += value.date+'_ Ca thi: '+value.start+'-'+value.end;
+                                elements += '</label></div>';
                             });
                             $('#LopHocPhan').html(elements);
                             
-                            $('#DKLopMonHoc').html('Lớp học phần '+ma_mon+' - '+ten_mon);                        
+                            $('#DKLopMonHoc').html('Lịch thi lại học phần '+ma_mon+' - '+ten_mon);                        
                         }
                     }
                 });
@@ -224,37 +219,44 @@
             function datatablesOptions(ky_id) {
                 return {
                     ajax: {
-                        url: '/api/lichlop/sinhvien/'+'{{ current_user.id }}'+'/'+ky_id,
+                        url: '/api/lichthi/sinhvien/'+'{{ current_user.id }}'+'/'+ky_id,
                         type: 'GET'
                     },
                     columns: [  
                         {data: 'ma_mon'},
                         {data: 'ten_mon'},
-                        {data: 'ten_lop'},
-                        {data: 'thu'},
                         {
                             render: function (data, type, row) {
-                                return row.start + '-' + row.end
+                                const [year, month, day] = row.date.split('-');
+                                return day + '/' + month + '/' + year;
                             }
                         },
-                        {data: 'ten_phong'}          
+                        {
+                            render: function (data, type, row) {
+                                if (row.start=='' || row.end==''){
+                                    return ''
+                                }
+                                return row.start + ' - ' + row.end
+                            }
+                        },
+                        {data: 'ten_phong'}     
                     ], autoWidth: false, bDestroy: true, searching: false, paging: false, info: false
                 };
             };
 
 
             // Function save form
-            function saveFormSV(lop_id, mon_id){
+            function saveFormSV(lichthi_id, mon_id){
                 var sv_id = '{{ current_user.id }}';
                 // alert(lop_id + ' ' + sv_id + ' ' + ky_id);
-                if(!lop_id || !sv_id || !ky_id){
+                if(!lichthi_id || !sv_id || !ky_id){
                     notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', 'Lỗi');
                 }else{
                     $.ajax({
-                        url: '/dangkyhoc',
+                        url: '/dangkythilai',
                         type: 'POST',
                         traditional: true,
-                        data: {lop_id: lop_id, sv_id: sv_id, ky_id: ky_id},
+                        data: {lichthi_id: lichthi_id, sv_id: sv_id, ky_id: ky_id},
                         success: function(data){
                             if(data.duplicate){
                                 notify('top', 'right', '', 'danger', 'animated fadeIn', 'animated fadeOut', data.duplicate);
@@ -269,9 +271,9 @@
                 }
             }
 
-            function deleteLopDKH(lop_id, mon_id){
+            function deleteLopDKH(lichthi_id, mon_id){
                 $.ajax({
-                    url: '/dangkyhoc/'+'{{ current_user.id }}'+'/'+lop_id,
+                    url: '/dangkythilai/'+'{{ current_user.id }}'+'/'+lichthi_id,
                     type: 'DELETE',
                     success: function(data){
                         if(data.error){
@@ -294,11 +296,11 @@
 
             $('#LopHocPhan').on('change', 'input[type="checkbox"]', function(){
                 var mon_id = $(this).attr('mon-id');
-                var lop_id = $(this).val();
+                var lichthi_id = $(this).val();
                 if(this.checked) {
-                    saveFormSV(lop_id, mon_id);
+                    saveFormSV(lichthi_id, mon_id);
                 } else {
-                    deleteLopDKH(lop_id, mon_id);
+                    deleteLopDKH(lichthi_id, mon_id);
                 }
             });
             

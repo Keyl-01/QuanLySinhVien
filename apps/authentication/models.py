@@ -919,6 +919,36 @@ class LichThi(db.Model):
         }
 
 
+    def to_dictDKTLLop(self, sv_id):
+        sv_lichthi = SinhVien_LichThi.query.filter(SinhVien_LichThi.lichthi_id == self.id, SinhVien_LichThi.sv_id == sv_id).first()
+        isDK = 0
+        if sv_lichthi:
+            isDK = 1
+
+        ten_phong = ''
+        so_luong = ''
+        if self.phong_id != '':
+            ten_phong = self.phong.ten_phong
+            so_luong = self.phong.so_luong
+        return {
+            'id': self.id,
+            'isDK': isDK,
+            'date': self.date.strftime("%Y-%m-%d"),
+            'start': self.start,
+            'end': self.end,
+            'mon_id': self.mon_id,
+            'ma_mon': self.mon.ma_mon,
+            'ten_mon': self.mon.ten_mon,
+            'tinchi': self.mon.tinchi,
+            'phong_id': self.phong_id,
+            'ten_phong': ten_phong,
+            'so_luong': so_luong,
+            'ky_id': self.ky_id,
+            'ky': self.ky.ten_ky,
+            'nam_id': self.ky.nam_id
+        }
+
+
 
 # -------------------------SinhVien_Thi--------------------------------
 
@@ -962,4 +992,4 @@ class SinhVien_LichThi(db.Model):
             'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.sinhvien.lcns]
             # 'lcns': [{'lcn_id': lcn.id, 'ten_lcn': lcn.ten_lcn} for lcn in self.lcns]
         }
-
+        

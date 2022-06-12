@@ -30,61 +30,59 @@ def route_default():
 
 # -------------------------------------------------API--------------------------------------------------------
 # -------------------------Dang ky thi--------------------------------
-@blueprint.route('/api/dotdkt')
+@blueprint.route('/api/dotdktl')
 def dataDotDKTL():
-    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    ky = Ky.query.filter(Ky.dkt_start != None, Ky.dkt_end != None).order_by(asc(Ky.date_start)).first()
     if ky:
         return jsonify({'data': ky.to_dict()})
     return jsonify({'data': ''})
 
 @blueprint.route('/api/dangkythilai/mon/<int:sv_id>')
 def dataDKTLMon(sv_id):
-    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    ky = Ky.query.filter(Ky.dkt_start != None, Ky.dkt_end != None).order_by(asc(Ky.date_start)).first()
     if ky:
         now = datetime.now()
-        if ky.dkh_start<=now and now<ky.dkh_end:
-            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+        if ky.dkt_start<=now and now<ky.dkt_end:
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.diemQT >= 4).all()
             monDK = []
             for sv_lop in sv_lops:
                 if sv_lop.lop.ky_id < ky.id:
                     monDK.append(sv_lop.lop.mon_id)
-            
-            sv = SinhVien.query.filter(SinhVien.id == sv_id).first()
-            mons = []
-            for lcn in sv.lcns:
-                for mon in lcn.ctdt.mons:
-                    for lop in mon.lops:
-                        if lop.ky_id == ky.id:
-                            if not(lop.mon_id in monDK):
 
-                                flag = True
-                                for check in mons:
-                                    if lop.mon_id == check.id:
-                                        flag = False
-                                if flag:     
-                                    mons.append(lop.mon)
+            mons = []
+            lichthis = LichThi.query.filter(LichThi.ky_id == ky.id).all()
+            for lichthi in lichthis:
+                if lichthi.mon_id in monDK:
+
+                    flag = True
+                    for check in mons:
+                        if lichthi.mon_id == check.id:
+                            flag = False
+                    if flag:     
+                        mons.append(lichthi.mon)
+
 
             return jsonify({'data': [mon.to_dict() for mon in mons]})
     return jsonify({'data': ''})
 
 @blueprint.route('/api/dangkythilai/lichthi/<int:sv_id>/<int:mon_id>')
 def dataDKTLLop(sv_id, mon_id):
-    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+    ky = Ky.query.filter(Ky.dkt_start != None, Ky.dkt_end != None).order_by(asc(Ky.date_start)).first()
     if ky:
         now = datetime.now()
-        if ky.dkh_start<=now and now<ky.dkh_end:
-            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+        if ky.dkt_start<=now and now<ky.dkt_end:
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.diemQT >= 4).all()
             monDK = []
             for sv_lop in sv_lops:
                 if sv_lop.lop.ky_id < ky.id:
                     monDK.append(sv_lop.lop.mon_id)
             
-            lopDK = []
-            lops = Lop.query.filter(Lop.ky_id == ky.id, Lop.mon_id == mon_id).order_by(asc(Lop.ten_lop)).all()
-            for lop in lops:
-                if not(lop.mon_id in monDK):
-                    lopDK.append(lop)
-            return jsonify({'data': [lop.to_dictDKHLop(sv_id) for lop in lopDK]})
+            lichthiDK = []
+            lichthis = LichThi.query.filter(LichThi.ky_id == ky.id, LichThi.mon_id == mon_id).order_by(asc(LichThi.date)).all()
+            for lichthi in lichthis:
+                if lichthi.mon_id in monDK:
+                    lichthiDK.append(lichthi)
+            return jsonify({'data': [lichthi.to_dictDKTLLop(sv_id) for lichthi in lichthiDK]})
     return jsonify({'data': ''})
 
 
@@ -105,7 +103,7 @@ def dataDKHMon(sv_id):
     if ky:
         now = datetime.now()
         if ky.dkh_start<=now and now<ky.dkh_end:
-            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.diemQT >= 4).all()
             monDK = []
             for sv_lop in sv_lops:
                 if sv_lop.lop.ky_id < ky.id:
@@ -135,7 +133,7 @@ def dataDKHLop(sv_id, mon_id):
     if ky:
         now = datetime.now()
         if ky.dkh_start<=now and now<ky.dkh_end:
-            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+            sv_lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.diemQT >= 4).all()
             monDK = []
             for sv_lop in sv_lops:
                 if sv_lop.lop.ky_id < ky.id:
@@ -575,6 +573,20 @@ def dataLichThiSVFilter(sv_id, nam_id, ky_id):
                 sv_lichthis.append(lichthi)
                 break
     return jsonify({'data': [lichthi.to_dict() for lichthi in sv_lichthis]})
+
+
+@blueprint.route('/api/lichthi/sinhvien/<int:sv_id>/<int:ky_id>', methods=['GET'])
+def dataLichThiSVFilterKy(sv_id, ky_id):
+    lichthis = LichThi.query.filter(LichThi.ky_id == ky_id).all()
+    sv_lichthis = []
+    for lichthi in lichthis:
+        for sv_lichthi in lichthi.sv_lichthis:
+            if sv_lichthi.sv_id == sv_id:
+                sv_lichthis.append(lichthi)
+                break
+    return jsonify({'data': [lichthi.to_dict() for lichthi in sv_lichthis]})
+
+
 
 # -------------------------SinhVien_LichThi--------------------------------
 

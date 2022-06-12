@@ -89,21 +89,20 @@ def addDKH():
     for lop in lops:
         sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.lop_id == lop.id).first()
         if sv_lop:
-            if sv_lop is None:
-                return jsonify({'duplicate': 'Không tìm thấy.'})
             db.session.delete(sv_lop)
-            db.session.commit()
 
     lichlop1 = LichLop.query.filter(LichLop.lop_id == lop_id).all()
     mon1 = Lop.query.filter(Lop.id == lop_id).first()
 
-    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.diemQT >= 4).all()
 
     for lop in lops:
         mon2 = Lop.query.filter(Lop.mon_id == lop.lop.mon_id).first()
         if mon2 is not None and mon1.mon_id == mon2.mon_id:
-            return jsonify({'duplicate': 'Sinh viên này đã đăng ký học phần này. Không thể thêm sinh viên này.'})
+            return jsonify({'duplicate': 'Đã đăng ký học phần này. Không thể đăng ký lớp học này.'})
 
+
+    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
     for lop in lops:
         check = Lop.query.filter(Lop.ky_id == ky_id, Lop.id == lop.lop_id).first()
         if check:
@@ -112,7 +111,7 @@ def addDKH():
                 for row1 in lichlop1:
                     if row2.thu == row1.thu:
                         if((row2.start<=row1.start and row1.start<=row2.end) or (row2.start<=row1.end and row1.end<=row2.end)):
-                            return jsonify({'duplicate': 'Sinh viên này bị trùng lịch. Không thể thêm sinh viên này.'})
+                            return jsonify({'duplicate': 'Trùng lịch. Không thể đăng ký lớp học này.'})
 
     sv_lop = SinhVien_Lop(**request.form)
     db.session.add(sv_lop)
@@ -157,55 +156,43 @@ def addDKTL():
         if now<ky.dkt_start or now>=ky.dkt_end:
             return
 
-    mon_id = (Lop.query.filter_by(id=lop_id).first()).mon_id
-    lops = Lop.query.filter(Lop.ky_id == ky_id, Lop.mon_id == mon_id).all()
-    for lop in lops:
-        sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.lop_id == lop.id).first()
-        if sv_lop:
-            if sv_lop is None:
-                return jsonify({'duplicate': 'Không tìm thấy.'})
-            db.session.delete(sv_lop)
-            db.session.commit()
+    mon_id = (LichThi.query.filter_by(id=lichthi_id).first()).mon_id
+    lichthis = LichThi.query.filter(LichThi.ky_id == ky_id, LichThi.mon_id == mon_id).all()
+    for lichthi in lichthis:
+        sv_lichthi = SinhVien_LichThi.query.filter(SinhVien_LichThi.sv_id == sv_id, SinhVien_LichThi.lichthi_id == lichthi.id).first()
+        if sv_lichthi:
+            db.session.delete(sv_lichthi)
 
-    lichlop1 = LichLop.query.filter(LichLop.lop_id == lop_id).all()
-    mon1 = Lop.query.filter(Lop.id == lop_id).first()
+    lichthi1 = LichThi.query.filter(LichThi.id == lichthi_id).first()
 
-    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+    lichthis = SinhVien_LichThi.query.filter(SinhVien_LichThi.sv_id == sv_id).all()
 
-    for lop in lops:
-        mon2 = Lop.query.filter(Lop.mon_id == lop.lop.mon_id).first()
-        if mon2 is not None and mon1.mon_id == mon2.mon_id:
-            return jsonify({'duplicate': 'Sinh viên này đã đăng ký học phần này. Không thể thêm sinh viên này.'})
-
-    for lop in lops:
-        check = Lop.query.filter(Lop.ky_id == ky_id, Lop.id == lop.lop_id).first()
+    for lichthi in lichthis:
+        check = LichThi.query.filter(LichThi.ky_id == ky_id, LichThi.id == lichthi.lichthi_id).first()
         if check:
-            lichlop2 = LichLop.query.filter(LichLop.lop_id == lop.lop_id).all()
-            for row2 in lichlop2:
-                for row1 in lichlop1:
-                    if row2.thu == row1.thu:
-                        if((row2.start<=row1.start and row1.start<=row2.end) or (row2.start<=row1.end and row1.end<=row2.end)):
-                            return jsonify({'duplicate': 'Sinh viên này bị trùng lịch. Không thể thêm sinh viên này.'})
+            if check.date == lichthi1.date:
+                if((check.start<=lichthi1.start and lichthi1.start<=check.end) or (check.start<=lichthi1.end and lichthi1.end<=check.end)):
+                    return jsonify({'duplicate': 'Trùng lịch. Không thể đăng ký thi lại học phần này.'})
 
-    sv_lop = SinhVien_Lop(**request.form)
-    db.session.add(sv_lop)
+    sv_lichthi = SinhVien_LichThi(**request.form)
+    db.session.add(sv_lichthi)
     db.session.commit()
         
     return jsonify({'success': 'Đăng ký thành công.'})
 
-@blueprint.route('/dangkythilai/<int:sv_id>/<int:lop_id>', methods=['DELETE'])
+@blueprint.route('/dangkythilai/<int:sv_id>/<int:lichthi_id>', methods=['DELETE'])
 @login_required
-def deleteDKTL(sv_id, lop_id):
-    ky = Ky.query.filter(Ky.dkh_start != None, Ky.dkh_end != None).order_by(asc(Ky.date_start)).first()
+def deleteDKTL(sv_id, lichthi_id):
+    ky = Ky.query.filter(Ky.dkt_start != None, Ky.dkt_end != None).order_by(asc(Ky.date_start)).first()
     if ky:
         now = datetime.now()
-        if now<ky.dkh_start or now>=ky.dkh_end:
+        if now<ky.dkt_start or now>=ky.dkt_end:
             return
 
-    sv_lop = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.lop_id == lop_id).first()
-    if sv_lop is None:
+    sv_lichthi = SinhVien_LichThi.query.filter(SinhVien_LichThi.sv_id == sv_id, SinhVien_LichThi.lichthi_id == lichthi_id).first()
+    if sv_lichthi is None:
         return jsonify({'error': 'Không tìm thấy.'})
-    db.session.delete(sv_lop)
+    db.session.delete(sv_lichthi)
     db.session.commit()
     return jsonify({'success': 'Xóa thành công.'})
 
@@ -1339,13 +1326,14 @@ def addSVLop():
     lichlop1 = LichLop.query.filter(LichLop.lop_id == lop_id).all()
     mon1 = Lop.query.filter(Lop.id == lop_id).first()
 
-    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
+    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id, SinhVien_Lop.diemQT >= 4).all()
 
     for lop in lops:
         mon2 = Lop.query.filter(Lop.mon_id == lop.lop.mon_id).first()
         if mon2 is not None and mon1.mon_id == mon2.mon_id:
             return jsonify({'duplicate': 'Sinh viên này đã đăng ký học phần này. Không thể thêm sinh viên này.'})
 
+    lops = SinhVien_Lop.query.filter(SinhVien_Lop.sv_id == sv_id).all()
     for lop in lops:
         check = Lop.query.filter(Lop.ky_id == ky_id, Lop.id == lop.lop_id).first()
         if check:

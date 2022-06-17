@@ -386,7 +386,8 @@
             invalidFeedback('#last_name', '#ifb_last_name');
             invalidFeedback('#date_birth', '#ifb_date_birth');
             invalidFeedbackEmail();
-            invalidFeedback('#phone', '#ifb_phone');
+            invalidFeedbackPhone();
+            // invalidFeedback('#phone', '#ifb_phone');
             invalidFeedbackSelect('#bomon_id', '#ifb_bomon_id');
             
             
@@ -434,14 +435,15 @@
                 var quan = $('#quan').val();
                 var city = $('#city').val();
                 var bomon_id = $('#bomon_id').val();
-                if(ma_gv=='' || first_name=='' || last_name=='' || email=='' || phone=='' || date_birth=='' || bomon_id==null){
+                if(ma_gv=='' || first_name=='' || last_name=='' || !validateEmail(email) || !validatePhone(phone) || date_birth=='' || bomon_id==null){
                     checkInput('#ma_gv', '#ifb_ma_gv');
                     checkInput('#first_name', '#ifb_first_name');
                     checkInput('#last_name', '#ifb_last_name');
                     checkInput('#date_birth', '#ifb_date_birth');
                     // checkInputEmail('#email', '#ifb_email');
                     checkInputEmail();
-                    checkInput('#phone', '#ifb_phone');
+                    checkInputPhone();
+                    // checkInput('#phone', '#ifb_phone');
                     checkInputSelect('#bomon_id', '#ifb_bomon_id');
                 }else{
                     if(method!='POST'){id='/'+id;}

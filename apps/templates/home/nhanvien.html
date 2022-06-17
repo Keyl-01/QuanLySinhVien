@@ -387,7 +387,8 @@
             invalidFeedback('#last_name', '#ifb_last_name');
             invalidFeedback('#date_birth', '#ifb_date_birth');
             invalidFeedbackEmail();
-            invalidFeedback('#phone', '#ifb_phone');
+            invalidFeedbackPhone();
+            // invalidFeedback('#phone', '#ifb_phone');
             
             
             // notify('top', 'right', '', 'info', 'animated fadeIn', 'animated fadeOut', 'Thêm thành công!');
@@ -432,14 +433,15 @@
                 var quan = $('#quan').val();
                 var city = $('#city').val();
                 var type = $('#type').val();
-                if(ma_nv=='' || first_name=='' || last_name=='' || email=='' || phone=='' || date_birth=='' || type==null){
+                if(ma_nv=='' || first_name=='' || last_name=='' || !validateEmail(email) || !validatePhone(phone) || date_birth=='' || type==null){
                     checkInput('#ma_nv', '#ifb_ma_nv');
                     checkInput('#first_name', '#ifb_first_name');
                     checkInput('#last_name', '#ifb_last_name');
                     checkInput('#date_birth', '#ifb_date_birth');
                     // checkInputEmail('#email', '#ifb_email');
                     checkInputEmail();
-                    checkInput('#phone', '#ifb_phone');
+                    checkInputPhone();
+                    // checkInput('#phone', '#ifb_phone');
                 }else{
                     if(method!='POST'){id='/'+id;}
                     $.ajax({

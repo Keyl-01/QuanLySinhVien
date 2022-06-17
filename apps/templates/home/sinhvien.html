@@ -159,7 +159,7 @@
                                     </div>
                                     <div class="fieldName pr-0 col-5 align-self-end">
                                         {{ form.phone(class="form-control bg-white shadow-none", style="padding: 6px 12px;") }}
-                                        <small id="ifb_phone" class="invalid-feedback text-danger position-absolute text-truncate">Số điện thoại là trường bắt buộc.</small>
+                                        <small id="ifb_phone" class="invalid-feedback text-danger position-absolute text-truncate"></small>
                                     </div>
                                 </div>
                             </div>
@@ -466,6 +466,7 @@
 
     <script>
         $(document).ready(function () {
+            
             $('#lcn_id').select2({
                 closeOnSelect : false,
                 // placeholder : "Chọn môn học",
@@ -520,7 +521,7 @@
             invalidFeedback('#last_name', '#ifb_last_name');
             invalidFeedback('#date_birth', '#ifb_date_birth');
             invalidFeedbackEmail();
-            invalidFeedback('#phone', '#ifb_phone');
+            invalidFeedbackPhone();
             invalidFeedbackSelect('#lcn_id', '#ifb_lcn_id');
             
             
@@ -568,14 +569,15 @@
                 var quan = $('#quan').val();
                 var city = $('#city').val();
                 var lcn_id = $('#lcn_id').val();
-                if(ma_sv=='' || first_name=='' || last_name=='' || email=='' || phone=='' || date_birth=='' || lcn_id==null){
+                if(ma_sv=='' || first_name=='' || last_name=='' || !validateEmail(email) || !validatePhone(phone) || date_birth=='' || lcn_id==null){
                     checkInput('#ma_sv', '#ifb_ma_sv');
                     checkInput('#first_name', '#ifb_first_name');
                     checkInput('#last_name', '#ifb_last_name');
                     checkInput('#date_birth', '#ifb_date_birth');
                     // checkInputEmail('#email', '#ifb_email');
                     checkInputEmail();
-                    checkInput('#phone', '#ifb_phone');
+                    // checkInput('#phone', '#ifb_phone');
+                    checkInputPhone();
                     checkInputSelect('#lcn_id', '#ifb_lcn_id');
                 }else{
                     if(method!='POST'){id='/'+id;}
@@ -602,9 +604,13 @@
                                 notify('top', 'right', '', 'success', 'animated fadeIn', 'animated fadeOut', data.success);
                                 $('#formModal').modal('hide');
                                 $('#formSV').trigger('reset');
-                                // $("#lcn_id").val('').trigger('change')
-                                // $('#ma_mon').removeAttr('value');
-                                // $('#ten_mon').removeAttr('value');
+                                $('#formSV').trigger('reset');
+
+                                $("#lcn_id").val('').trigger('change')
+                                $('input').css('border', '');
+                                $('.select2-selection').css('border', '');
+                                $('small.invalid-feedback').hide('');
+
                                 $('#table').dataTable(datatablesOptions);
                             }
                         }

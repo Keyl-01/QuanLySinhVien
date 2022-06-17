@@ -151,6 +151,43 @@
             });
         }
 
+        function validatePhone(phone){
+                var testPhone = /([\+84|84|0]+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/;
+                if (testPhone.test(phone)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+            function checkInputPhone(){
+                var value = $('input#phone').val();
+                var result = validatePhone(value);
+                if(value == ''){
+                    $('input#phone').css('border', '1px solid red');
+                    $('small#ifb_phone').text('Số điện thoại là trường bắt buộc.');
+                    $('small#ifb_phone').show();
+                }else if(!result && value!=''){
+                    $('input#phone').css('border', '1px solid red');
+                    $('small#ifb_phone').text('Số điện thoại không hợp lệ.');
+                    $('small#ifb_phone').show();
+                }else{
+                    $('input#phone').css('border', '');
+                    $('small#ifb_phone').text('');
+                    $('small#ifb_phone').hide();
+                }
+            };
+
+            function invalidFeedbackPhone(){
+                $('input#phone').on({
+                    focusout: function() {
+                        checkInputPhone();
+                    },
+                    keyup: function() {
+                        checkInputPhone();
+                    }
+                });
+            }
+
 
         function checkInputSelect(input, feedback){
             var value = $(input).val();
